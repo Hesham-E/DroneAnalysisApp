@@ -1,0 +1,1 @@
+This layer can be thought of as the "brains" of the program. It will contain all the main objects and calculations needed. This layer can also be thought of as containing all the logic that would have existed if this was just a script running on the command line.

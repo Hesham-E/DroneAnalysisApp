@@ -1,0 +1,1 @@
+This layer can be thought of as the liason between the View Layer and the Model Layer. It will pass data between those two layers. For example, taking in user inputs to instantiaze objects and invoking the calculations in the Model layer. Then, it will return outputs from the Model layer to the View layer to be displayed.
