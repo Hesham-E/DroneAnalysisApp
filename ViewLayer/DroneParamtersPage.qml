@@ -7,10 +7,10 @@ Item {
     anchors.fill: parent
 
     Grid {
-        id: parameterGrid
-        x: 151
-        y: 88
-        width: 338
+        id: leftParameterGrid
+        x: 8
+        y: 119
+        width: 296
         height: 354
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
@@ -18,7 +18,7 @@ Item {
         flow: Grid.LeftToRight
         columns: 2
         spacing: 30
-        columnSpacing: 100
+        columnSpacing: 50
 
         Text {
             id: wingSpanLabel
@@ -35,13 +35,13 @@ Item {
         }
 
         Text {
-            id: dragCoefficientLabel
+            id: droneWeightLabel
+            text: "Weight of the Drone (kg)"
             textFormat: Text.RichText
-            text: qsTr("Drag Coeffcient (C<sub>d</sub>)")
             font.pixelSize: 12
         }
         TextField {
-            id: dragCoefficientInput
+            id: droneWeightInput
             width: 80
             height: 24
             text: qsTr("0")
@@ -50,12 +50,12 @@ Item {
         }
 
         Text {
-            id: verticalThrustLabel
-            text: qsTr("Total Vertical Thrust (N)")
+            id: loadWeightLabel
+            text: qsTr("Weight of the Load (kg)")
             font.pixelSize: 12
         }
         TextField {
-            id: verticalThrustInput
+            id: loadWeightInput
             width: 80
             height: 24
             text: qsTr("0")
@@ -64,12 +64,16 @@ Item {
         }
 
         Text {
-            id: horizontalThrustLabel
-            text: qsTr("Total Horizontal Thrust (N)")
+            id: wingAreaLabel
+            height: 20
+            text: "Area of the Wings (m<sup>2</sup>)"
             font.pixelSize: 12
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            textFormat: Text.RichText
         }
         TextField {
-            id: horizontalThrustInput
+            id: wingAreaInput
             width: 80
             height: 24
             text: qsTr("0")
@@ -78,12 +82,12 @@ Item {
         }
 
         Text {
-            id: propVTOLDLabel
-            text: qsTr("VTOL Propeller Diameter (cm)")
+            id: angleOfAttackLabel
+            text: qsTr("Angle of Attack (degrees)")
             font.pixelSize: 12
         }
         TextField {
-            id: propVTOLDInput
+            id: angleOfAttackInput
             width: 80
             height: 24
             text: qsTr("0")
@@ -92,12 +96,12 @@ Item {
         }
 
         Text {
-            id: propVTOLSizeLabel
-            text: qsTr("VTOL Propeller Size (cm)")
+            id: batteryWeightLabel
+            text: qsTr("Weight of the Battery (kg)")
             font.pixelSize: 12
         }
         TextField {
-            id: propVTOLSizeInput
+            id: batteryWeightInput
             width: 80
             height: 24
             text: qsTr("0")
@@ -106,20 +110,59 @@ Item {
         }
 
         Text {
-            id: propVTOLPitchLabel
-            text: qsTr("VTOL Propeller Pitch (cm)")
+            id: batteryCapctiyLabel
+            text: qsTr("Battery Capacity (Wh)")
             font.pixelSize: 12
         }
         TextField {
-            id: propVTOLPitchInput
+            id: batteryCapacityInput
             width: 80
             height: 24
             text: qsTr("0")
             font.pixelSize: 12
             horizontalAlignment: Text.AlignHCenter
         }
+
+
 
     }
+
+    Grid {
+        id: rightParameterGrid
+        x: 322
+        y: 119
+        width: 300
+        height: 91
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignLeft
+        layoutDirection: Qt.LeftToRight
+        flow: Grid.LeftToRight
+        columns: 2
+        spacing: 30
+        columnSpacing: 40
+
+        Text {
+            id: reynoldsNumLabel
+            text: qsTr("Reynolds Number")
+            font.pixelSize: 12
+        }
+        TextField {
+            id: reynoldsNumInput
+            width: 80
+            height: 24
+            text: qsTr("1000000")
+            font.pixelSize: 12
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        CheckBox {
+            id: checkBox
+            text: qsTr("Use Non-Ideal Conditions?")
+            font.pixelSize: 12
+            leftPadding: 0
+        }
+
+      }
 
     Image {
         id: epJrE5C6_400x400
@@ -148,4 +191,8 @@ Item {
         text: qsTr("Drone Analysis App")
         font.pixelSize: 20
     }
+
+
+
+
 }

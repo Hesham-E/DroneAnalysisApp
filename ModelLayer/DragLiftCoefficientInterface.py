@@ -1,7 +1,7 @@
 import csv
 import pandas as pd
 
-class DragLiftInteface:
+class DragLiftCoefficientInterface:
     def __init__(self, filePath):
         self.filePath = filePath
 
@@ -61,7 +61,7 @@ class DragLiftInteface:
                 
 
 
-reader = DragLiftInteface("./xf-naca2408-il-1000000_Subset_1.csv")
+reader = DragLiftCoefficientInterface("./xf-naca2408-il-1000000_Subset_1.csv")
 print(reader.getLiftCoefficient(0.1)) # Should be 0.24414
 print(reader.getLiftCoefficient(-1.24)) # Should be 0.109764
 

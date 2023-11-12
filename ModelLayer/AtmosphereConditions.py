@@ -1,4 +1,5 @@
 class AtmosphereConditions:
+    # Conditions are assumed to be ideal for now
     SEA_PRESSURE = 101325.0 # Pascals
     SEA_TEMP = 288.15 # Kelvins
     LAPSE_RATE = 0.0065 # K/m

@@ -1,9 +1,22 @@
 class Drone:
-    def __init__(self, wingSpan, weight, dragCoeff, liftCoeff):
+    def __init__(self, 
+                 wingSpan, wingArea, 
+                 weight, loadWeight, 
+                 angleOfAttack, 
+                 batteryWeight, batteryCapacity):
+        
         self.wingSpan = wingSpan
+        self.wingArea = wingArea
+
         self.weight = weight
-        self.dragCoeff = dragCoeff
-        self.liftCoeff = liftCoeff
+        self.loadWeight = loadWeight 
+
+        self.angleOfAttack = angleOfAttack
+
+        self.batteryWeight = batteryWeight
+        self.batteryCapacity = batteryCapacity
+
+        self.ellipticalDistribution = 1.1
 
     def calcMinAirSpeed():
         # some formula using parameters
