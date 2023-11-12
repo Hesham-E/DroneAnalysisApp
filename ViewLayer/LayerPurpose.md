@@ -1,0 +1,1 @@
+This layer is responsible for handling all the UI elements and for doing some of the procesing of user inputs.
