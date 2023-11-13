@@ -1,12 +1,21 @@
 class Drone:
     def __init__(self, 
-                 wingSpan, wingArea, 
+                 wingSpan, wingArea, wingThickness,
+                 vStabilizerLen, vStabilizerWidth,
+                 fuselageRadius, 
                  weight, loadWeight, 
                  angleOfAttack, 
-                 batteryWeight, batteryCapacity):
+                 batteryWeight, batteryCapacity,
+                 motorTablePath):
         
         self.wingSpan = wingSpan
         self.wingArea = wingArea
+        self.wingThickness = wingThickness
+        
+        self.vStabilizerLen = vStabilizerLen
+        self.vStabilizerWidth = vStabilizerWidth
+
+        self.fuselageRadius = fuselageRadius
 
         self.weight = weight
         self.loadWeight = loadWeight 
@@ -15,6 +24,8 @@ class Drone:
 
         self.batteryWeight = batteryWeight
         self.batteryCapacity = batteryCapacity
+
+        self.motorTablePath = motorTablePath
 
         self.ellipticalDistribution = 1.1
 

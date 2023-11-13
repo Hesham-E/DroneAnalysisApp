@@ -61,9 +61,9 @@ class DragLiftCoefficientInterface:
                 
 
 
-reader = DragLiftCoefficientInterface("./xf-naca2408-il-1000000_Subset_1.csv")
-print(reader.getLiftCoefficient(0.1)) # Should be 0.24414
-print(reader.getLiftCoefficient(-1.24)) # Should be 0.109764
+reader = DragLiftCoefficientInterface("./xf-naca2408-il-500000_Subset_1.csv")
+print(reader.getLiftCoefficient(0.1))
+print(reader.getLiftCoefficient(-1.24)) 
 
-print(reader.getDragCoefficient(0.1)) # Should be 0.004182
-print(reader.getDragCoefficient(-1.24)) # Should be 0.0055896
+print(reader.getDragCoefficient(0.1)) 
+print(reader.getDragCoefficient(-1.24)) 

@@ -6,8 +6,8 @@ import "ViewLayer"
 
 
 Window {
-    width: 640
-    height: 480
+    width: 1280
+    height: 960
     visible: true
 
     StackView {
@@ -18,5 +18,9 @@ Window {
 
     DroneParamtersPage {
         id: droneParamtersPage
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
     }
 }
