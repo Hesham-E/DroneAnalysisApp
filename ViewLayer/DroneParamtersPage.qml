@@ -35,6 +35,20 @@ Item {
         }
 
         Text {
+            id: wingThicknessLabel
+            text: qsTr("Wing Thickness (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: wingThicknessInput
+            width: 80
+            height: 36
+            text: qsTr("0")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
             id: droneWeightLabel
             text: "Weight of the Drone (kg)"
             textFormat: Text.RichText
@@ -154,12 +168,26 @@ Item {
         }
 
         Text {
-            id: wingThicknessLabel
-            text: qsTr("Wing Thickness (m)")
+            id: pressureLabel
+            text: qsTr("Air Pressure (Pa)")
             font.pixelSize: 18
         }
         TextField {
-            id: wingThicknessInput
+            id: pressureInput
+            width: 80
+            height: 36
+            text: qsTr("0")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: temperatureLabel
+            text: qsTr("Temperature (K)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: temperatureInput
             width: 80
             height: 36
             text: qsTr("0")
