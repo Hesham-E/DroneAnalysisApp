@@ -227,7 +227,7 @@ class Drone:
     
     def calcPeriod4(self):
         time1, dist1, energy1 = self.calcTakeOff()
-        time2, dist2, energy2 = self.calcPeriod2()
+        time2, energy2 = self.calcPeriod2()
         time23, dist23, energy23 = self.calcPeriod23()
         time5 = self.calcPeriod5()
         time6, energy6 = self.calcPeriod6()

@@ -145,5 +145,21 @@ Item {
             horizontalAlignment: Text.AlignHCenter
         }
 
+        Text {
+            id: totalRangeLabel
+            objectName: "totalRangeLabel"
+            text: qsTr("Total Range (m)")
+            font.pixelSize: 18
+        }
+        Text {
+            id: totalRangeOutput
+            objectName: "totalRangeOutput"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
     }
 }

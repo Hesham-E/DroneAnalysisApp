@@ -39,21 +39,24 @@ class ParameterController:
                                 self.params["angleOfAttack"],
                                 self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
                                 self.params["targetAltitude"],
-                                self.params["cruiseMotorTablePath"],
+                                self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
+                                self.params["auxPowerCon"],
+                                self.params["ascentDecentSpeed"],
                                 self.params['pressure'], self.params['temperature'])
 
         print(self.params)
 
     def runSimulations(self):
-        temp = self.params['temperature']
-        pressure = self.params['pressure']
+        temp = self.params["temperature"]
+        pressure = self.params["pressure"]
 
-        self.results['stallSpeed'] = self.modelLayer.calcStallSpeed(pressure, temp)
-        self.results['maxSpeed'] = self.modelLayer.calcMaxSpeed(pressure, temp)
-        self.results['lift'] = self.modelLayer.calcLift(pressure, temp)
-        self.results['liftInducedDrag'] = self.modelLayer.calcLiftInducedDrag(pressure, temp)
-        self.results['parasiticDrag'] = self.modelLayer.calcParasiticDrag(pressure, temp)
-        self.results['totalDrag'] = self.modelLayer.calcDrag(pressure, temp)
+        self.results["stallSpeed"] = self.modelLayer.calcStallSpeed(pressure, temp)
+        self.results["maxSpeed"] = self.modelLayer.calcMaxSpeed(pressure, temp)
+        self.results["lift"] = self.modelLayer.calcLift(pressure, temp)
+        self.results["liftInducedDrag"] = self.modelLayer.calcLiftInducedDrag(pressure, temp)
+        self.results["parasiticDrag"] = self.modelLayer.calcParasiticDrag(pressure, temp)
+        self.results["totalDrag"] = self.modelLayer.calcDrag(pressure, temp)
+        self.results["totalRange"] = self.modelLayer.calcMaxRange()
 
     def goToResults(self):
         paramWindow = self.window.findChild(QObject, "droneParametersPage")
