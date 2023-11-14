@@ -10,7 +10,7 @@ Item {
     Grid {
         id: leftParameterGrid
         objectName: "leftParameterGrid"
-        x: 44
+        x: 7
         y: 106
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
@@ -18,7 +18,7 @@ Item {
         flow: Grid.LeftToRight
         columns: 2
         spacing: 50
-        columnSpacing: 50
+        columnSpacing: 30
 
         Text {
             id: wingSpanLabel
@@ -172,9 +172,9 @@ Item {
     }
 
     Grid {
-        id: rightParameterGrid
-        objectName: "rightParameterGrid"
-        x: 726
+        id: middleParameterGrid
+        objectName: "middleParameterGrid"
+        x: 351
         y: 106
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
@@ -182,7 +182,7 @@ Item {
         flow: Grid.LeftToRight
         columns: 2
         spacing: 50
-        columnSpacing: 40
+        columnSpacing: 30
 
         Text {
             id: reynoldsNumLabel
@@ -297,18 +297,85 @@ Item {
         }
 
         Text {
-            id: motorTableLabel
-            objectName: "motorTableLabel"
-            text: qsTr("File Path to Motor Table")
+            id: cruiseMotorTableLabel
+            objectName: "cruiseMotorTableLabel"
+            text: qsTr("File Path to Cruise Motor Table")
             font.pixelSize: 18
         }
         TextField {
-            id: motorTablePathInput
-            objectName: "motorTablePathInput"
+            id: cruiseMotorTablePathInput
+            objectName: "cruiseMotorTablePathInput"
             width: 220
             height: 36
 //            text: qsTr("/path/to/MotorTable.csv")
             text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: vtolMotorTableLabel
+            objectName: "vtolMotorTableLabel"
+            text: qsTr("File Path to VTOL Motor Table")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: vtolMotorTablePathInput
+            objectName: "vtolMotorTablePathInput"
+            width: 220
+            height: 36
+//            text: qsTr("/path/to/MotorTable.csv")
+            text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+
+
+
+      }
+
+    Grid {
+        id: rightParameterGrid
+        objectName: "rightParameterGrid"
+        x: 847
+        y: 106
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignLeft
+        layoutDirection: Qt.LeftToRight
+        flow: Grid.LeftToRight
+        columns: 2
+        spacing: 50
+        columnSpacing: 30
+
+        Text {
+            id: auxPowerConLabel
+            objectName: "auxPowerConLabel"
+            text: qsTr("Auxiliary Power Consumed (W)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: auxPowerConInput
+            objectName: "auxPowerConInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: ascentDecentSpeedLabel
+            objectName: "ascentDecentSpeedLabel"
+            text: qsTr("Desired Ascent and Decent Speed (m/s)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: ascentDecentSpeedInput
+            objectName: "ascentDecentSpeedInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
         }
@@ -320,8 +387,7 @@ Item {
             font.pixelSize: 18
             leftPadding: 0
         }
-
-      }
+    }
 
     Image {
         id: epJrE5C6_400x400
@@ -354,8 +420,4 @@ Item {
         text: qsTr("Drone Analysis App")
         font.pixelSize: 24
     }
-
-
-
-
 }

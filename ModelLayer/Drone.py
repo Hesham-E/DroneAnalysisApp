@@ -31,6 +31,7 @@ class Drone:
         self.batteryWeight = batteryWeight
         self.batteryCapacity = batteryCapacity
         self.batteryVoltage = batteryVoltage
+        self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
         self.targetAltitude = targetAltitude
 
