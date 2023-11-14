@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-11-05T21:59:03. -->
+<!-- Written by QtCreator 11.0.3, 2023-11-13T16:48:43. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -146,7 +146,6 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Users/shiko/OneDrive - University of Calgary/School Stuff/University/Year 4/ENGG 501/DroneAnalysisApp/main.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/shiko/OneDrive - University of Calgary/School Stuff/University/Year 4/ENGG 501/DroneAnalysisApp/main.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{88fcc6c2-91cc-4535-a632-532e640b8baa}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Users\shiko\OneDrive - University of Calgary\School Stuff\University\Year 4\ENGG 501\DroneAnalysisApp\main.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

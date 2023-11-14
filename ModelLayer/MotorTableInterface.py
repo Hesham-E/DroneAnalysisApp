@@ -10,7 +10,6 @@ class MotorTableInterface:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)
         
-        
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
         df = df.sort_values(by = ['Thrust (kgf)'])
@@ -18,5 +17,6 @@ class MotorTableInterface:
         return df['Thrust (kgf)'].values[-1] * 9.81 # kgf * 9.81 = Newtons
 
 
-interface = MotorTableInterface("./T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
-print(interface.getMaxThrust())
+# TESTING
+# interface = MotorTableInterface("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
+# print(interface.getMaxThrust())

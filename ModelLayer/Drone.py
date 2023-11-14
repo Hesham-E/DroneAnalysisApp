@@ -1,6 +1,6 @@
-import AtmosphereConditions
-import DragLiftCoefficientInterface
-import MotorTableInterface
+from .AtmosphereConditions import AtmosphereConditions
+from .DragLiftCoefficientInterface import DragLiftCoefficientInterface
+from .MotorTableInterface import MotorTableInterface
 import math
 
 class Drone:
@@ -10,7 +10,8 @@ class Drone:
                  fuselageRadius, 
                  weight, loadWeight, 
                  angleOfAttack, 
-                 batteryWeight, batteryCapacity,
+                 batteryWeight, batteryCapacity, batteryVoltage,
+                 targetAltitude,
                  motorTablePath):
         
         self.wingSpan = wingSpan
@@ -29,11 +30,14 @@ class Drone:
 
         self.batteryWeight = batteryWeight
         self.batteryCapacity = batteryCapacity
+        self.batteryVoltage = batteryVoltage
+
+        self.targetAltitude = targetAltitude
 
         self.ellipticalDistribution = 1.1
 
         self.atmConditions = AtmosphereConditions()
-        self.dragLiftInterface = DragLiftCoefficientInterface("./xf-naca2408-il-500000_Subset_1.csv")
+        self.dragLiftInterface = DragLiftCoefficientInterface("./ModelLayer/xf-naca2408-il-500000_Subset_1.csv")
         self.motorTableInterface = MotorTableInterface(motorTablePath)
 
     def calcFrontalArea(self):

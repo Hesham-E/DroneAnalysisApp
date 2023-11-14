@@ -9,18 +9,27 @@ Window {
     width: 1280
     height: 960
     visible: true
-
-    StackView {
-        id: stack
-        initialItem: droneParametersPage
-        anchors.fill: parent
-    }
+    id: appWindow
+    objectName: "appWindow"
 
     DroneParamtersPage {
-        id: droneParamtersPage
+        id: droneParametersPage
+        objectName: "droneParametersPage"
         anchors.rightMargin: 0
         anchors.bottomMargin: 0
         anchors.leftMargin: 0
         anchors.topMargin: 0
+        visible: true
     }
+
+    ResultsPage {
+        id: resultsPage
+        objectName: "resultsPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
+    }
+
 }

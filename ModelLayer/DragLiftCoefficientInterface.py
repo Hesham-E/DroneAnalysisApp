@@ -45,10 +45,10 @@ class DragLiftCoefficientInterface:
 
                 
 
+# TESTING
+# reader = DragLiftCoefficientInterface("./ModelLayer/xf-naca2408-il-500000_Subset_1.csv")
+# print(reader.getLiftCoefficient(0.1))
+# print(reader.getLiftCoefficient(-1.24)) 
 
-reader = DragLiftCoefficientInterface("./xf-naca2408-il-500000_Subset_1.csv")
-print(reader.getLiftCoefficient(0.1))
-print(reader.getLiftCoefficient(-1.24)) 
-
-print(reader.getDragCoefficient(0.1)) 
-print(reader.getDragCoefficient(-1.24)) 
+# print(reader.getDragCoefficient(0.1)) 
+# print(reader.getDragCoefficient(-1.24)) 
