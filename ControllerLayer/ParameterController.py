@@ -39,7 +39,8 @@ class ParameterController:
                                 self.params["angleOfAttack"],
                                 self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
                                 self.params["targetAltitude"],
-                                self.params["cruiseMotorTablePath"])
+                                self.params["cruiseMotorTablePath"],
+                                self.params['pressure'], self.params['temperature'])
 
         print(self.params)
 

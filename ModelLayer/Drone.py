@@ -49,6 +49,7 @@ class Drone:
         self.temperature = temperature
 
         self.ellipticalDistribution = 1.1
+        self.liftDistribution = 0.95
 
         self.atmConditions = AtmosphereConditions()
         self.dragLiftInterface = DragLiftCoefficientInterface("./ModelLayer/xf-naca2408-il-500000_Subset_1.csv")
@@ -64,7 +65,7 @@ class Drone:
     
     def calcStallSpeed(self, pressure, temperature):
         airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack)
+        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         
         vStallSquared = ( 2 * (self.weight + self.loadWeight + self.batteryWeight) ) / ( self.wingArea * airDensity * liftCoefficient )
         return math.sqrt(vStallSquared)
@@ -80,7 +81,7 @@ class Drone:
     
     def calcLift(self, pressure, temperature):
         airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack)
+        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
         return 0.5 * airDensity * ( self.calcMaxSpeed(pressure, temperature) ** 2 ) * self.wingArea * liftCoefficient
 
@@ -95,16 +96,21 @@ class Drone:
     def calcParasiticDrag(self, pressure, temperature):
         airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
         q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed(pressure, temperature) ) ** 2
-        liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack)
+        liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         parasiticDragoefficent = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
 
         return ( parasiticDragoefficent + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
-    def calcDrag(self, pressure, temperature):
+    def calcDrag(self, pressure, temperature):        
+        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
+        aspectRatio = self.wingSpan ** 2 / self.wingArea 
+        liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * aspectRatio)
+        
+        dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
+        dragCoefficient += liftInducedDragCoefficient
+
         airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
         q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed(pressure, temperature) ) ** 2
-        dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
-
         return dragCoefficient * q * self.wingArea
     
     def calcTakeOff1(self):
