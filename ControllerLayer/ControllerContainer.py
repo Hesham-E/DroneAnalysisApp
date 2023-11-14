@@ -1,10 +1,10 @@
-from PySide6.QtCore import QObject
-from functools import partial
 from .ParameterController import ParameterController
 from .ResultsController import ResultsController
+from .IntroController import IntroController
 
 class ControllerContainer:
     def __init__(self, window):
+        self.introController = IntroController(window)
         self.parameterController = ParameterController(window)
 
 #    def changeButtonText(self, text):

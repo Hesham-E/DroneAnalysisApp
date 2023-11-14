@@ -12,6 +12,16 @@ Window {
     id: appWindow
     objectName: "appWindow"
 
+    IntroductionPage {
+        id: introPage 
+        objectName: "introPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: true
+    }
+
     DroneParametersPage {
         id: droneParametersPage 
         objectName: "droneParametersPage"
@@ -19,7 +29,7 @@ Window {
         anchors.bottomMargin: 0
         anchors.leftMargin: 0
         anchors.topMargin: 0
-        visible: true
+        visible: false
     }
 
     ResultsPage {

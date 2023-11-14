@@ -25,7 +25,7 @@ Item {
         objectName: "pageTitle"
         x: 536
         y: 17
-        text: qsTr("Drone Analysis App")
+        text: qsTr("Results")
         font.pixelSize: 24
     }
 
