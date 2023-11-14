@@ -14,6 +14,7 @@
         "ViewLayer/images/EpJrE5C6_400x400.png",
         "main.py",
         "main.qml",
-        "ViewLayer/ResultsPage.qml"
+        "ViewLayer/ResultsPage.qml",
+        "ControllerLayer/ResultsController.py"
     ]
 }

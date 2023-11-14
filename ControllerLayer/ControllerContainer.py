@@ -1,6 +1,7 @@
 from PySide6.QtCore import QObject
 from functools import partial
 from .ParameterController import ParameterController
+from .ResultsController import ResultsController
 
 class ControllerContainer:
     def __init__(self, window):

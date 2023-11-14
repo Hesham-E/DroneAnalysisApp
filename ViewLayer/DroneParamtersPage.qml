@@ -307,7 +307,8 @@ Item {
             objectName: "motorTablePathInput"
             width: 220
             height: 36
-            text: qsTr("/path/to/MotorTable.csv")
+//            text: qsTr("/path/to/MotorTable.csv")
+            text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
         }

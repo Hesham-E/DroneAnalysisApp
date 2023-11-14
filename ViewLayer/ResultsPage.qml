@@ -34,6 +34,8 @@ Item {
         objectName: "resultsGrid"
         x: 44
         y: 106
+        width: 506
+        height: 466
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -45,13 +47,13 @@ Item {
         Text {
             id: liftLabel
             objectName: "liftLabel"
-            text: qsTr("Wing Span (m)")
+            text: qsTr("Lift (N)")
             font.pixelSize: 18
         }
-        TextField {
-            id: liftInput
-            objectName: "liftInput"
-            width: 80
+        Text {
+            id: liftOutput
+            objectName: "liftOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18
@@ -61,13 +63,13 @@ Item {
         Text {
             id: liftInducedDragLabel
             objectName: "liftInducedDragLabel"
-            text: qsTr("Wing Thickness (m)")
+            text: qsTr("Lift Induced Drag (N)")
             font.pixelSize: 18
         }
-        TextField {
-            id: liftInducedDragInput
-            objectName: "liftInducedDragInput"
-            width: 80
+        Text {
+            id: liftInducedDragOutput
+            objectName: "liftInducedDragOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18
@@ -77,14 +79,14 @@ Item {
         Text {
             id: parasiticDragLabel
             objectName: "parasiticDragLabel"
-            text: "Weight of the Drone (kg)"
+            text: "Parasitic Drag (N)"
             textFormat: Text.RichText
             font.pixelSize: 18
         }
-        TextField {
-            id: parasiticDragInput
-            objectName: "parasiticDragInput"
-            width: 80
+        Text {
+            id: parasiticDragOutput
+            objectName: "parasiticDragOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18
@@ -94,13 +96,13 @@ Item {
         Text {
             id: totalDragLabel
             objectName: "totalDragLabel"
-            text: qsTr("Weight of the Load (kg)")
+            text: qsTr("Total Drag (N)")
             font.pixelSize: 18
         }
-        TextField {
-            id: totalDragInput
-            objectName: "totalDragInput"
-            width: 80
+        Text {
+            id: totalDragOutput
+            objectName: "totalDragOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18
@@ -111,16 +113,16 @@ Item {
             id: stallSpeedLabel
             objectName: "stallSpeedLabel"
             height: 20
-            text: "Area of the Wings (m<sup>2</sup>)"
+            text: "Stall Speed (m/s)"
             font.pixelSize: 18
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.RichText
         }
-        TextField {
-            id: stallSpeedInput
-            objectName: "stallSpeedInput"
-            width: 80
+        Text {
+            id: stallSpeedOutput
+            objectName: "stallSpeedOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18
@@ -130,13 +132,13 @@ Item {
         Text {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
-            text: qsTr("Angle of Attack (degrees)")
+            text: qsTr("Maximum Speed (m/s)")
             font.pixelSize: 18
         }
-        TextField {
-            id: maxSpeedInput
-            objectName: "maxSpeedInput"
-            width: 80
+        Text {
+            id: maxSpeedOutput
+            objectName: "maxSpeedOutput"
+            width: 200
             height: 36
             text: qsTr("NA")
             font.pixelSize: 18

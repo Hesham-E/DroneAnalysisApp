@@ -1,15 +1,16 @@
 from PySide6.QtCore import QObject
-from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 
 import sys
 import os
 sys.path.append(os.path.abspath('../ModelLayer'))
 from ModelLayer.Drone import Drone
+from .ResultsController import ResultsController
 
 class ParameterController:
     def __init__(self, window):
         self.window = window
         self.params = {}
+        self.results = {}
 
         self.modelLayer = None
 
@@ -43,19 +44,15 @@ class ParameterController:
         print(self.params)
 
     def runSimulations(self):
-        results = {}
-
         temp = self.params['temperature']
         pressure = self.params['pressure']
 
-        results['stallSpeed'] = self.modelLayer.calcStallSpeed(pressure, temp)
-        results['maxSpeed'] = self.modelLayer.calcMaxSpeed(pressure, temp)
-        results['lift'] = self.modelLayer.calcLift(pressure, temp)
-        results['liftInducedDrag'] = self.modelLayer.calcLiftInducedDrag(pressure, temp)
-        results['parasiticDrag'] = self.modelLayer.calcParasiticDrag(pressure, temp)
-        results['totalDrag'] = self.modelLayer.calcDrag(pressure, temp)
-
-        print(results)
+        self.results['stallSpeed'] = self.modelLayer.calcStallSpeed(pressure, temp)
+        self.results['maxSpeed'] = self.modelLayer.calcMaxSpeed(pressure, temp)
+        self.results['lift'] = self.modelLayer.calcLift(pressure, temp)
+        self.results['liftInducedDrag'] = self.modelLayer.calcLiftInducedDrag(pressure, temp)
+        self.results['parasiticDrag'] = self.modelLayer.calcParasiticDrag(pressure, temp)
+        self.results['totalDrag'] = self.modelLayer.calcDrag(pressure, temp)
 
     def goToResults(self):
         paramWindow = self.window.findChild(QObject, "droneParametersPage")
@@ -63,3 +60,5 @@ class ParameterController:
 
         paramWindow.setProperty("visible", False)
         resultsWindow.setProperty("visible", True)
+
+        self.resultsController = ResultsController(self.window, self.results)
