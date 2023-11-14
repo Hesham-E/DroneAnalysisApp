@@ -12,7 +12,7 @@ Window {
     id: appWindow
     objectName: "appWindow"
 
-    DroneParamtersPage {
+    DroneParametersPage {
         id: droneParametersPage
         objectName: "droneParametersPage"
         anchors.rightMargin: 0

@@ -305,7 +305,7 @@ Item {
         TextField {
             id: cruiseMotorTablePathInput
             objectName: "cruiseMotorTablePathInput"
-            width: 220
+            width: 400
             height: 36
 //            text: qsTr("/path/to/MotorTable.csv")
             text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
@@ -322,7 +322,7 @@ Item {
         TextField {
             id: vtolMotorTablePathInput
             objectName: "vtolMotorTablePathInput"
-            width: 220
+            width: 400
             height: 36
 //            text: qsTr("/path/to/MotorTable.csv")
             text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")

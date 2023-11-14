@@ -10,7 +10,7 @@
         "ModelLayer/MotorTableInterface.py",
         "ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv",
         "ModelLayer/xf-naca2408-il-500000_Subset_1.csv",
-        "ViewLayer/DroneParamtersPage.qml",
+        "ViewLayer/DroneParametersPage.qml",
         "ViewLayer/images/EpJrE5C6_400x400.png",
         "main.py",
         "main.qml",
