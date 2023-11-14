@@ -187,7 +187,7 @@ Item {
         Text {
             id: reynoldsNumLabel
             objectName: "reynoldsNumLabel"
-            text: qsTr("Reynolds Number")
+            text: qsTr("(WIP) Reynolds Number")
             font.pixelSize: 18
         }
         TextField {
@@ -382,7 +382,7 @@ Item {
 
         CheckBox {
             id: nonIdealInput
-            text: "Use Non-Ideal Conditions?"
+            text: "(WIP) Use Non-Ideal Conditions?"
             objectName: "nonIdealConditionsInput"
             font.pixelSize: 18
             leftPadding: 0
