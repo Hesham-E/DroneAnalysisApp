@@ -162,4 +162,16 @@ Item {
         }
 
     }
+
+    Button {
+        id: backButton
+        objectName: "backButton"
+        x: 536
+        y: 874
+        width: 208
+        height: 36
+        text: qsTr("Go Back")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
 }

@@ -5,6 +5,10 @@ class IntroController:
         self.window = window
         self.connectStartButton()
     
+    def getStartButton(self):
+        startButton = self.window.findChild(QObject, "introPage").findChild(QObject, "startButton")
+        return startButton
+
     def connectStartButton(self):
         startButton = self.window.findChild(QObject, "introPage").findChild(QObject, "startButton")
         startButton.clicked.connect(self.goToParameters)

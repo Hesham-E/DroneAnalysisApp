@@ -3,9 +3,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
-from PySide6.QtCore import QObject
-from functools import partial
+from PySide6.QtQml import QQmlApplicationEngine
 from ControllerLayer.ControllerContainer import ControllerContainer
 
 if __name__ == "__main__":

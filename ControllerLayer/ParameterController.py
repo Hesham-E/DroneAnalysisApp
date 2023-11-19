@@ -1,16 +1,16 @@
-from PySide6.QtCore import QObject
+from PySide6.QtCore import QObject, Signal
 
 import sys
 import os
 sys.path.append(os.path.abspath('../ModelLayer'))
 from ModelLayer.Drone import Drone
-from .ResultsController import ResultsController
 
 class ParameterController:
-    def __init__(self, window):
+    def __init__(self, window, resultSignal):
         self.window = window
-        self.params = {}
+        self.resultSignal = resultSignal
         self.results = {}
+        self.params = {}
 
         self.modelLayer = None
 
@@ -57,6 +57,9 @@ class ParameterController:
         self.results["parasiticDrag"] = self.modelLayer.calcParasiticDrag(pressure, temp)
         self.results["totalDrag"] = self.modelLayer.calcDrag(pressure, temp)
         self.results["totalRange"] = self.modelLayer.calcMaxRange()
+    
+    def getResults(self):
+        return self.results
 
     def goToResults(self):
         paramWindow = self.window.findChild(QObject, "droneParametersPage")
@@ -64,5 +67,6 @@ class ParameterController:
 
         paramWindow.setProperty("visible", False)
         resultsWindow.setProperty("visible", True)
+        self.resultSignal.emit()
 
-        self.resultsController = ResultsController(self.window, self.results)
+        
