@@ -6,17 +6,40 @@ import "ViewLayer"
 
 
 Window {
-    width: 640
-    height: 480
+    width: 1280
+    height: 960
     visible: true
+    id: appWindow
+    objectName: "appWindow"
 
-    StackView {
-        id: stack
-        initialItem: droneParametersPage
-        anchors.fill: parent
+    IntroductionPage {
+        id: introPage 
+        objectName: "introPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: true
     }
 
-    DroneParamtersPage {
-        id: droneParamtersPage
+    DroneParametersPage {
+        id: droneParametersPage 
+        objectName: "droneParametersPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
     }
+
+    ResultsPage {
+        id: resultsPage
+        objectName: "resultsPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
+    }
+
 }
