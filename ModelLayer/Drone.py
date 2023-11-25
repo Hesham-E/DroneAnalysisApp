@@ -5,7 +5,7 @@ import math
 
 
 G_ACCEL = 9.80665
-UNDER_HOVER_FORCE = 0.15
+UNDER_HOVER_FORCE = 0.5
 
 class Drone:
     def __init__(self, 
@@ -41,7 +41,10 @@ class Drone:
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
         self.targetAltitude = targetAltitude
+        self.cruiseAltitude = 1 #TODO: change this
         self.ascentDecentSpeed = ascentDecentSpeed
+
+        self.targetDistance = 1 #TODO: change this
 
         self.auxPowerCon = auxPowerCon
 
@@ -146,51 +149,104 @@ class Drone:
         
         return totalTime, totalDist, totalEnergy
     
-    def calcPeriod2(self):
-        maxThrust = self.cruiseMotorTableInterface.getMaxThrust()
-        cruiseAccel = maxThrust / (self.weight + self.loadWeight + self.batteryWeight)
-        time2 = ( self.calcMaxSpeed(self.pressure, self.temperature) / cruiseAccel ) * math.atanh( self.calcStallSpeed(self.pressure, self.temperature) / self.calcMaxSpeed(self.pressure, self.temperature) )
-        
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy2 = time2 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
+    def calcPeriod1(self):
+        maxThrust = self.vtolMotorTableInterface.getMaxThrust() * 4
+        maxPower = self.vtolMotorTableInterface.getMaxPower() * 4
+        underHoverThrust = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
+        underHoverPower = self.vtolMotorTableInterface.getPowerAtThrust(underHoverThrust / 4) * 4
+        hoverThrust = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
+        hoverPower = self.vtolMotorTableInterface.getPowerAtThrust(hoverThrust / 4) * 4
+        totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-        return time2, energy2
+
+        powerHeightRatio = hoverPower * self.targetAltitude / self.ascentDecentSpeed
+        maxPowerThrustEnergy = (maxPower - hoverPower / 2) / (maxThrust / totalWeight - G_ACCEL)
+        underPowerThrustEnergy = (underHoverPower - hoverPower / 2) / (G_ACCEL - underHoverThrust / totalWeight)
+        
+        climbEnergy = (maxPowerThrustEnergy + underPowerThrustEnergy) * self.ascentDecentSpeed + powerHeightRatio
+
+
+        maxThrustTime = 0.5 / (maxThrust / totalWeight - G_ACCEL)
+        underThrustTime = 0.5 / (G_ACCEL - underHoverThrust / totalWeight)
+        speedHeightRatio = self.targetAltitude / self.ascentDecentSpeed
+
+        climbTime = (maxThrustTime + underThrustTime) * self.ascentDecentSpeed + speedHeightRatio
+
+        return climbTime, climbEnergy
+    
+    def calcPeriod2(self):
+        hoverThrust = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
+        hoverPower = self.vtolMotorTableInterface.getPowerAtThrust(hoverThrust / 4) * 4
+        cruiseSpeed = self.dummyFunction()
+        cruiseThrust = self.dummyFunction()
+        totalWeight = self.weight + self.loadWeight + self.batteryWeight
+        stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
+
+        energy = hoverPower * ( cruiseSpeed / (cruiseThrust / totalWeight) ) *  math.atanh(stallSpeed / cruiseSpeed)
+        time = ( cruiseSpeed / (cruiseThrust / totalWeight) ) * math.atanh(stallSpeed / cruiseSpeed)
+
+        return time, energy
     
     def calcPeriod23(self):
-        maxSpeed = self.calcMaxSpeed(self.pressure, self.temperature)
+        cruiseSpeed = self.dummyFunction()
+        cruiseThrust = self.dummyFunction()
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(cruiseThrust)
+        totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-        maxThrust = self.cruiseMotorTableInterface.getMaxThrust()
-        cruiseAccel = maxThrust / (self.weight + self.loadWeight + self.batteryWeight)
-        time23 = (maxSpeed / cruiseAccel) * math.atanh(0.99)
-        dist23 = maxSpeed * math.log( math.cosh(time23 * cruiseAccel / maxSpeed) ) / (cruiseAccel / maxSpeed)
-        energy23 = time23 * self.cruiseMotorTableInterface.getMaxThrust()
+        time = cruiseSpeed / (cruiseThrust / totalWeight) * math.atanh(0.99)
+        distance = (cruiseSpeed ** 2) / (cruiseThrust / totalWeight) * math.log( math.cosh( math.atanh(0.99) ) )
+        energy = cruiseSpeed / (cruiseThrust / totalWeight) * cruisePower * math.atanh(0.99)
 
-        return time23, dist23, energy23
+        return time, distance, energy
     
     def calcPeriod5(self):
         stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
-        maxSpeed = self.calcMaxSpeed(self.pressure, self.temperature)
+        cruiseSpeed = self.dummyFunction()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        frontalArea = self.calcFrontalArea()
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-        time5 = (1 / stallSpeed - 1 / maxSpeed) - ( densityAltitude * dragCoefficient * frontalArea / (2 * totalWeight))
-        return time5
+        time = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * (1 / stallSpeed - 1 / cruiseSpeed)
+        distance = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed)
+        return time, distance
 
     def calcPeriod6(self):
-        maxSpeed = self.calcMaxSpeed(self.pressure, self.temperature)
+        cruiseSpeed = self.dummyFunction()
+        stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        frontalArea = self.calcFrontalArea()
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
-        time5 = self.calcPeriod5()
+        time5, distance5 = self.calcPeriod5()
 
-        time6 = (1 / 0.5 - 1 / maxSpeed) - ( densityAltitude * dragCoefficient * frontalArea / (2 * totalWeight)) - time5
+        time6 = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * (2 - 1 / cruiseSpeed) - time5
+        distance6 = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed) - distance5
         hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
         energy6 = time6 * self.vtolMotorTableInterface.getPowerAtThrust( hoverForce / 4 ) * 4
 
-        return time6, energy6
+        return time6, distance6, energy6
+    
+    def calcPeriod7(self):
+        maxPower = self.vtolMotorTableInterface.getMaxPower()
+        maxThrust = self.vtolMotorTableInterface.getMaxThrust()
+        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
+        hoverPower = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
+        underHoverThrust = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
+        underHoverPower = self.vtolMotorTableInterface.getPowerAtThrust(underHoverThrust / 4) * 4
+        totalWeight = self.weight + self.loadWeight + self.batteryWeight
+
+        powerHeightRatio = hoverPower * abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+        maxPowerThrustRatio = (maxPower - hoverPower / 2) / (maxThrust / totalWeight - G_ACCEL)
+        underPowerThrustRatio = (underHoverPower - hoverPower / 2) / (G_ACCEL - underHoverThrust / totalWeight)
+        
+        decentEnergy = (maxPowerThrustRatio + underPowerThrustRatio) * self.ascentDecentSpeed + powerHeightRatio
+
+        maxThrustTimeRatio = 0.5 / (maxThrust / totalWeight - G_ACCEL)
+        underThrustTimeRatio = 0.5 / (G_ACCEL - underHoverThrust / totalWeight)
+        speedHeightRatio = abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+
+        decentTime = (maxThrustTimeRatio + underThrustTimeRatio) * self.ascentDecentSpeed + speedHeightRatio
+
+        return decentTime, decentEnergy
     
     def calcLanding1(self):
         hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
@@ -226,21 +282,25 @@ class Drone:
         return totalTime, totalDist, totalEnergy
     
     def calcPeriod4(self):
-        time1, dist1, energy1 = self.calcTakeOff()
-        time2, energy2 = self.calcPeriod2()
-        time23, dist23, energy23 = self.calcPeriod23()
-        time5 = self.calcPeriod5()
-        time6, energy6 = self.calcPeriod6()
-        time7, dist7, energy7 = self.calcLanding()
+        time23, distance23, energy23 = self.calcPeriod23()
+        time5, distance5 = self.calcPeriod5()
+        time6, distance6, energy6 = self.calcPeriod6()
 
-        cruisePower = self.cruiseMotorTableInterface.getMaxPower()
-        time4 = ( self.batteryEnergy - energy1 - energy2 - energy23 - energy6 - energy7 - self.auxPowerCon * (time1 + time23 + time5 + time6 + time7) ) / (cruisePower + self.auxPowerCon)
-        dist4 = time4 * self.calcMaxSpeed(self.pressure, self.temperature)
+        cruiseSpeed = self.dummyFunction()
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(cruiseSpeed)
 
-        return time4, dist4
+        distance4 = self.targetDistance - distance23 - distance5 - distance6
+        time4 = distance4 / cruiseSpeed
+        energy4 = cruisePower * time4
+
+        return time4, distance4, energy4
     
     def calcMaxRange(self):
         time23, dist23, energy23 = self.calcPeriod23()
         time4, dist4 = self.calcPeriod4()
 
         return dist4 + dist23
+    
+    def dummyFunction(self):
+        # TODO: replace all instances of dummyFunction() with real logic
+        return 1
