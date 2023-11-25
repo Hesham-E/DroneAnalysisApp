@@ -23,7 +23,7 @@ Item {
     Text {
         id: pageTitle
         objectName: "pageTitle"
-        x: 536
+        x: 603
         y: 17
         text: qsTr("Results")
         font.pixelSize: 24

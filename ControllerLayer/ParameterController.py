@@ -17,7 +17,7 @@ class ParameterController:
         self.connectEstimationButton()
     
     def connectEstimationButton(self):
-        estimateButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "estimateButton")
+        estimateButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "updateButton")
         estimateButton.clicked.connect(self.collectParameters)
         estimateButton.clicked.connect(self.runSimulations)
         estimateButton.clicked.connect(self.goToResults)

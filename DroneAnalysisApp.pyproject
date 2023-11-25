@@ -17,6 +17,9 @@
         "ViewLayer/ResultsPage.qml",
         "ControllerLayer/ResultsController.py",
         "ViewLayer/IntroductionPage.qml",
-        "ControllerLayer/IntroController.py"
+        "ControllerLayer/IntroController.py",
+        "ViewLayer/MIssionTypePage.qml",
+        "ViewLayer/MissionParametersPage.qml",
+        "ViewLayer/MissionProfilePage.qml"
     ]
 }
