@@ -210,7 +210,8 @@ class Drone:
         underHoverPower = self.vtolMotorTableInterface.getPowerAtThrust(underHoverThrust / 4) * 4
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-        powerHeightRatio = hoverPower * abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+        # powerHeightRatio = hoverPower * abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+        powerHeightRatio = hoverPower * self.targetAltitude / self.ascentDecentSpeed # cruiseAltitude is ambigious at the moment
         maxPowerThrustRatio = (maxPower - hoverPower / 2) / (maxThrust / totalWeight - G_ACCEL)
         underPowerThrustRatio = (underHoverPower - hoverPower / 2) / (G_ACCEL - underHoverThrust / totalWeight)
         
@@ -218,7 +219,8 @@ class Drone:
 
         maxThrustTimeRatio = 0.5 / (maxThrust / totalWeight - G_ACCEL)
         underThrustTimeRatio = 0.5 / (G_ACCEL - underHoverThrust / totalWeight)
-        speedHeightRatio = abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+        # speedHeightRatio = abs(self.targetAltitude - self.cruiseAltitude) / self.ascentDecentSpeed
+        speedHeightRatio = self.targetAltitude / self.ascentDecentSpeed # cruiseAltitude is ambigious at the moment
 
         decentTime = (maxThrustTimeRatio + underThrustTimeRatio) * self.ascentDecentSpeed + speedHeightRatio
 
