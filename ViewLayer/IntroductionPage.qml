@@ -78,7 +78,7 @@ Item {
         y: 488
         width: 362
         height: 83
-        text: qsTr("Some parameters are still Work In Progress and have been marked as such. Although they appear on the user interface, they have no actual function at the moment (or are hardcoded in the actural program).")
+        text: qsTr("Some parameters are still Work In Progress and have been marked as such. Although they appear on the user interface, they have no actual function at the moment (or are hardcoded in the actual program).")
         font.pixelSize: 14
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap

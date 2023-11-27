@@ -352,7 +352,7 @@ Item {
         Text {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
-            text: qsTr("Desired Max Speed (m/s)")
+            text: qsTr("(WIP) Desired Max Speed (m/s)")
             font.pixelSize: 18
         }
         TextField {
@@ -370,7 +370,7 @@ Item {
         id: switch1
         x: 1003
         y: 297
-        text: qsTr("Predict Design")
+        text: qsTr("(WIP) Predict Design")
         font.pixelSize: 18
     }
 

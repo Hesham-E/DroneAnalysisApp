@@ -35,7 +35,7 @@ class Drone:
         self.fuselageRadius = fuselageRadius
 
         self.weight = weight
-        self.loadWeight = 0
+        self.loadWeight = mission.parameters["loadWeight"]
 
         self.angleOfAttack = angleOfAttack
 

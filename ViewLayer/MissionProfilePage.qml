@@ -55,7 +55,7 @@ Item {
         y: 529
         width: 208
         height: 36
-        text: qsTr("Select Profile #2")
+        text: qsTr("(WIP) Select Profile #2")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -76,7 +76,7 @@ Item {
         y: 531
         width: 208
         height: 36
-        text: qsTr("Select Profile #3")
+        text: qsTr("(WIP) Select Profile #3")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -97,7 +97,7 @@ Item {
         y: 822
         width: 208
         height: 36
-        text: qsTr("Select Profile #4")
+        text: qsTr("(WIP) Select Profile #4")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -118,7 +118,7 @@ Item {
         y: 822
         width: 208
         height: 36
-        text: qsTr("Select Profile #5")
+        text: qsTr("(WIP) Select Profile #5")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -126,11 +126,11 @@ Item {
     Button {
         id: createOwnButton
         objectName: "createOwnButton"
-        x: 1006
+        x: 953
         y: 899
-        width: 241
+        width: 294
         height: 36
-        text: qsTr("Create Own Mission Profile")
+        text: qsTr("(WIP) Create Own Mission Profile")
         icon.color: "#000000"
         font.pixelSize: 18
     }

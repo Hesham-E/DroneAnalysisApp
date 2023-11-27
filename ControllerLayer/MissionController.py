@@ -29,13 +29,13 @@ class MissionController:
         parameterContinueButton = self.parameterWindow.findChild(QObject, "continueButton")
         parameterReturnButton = self.parameterWindow.findChild(QObject, "returnButton")
         parameterContinueButton.clicked.connect(self.confirmParameters)
-        parameterReturnButton.clicked.connect(self.returnParameters)
+        parameterReturnButton.clicked.connect(self.goBackParameters)
         # End mission parameter window configuration
 
         # Start mission profile window configuration
         profileOneButton = self.profileWindow.findChild(QObject, "selectOneButton")
         profileReturnButton = self.profileWindow.findChild(QObject, "returnButton")
-        profileReturnButton.clicked.connect(self.returnProfile)
+        profileReturnButton.clicked.connect(self.goBackProfile)
         profileOneButton.clicked.connect(self.selectProfileOne)
         # End mission profile window configuration
 
@@ -57,16 +57,17 @@ class MissionController:
         self.profileWindow.setProperty("visible", False)
         self.window.findChild(QObject, "droneParametersPage").setProperty("visible", True)
 
-    def returnProfile(self):
+    def goBackProfile(self):
         self.parameterWindow.setProperty("visible", True)
         self.profileWindow.setProperty("visible", False)
     
-    def returnParameters(self):
+    def goBackParameters(self):
         self.typeWindow.setProperty("visible", True)
         self.parameterWindow.setProperty("visible", False)
 
         self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", False)
         self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("text", "0")
 
     def confirmParameters(self):
         for child in self.parameterWindow.children():

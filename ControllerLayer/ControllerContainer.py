@@ -16,9 +16,5 @@ class ControllerContainer(QObject):
         self.droneParameterController = DroneParameterController(window, self.resultsReady, self.missionController.getMission)
         self.resultsController = ResultsController(window)
 
-        
         self.resultsReady.connect(partial(self.resultsController.populateResults, self.droneParameterController.getResults()))
-#    def changeButtonText(self, text):
-#        estimateButton = self.appWindow.findChild(QObject, "DronePage").findChild(QObject, "estimateButton")
-#        x = lambda obj: obj.setProperty("text", text)
-#        estimateButton.clicked.connect(partial(x, estimateButton))
+

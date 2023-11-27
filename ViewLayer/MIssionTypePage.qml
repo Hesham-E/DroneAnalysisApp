@@ -60,7 +60,7 @@ Item {
         y: 562
         width: 208
         height: 36
-        text: qsTr("All")
+        text: qsTr("(WIP) All")
         icon.color: "#000000"
         font.pixelSize: 18
     }
