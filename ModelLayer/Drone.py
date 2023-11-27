@@ -55,6 +55,8 @@ class Drone:
         self.pressure = mission.parameters["pressure"]
         self.temperature = mission.parameters["temperature"]
 
+        self.mission = mission
+
         self.ellipticalDistribution = 1.1
         self.liftDistribution = 0.95
 
@@ -151,8 +153,8 @@ class Drone:
     def calcPeriod2(self):
         hoverThrust = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
         hoverPower = self.vtolMotorTableInterface.getPowerAtThrust(hoverThrust / 4) * 4
-        cruiseSpeed = self.dummyFunction()
-        cruiseThrust = self.dummyFunction()
+        cruiseSpeed = self.calcCruiseSpeed()
+        cruiseThrust = self.calcCruiseThrust()
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
         stallSpeed = self.calcStallSpeed()
 
@@ -162,8 +164,8 @@ class Drone:
         return time, energy
     
     def calcPeriod23(self):
-        cruiseSpeed = self.dummyFunction()
-        cruiseThrust = self.dummyFunction()
+        cruiseSpeed = self.calcCruiseSpeed()
+        cruiseThrust = self.calcCruiseThrust()
         cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(cruiseThrust)
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
@@ -175,7 +177,7 @@ class Drone:
     
     def calcPeriod5(self):
         stallSpeed = self.calcStallSpeed()
-        cruiseSpeed = self.dummyFunction()
+        cruiseSpeed = self.calcCruiseSpeed()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
@@ -185,7 +187,7 @@ class Drone:
         return time, distance
 
     def calcPeriod6(self):
-        cruiseSpeed = self.dummyFunction()
+        cruiseSpeed = self.calcCruiseSpeed()
         stallSpeed = self.calcStallSpeed()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
@@ -227,8 +229,8 @@ class Drone:
         time5, distance5 = self.calcPeriod5()
         time6, distance6, energy6 = self.calcPeriod6()
 
-        cruiseSpeed = self.dummyFunction()
-        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(cruiseSpeed)
+        cruiseSpeed = self.calcCruiseSpeed()
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(self.calcCruiseThrust())
 
         distance4 = self.targetDistance - distance23 - distance5 - distance6
         time4 = distance4 / cruiseSpeed
@@ -242,6 +244,17 @@ class Drone:
 
         return dist4 + dist23
     
-    def dummyFunction(self):
-        # TODO: replace all instances of dummyFunction() with real logic
-        return 1
+    def calcCruiseSpeed(self):
+        if self.mission.performance == MissionPerformance.PERFORMANCE:
+            return self.calcMaxSpeed()
+        elif self.mission.performance == MissionPerformance.MINIMAL:
+            return self.calcStallSpeed()
+        else: # Default to efficient
+            return ( (self.calcMaxSpeed() + self.calcStallSpeed()) / 2 )
+    
+    def calcCruiseThrust(self):
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
+        cruiseSpeed = self.calcCruiseSpeed()
+
+        return ( (cruiseSpeed ** 2) * airDensity * dragCoefficient * self.calcFrontalArea() * 0.5 )
