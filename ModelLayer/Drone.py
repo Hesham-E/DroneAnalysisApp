@@ -1,6 +1,7 @@
 from .AtmosphereConditions import AtmosphereConditions
 from .DragLiftCoefficientInterface import DragLiftCoefficientInterface
 from .MotorTableInterface import MotorTableInterface
+from .Mission import *
 import math
 
 
@@ -11,15 +12,16 @@ class Drone:
     def __init__(self, 
                  wingSpan, wingArea, wingThickness,
                  vStabilizerLen, vStabilizerWidth,
+                 airFoil,
                  fuselageRadius, 
-                 weight, loadWeight, 
-                 angleOfAttack, 
+                 weight,
+                 angleOfAttack,
+                 reynoldsNum,
                  batteryWeight, batteryCapacity, batteryVoltage,
-                 targetAltitude,
                  cruiseMotorTablePath, vtolMotorTablePath,
                  auxPowerCon,
                  ascentDecentSpeed,
-                 pressure, temperature):
+                 mission):
         
         self.wingSpan = wingSpan
         self.wingArea = wingArea
@@ -31,7 +33,10 @@ class Drone:
         self.fuselageRadius = fuselageRadius
 
         self.weight = weight
-        self.loadWeight = loadWeight 
+        try:
+            self.loadWeight = mission.parameters["cruiseHeight"]
+        except KeyError:
+            self.loadWeight = 0
 
         self.angleOfAttack = angleOfAttack
 
@@ -40,16 +45,15 @@ class Drone:
         self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
-        self.targetAltitude = targetAltitude
-        self.cruiseAltitude = 1 #TODO: change this
+        self.targetAltitude = mission.parameters["cruiseHeight"]
         self.ascentDecentSpeed = ascentDecentSpeed
 
-        self.targetDistance = 1 #TODO: change this
+        self.targetDistance = mission.parameters["missionDistance"]
 
         self.auxPowerCon = auxPowerCon
 
-        self.pressure = pressure
-        self.temperature = temperature
+        self.pressure = mission.parameters["pressure"]
+        self.temperature = mission.parameters["temperature"]
 
         self.ellipticalDistribution = 1.1
         self.liftDistribution = 0.95
@@ -59,6 +63,11 @@ class Drone:
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
 
+        if self.pressure == None:
+            self.pressure = self.atmConditions.calcPressure(self.cruiseAltitude, self.temperature)
+        elif self.temperature == None:
+            self.temperature = self.atmConditions.calcAltitude(self.pressure, self.temperature)
+
     def calcFrontalArea(self):
         wingArea = (self.wingSpan - self.fuselageRadius * 2) * self.wingThickness
         fuselageArea = (self.fuselageRadius * math.pi) ** 2
@@ -66,45 +75,45 @@ class Drone:
 
         return wingArea + fuselageArea + vStabilizerArea
     
-    def calcStallSpeed(self, pressure, temperature):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
+    def calcStallSpeed(self):
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         
         vStallSquared = ( 2 * (self.weight + self.loadWeight + self.batteryWeight) ) / ( self.wingArea * airDensity * liftCoefficient )
         return math.sqrt(vStallSquared)
     
-    def calcMaxSpeed(self, pressure, temperature):
+    def calcMaxSpeed(self):
         thrust = self.cruiseMotorTableInterface.getMaxThrust()
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         
         vMaxSquared = (2 * thrust) / (airDensity * dragCoefficient * self.calcFrontalArea())
 
         return math.sqrt(vMaxSquared)
     
-    def calcLift(self, pressure, temperature):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
+    def calcLift(self):
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
-        return 0.5 * airDensity * ( self.calcMaxSpeed(pressure, temperature) ** 2 ) * self.wingArea * liftCoefficient
+        return 0.5 * airDensity * ( self.calcMaxSpeed() ** 2 ) * self.wingArea * liftCoefficient
 
-    def calcLiftInducedDrag(self, pressure, temperature):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
+    def calcLiftInducedDrag(self):
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         weight = self.weight + self.loadWeight + self.batteryWeight
         weightChordRatio = ( weight /  airDensity ) ** 2
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed(pressure, temperature) ) ** 2
+        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
 
         return (self.ellipticalDistribution * weightChordRatio) / (q * math.pi)
 
-    def calcParasiticDrag(self, pressure, temperature):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed(pressure, temperature) ) ** 2
+    def calcParasiticDrag(self):
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
         liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         parasiticDragoefficent = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
 
         return ( parasiticDragoefficent + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
-    def calcDrag(self, pressure, temperature):        
+    def calcDrag(self):        
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         aspectRatio = self.wingSpan ** 2 / self.wingArea 
         liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * aspectRatio)
@@ -112,42 +121,9 @@ class Drone:
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         dragCoefficient += liftInducedDragCoefficient
 
-        airDensity = self.atmConditions.calcIdealDensityAltitude(pressure, temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed(pressure, temperature) ) ** 2
+        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
-    
-    def calcTakeOff1(self):
-        thrust = self.vtolMotorTableInterface.getMaxThrust() * 4
-        takeOffAccel = thrust / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time11 = self.ascentDecentSpeed / takeOffAccel
-        dist11 = 0.5 * takeOffAccel * (time11 ** 2)
-        energy11 = self.vtolMotorTableInterface.getMaxPower() * 4 * time11
-        return time11, dist11, energy11
-    
-    def calcTakeOff3(self):
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
-        accel = hoverForce / (self.weight + self.loadWeight + self.batteryWeight)
-        time13 = -1 * self.ascentDecentSpeed / accel
-        dist13 = self.ascentDecentSpeed * time13 + 0.5 * accel * (time13 ** 2)
-        energy13 = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * time13 * 4
-
-        return time13, dist13, energy13
-    
-    def calcTakeOff(self):
-        time11, dist11, energy11 = self.calcTakeOff1()
-        time13, dist13, energy13 = self.calcTakeOff3()
-
-        dist12 = self.targetAltitude - dist11 - dist13
-        time12 = dist12 / self.ascentDecentSpeed
-
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy12 = time12 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
-
-        totalTime = time11 + time12 + time13
-        totalDist = dist11 + dist12 + dist13
-        totalEnergy = energy11 + energy12 + energy13
-        
-        return totalTime, totalDist, totalEnergy
     
     def calcPeriod1(self):
         maxThrust = self.vtolMotorTableInterface.getMaxThrust() * 4
@@ -180,7 +156,7 @@ class Drone:
         cruiseSpeed = self.dummyFunction()
         cruiseThrust = self.dummyFunction()
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
-        stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
+        stallSpeed = self.calcStallSpeed()
 
         energy = hoverPower * ( cruiseSpeed / (cruiseThrust / totalWeight) ) *  math.atanh(stallSpeed / cruiseSpeed)
         time = ( cruiseSpeed / (cruiseThrust / totalWeight) ) * math.atanh(stallSpeed / cruiseSpeed)
@@ -200,7 +176,7 @@ class Drone:
         return time, distance, energy
     
     def calcPeriod5(self):
-        stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
+        stallSpeed = self.calcStallSpeed()
         cruiseSpeed = self.dummyFunction()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
@@ -212,7 +188,7 @@ class Drone:
 
     def calcPeriod6(self):
         cruiseSpeed = self.dummyFunction()
-        stallSpeed = self.calcStallSpeed(self.pressure, self.temperature)
+        stallSpeed = self.calcStallSpeed()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
@@ -248,39 +224,6 @@ class Drone:
 
         return decentTime, decentEnergy
     
-    def calcLanding1(self):
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
-        accel = hoverForce / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time71 = -1 * self.ascentDecentSpeed / accel
-        dist71 = self.ascentDecentSpeed * time71 + 0.5 * accel * (time71 ** 2)
-        energy71 = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4 * time71
-
-        return time71, dist71, energy71
-
-    def calcLanding3(self):
-        maxThrust = self.vtolMotorTableInterface.getMaxThrust() * 4
-        accel = maxThrust / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time73 = self.ascentDecentSpeed / accel
-        dist73 = 0.5 * accel * (time73 ** 2)
-        energy73 = self.vtolMotorTableInterface.getMaxPower() * 4 * time73
-
-        return time73, dist73, energy73
-    
-    def calcLanding(self):
-        time71, dist71, energy71 = self.calcLanding1()
-        time73, dist73, energy73 = self.calcLanding3()
-
-        dist72 = self.targetAltitude - dist71 - dist73
-        time72 = dist72 / self.ascentDecentSpeed
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy72 = time72 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
-
-        totalTime = time71 + time72 + time73
-        totalDist = dist71 + dist72 + dist73
-        totalEnergy = energy71 + energy72 + energy73
-
-        return totalTime, totalDist, totalEnergy
-    
     def calcPeriod4(self):
         time23, distance23, energy23 = self.calcPeriod23()
         time5, distance5 = self.calcPeriod5()
@@ -297,7 +240,7 @@ class Drone:
     
     def calcMaxRange(self):
         time23, dist23, energy23 = self.calcPeriod23()
-        time4, dist4 = self.calcPeriod4()
+        time4, dist4, energy4 = self.calcPeriod4()
 
         return dist4 + dist23
     

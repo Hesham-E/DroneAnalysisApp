@@ -22,6 +22,36 @@ Window {
         visible: true
     }
 
+    MissionTypePage {
+        id: missionTypePage
+        objectName: "missionTypePage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
+    }
+
+    MissionParametersPage {
+        id: missionParamtersPage
+        objectName: "missionParamtersPage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
+    }
+
+    MissionProfilePage {
+        id: missionProfilePage
+        objectName: "missionProfilePage"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        visible: false
+    }
+
     DroneParametersPage {
         id: droneParametersPage 
         objectName: "droneParametersPage"

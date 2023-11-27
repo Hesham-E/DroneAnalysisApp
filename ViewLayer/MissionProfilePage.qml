@@ -144,7 +144,8 @@ Item {
         font.pixelSize: 18
     }
     ComboBox {
-        id: comboBox
+        id: selectPerformanceInput
+        objectName: "selectPerformanceInput"
         x: 651
         y: 152
         width: 142

@@ -1,9 +1,10 @@
 from PySide6.QtCore import Signal, QObject
 from functools import partial
 
-from .ParameterController import ParameterController
+from .DroneParameterController import DroneParameterController
 from .ResultsController import ResultsController
 from .IntroController import IntroController
+from .MissionController import MissionController
 
 class ControllerContainer(QObject):
     resultsReady = Signal()
@@ -11,10 +12,12 @@ class ControllerContainer(QObject):
     def __init__(self, window):
         super().__init__()
         self.introController = IntroController(window)
-        self.parameterController = ParameterController(window, self.resultsReady)
+        self.missionController = MissionController(window)
+        self.droneParameterController = DroneParameterController(window, self.resultsReady, self.missionController.getMission)
         self.resultsController = ResultsController(window)
+
         
-        self.resultsReady.connect(partial(self.resultsController.populateResults, self.parameterController.getResults()))
+        self.resultsReady.connect(partial(self.resultsController.populateResults, self.droneParameterController.getResults()))
 #    def changeButtonText(self, text):
 #        estimateButton = self.appWindow.findChild(QObject, "DronePage").findChild(QObject, "estimateButton")
 #        x = lambda obj: obj.setProperty("text", text)

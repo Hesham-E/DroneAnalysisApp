@@ -93,6 +93,21 @@ Item {
         }
 
         Text {
+            id: airFoilLabel
+            objectName: "airFoilLabel"
+            text: qsTr("Airfoil Shape (NACA Shape)")
+            font.pixelSize: 18
+        }
+        ComboBox {
+            id: airFoilInput
+            objectName: "airFoilInput"
+            width: 90
+            height: 36
+            font.pixelSize: 18
+            model: ["2408"]
+        }
+
+        Text {
             id: vStabilizerLengthLabel
             objectName: "vStabilizerLengthLabel"
             text: qsTr("Vertical Stabilizer Length (m)")

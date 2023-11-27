@@ -34,8 +34,8 @@ Item {
         objectName: "resultsGrid"
         x: 44
         y: 106
-        width: 506
-        height: 466
+        width: 494
+        height: 573
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -58,6 +58,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -74,6 +75,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -91,6 +93,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -107,6 +110,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -127,6 +131,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -143,6 +148,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -159,6 +165,7 @@ Item {
             text: qsTr("NA")
             font.pixelSize: 18
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
     }
