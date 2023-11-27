@@ -26,6 +26,8 @@ class Drone:
         self.wingSpan = wingSpan
         self.wingArea = wingArea
         self.wingThickness = wingThickness
+        self.airFoil = int(airFoil)
+        self.reynoldsNum = int(reynoldsNum)
         
         self.vStabilizerLen = vStabilizerLen
         self.vStabilizerWidth = vStabilizerWidth
@@ -33,10 +35,7 @@ class Drone:
         self.fuselageRadius = fuselageRadius
 
         self.weight = weight
-        try:
-            self.loadWeight = mission.parameters["cruiseHeight"]
-        except KeyError:
-            self.loadWeight = 0
+        self.loadWeight = 0
 
         self.angleOfAttack = angleOfAttack
 
@@ -45,6 +44,7 @@ class Drone:
         self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
+        self.cruiseAltitude = mission.parameters["cruiseHeight"] # TODO: Replace this as per a mission profile, for the none simple ones
         self.targetAltitude = mission.parameters["cruiseHeight"]
         self.ascentDecentSpeed = ascentDecentSpeed
 
@@ -59,7 +59,7 @@ class Drone:
         self.liftDistribution = 0.95
 
         self.atmConditions = AtmosphereConditions()
-        self.dragLiftInterface = DragLiftCoefficientInterface("./ModelLayer/xf-naca2408-il-500000_Subset_1.csv")
+        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.reynoldsNum}_Subset_1.csv")
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
 
@@ -134,13 +134,11 @@ class Drone:
         hoverPower = self.vtolMotorTableInterface.getPowerAtThrust(hoverThrust / 4) * 4
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-
         powerHeightRatio = hoverPower * self.targetAltitude / self.ascentDecentSpeed
         maxPowerThrustEnergy = (maxPower - hoverPower / 2) / (maxThrust / totalWeight - G_ACCEL)
         underPowerThrustEnergy = (underHoverPower - hoverPower / 2) / (G_ACCEL - underHoverThrust / totalWeight)
         
         climbEnergy = (maxPowerThrustEnergy + underPowerThrustEnergy) * self.ascentDecentSpeed + powerHeightRatio
-
 
         maxThrustTime = 0.5 / (maxThrust / totalWeight - G_ACCEL)
         underThrustTime = 0.5 / (G_ACCEL - underHoverThrust / totalWeight)

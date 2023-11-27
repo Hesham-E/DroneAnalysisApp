@@ -31,7 +31,7 @@ Item {
         id: selectOneButton
         objectName: "selectOneButton"
         x: 121
-        y: 531
+        y: 529
         width: 208
         height: 36
         text: qsTr("Select Profile #1")
@@ -73,7 +73,7 @@ Item {
         id: selectThreeButton
         objectName: "selectThreeButton"
         x: 946
-        y: 527
+        y: 531
         width: 208
         height: 36
         text: qsTr("Select Profile #3")
@@ -115,7 +115,7 @@ Item {
         id: selectFiveButton
         objectName: "selectFiveButton"
         x: 742
-        y: 814
+        y: 822
         width: 208
         height: 36
         text: qsTr("Select Profile #5")
@@ -131,6 +131,18 @@ Item {
         width: 241
         height: 36
         text: qsTr("Create Own Mission Profile")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
+
+    Button {
+        id: returnButton
+        objectName: "returnButton"
+        x: 37
+        y: 899
+        width: 241
+        height: 36
+        text: qsTr("Go Back")
         icon.color: "#000000"
         font.pixelSize: 18
     }

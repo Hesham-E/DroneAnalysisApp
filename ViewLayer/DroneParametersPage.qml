@@ -399,21 +399,34 @@ Item {
         id: generateResultsButton
         objectName: "generateResultsButton"
         x: 643
-        y: 874
+        y: 896
         width: 208
         height: 36
         text: qsTr("Generate Results")
         icon.color: "#000000"
         font.pixelSize: 18
     }
+
     Button {
         id: updateButton
         objectName: "updateButton"
         x: 406
-        y: 874
+        y: 896
         width: 208
         height: 36
         text: qsTr("Update Parameters")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
+
+    Button {
+        id: returnButton
+        objectName: "returnButton"
+        x: 17
+        y: 896
+        width: 208
+        height: 36
+        text: qsTr("Go Back")
         icon.color: "#000000"
         font.pixelSize: 18
     }

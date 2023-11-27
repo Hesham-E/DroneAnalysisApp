@@ -31,7 +31,7 @@ Item {
 
     Text {
         id: missionDistanceLabel
-        x: 155
+        x: 104
         y: 379
         objectName: "missionDistanceLabel"
         text: qsTr("Total Mission Distance (km)")
@@ -39,7 +39,7 @@ Item {
     }
     TextField {
         id: missionDistanceInput
-        x: 413
+        x: 362
         y: 373
         objectName: "missionDistanceInput"
         width: 80
@@ -71,7 +71,7 @@ Item {
 
     Text {
         id: cruiseHeightLabel
-        x: 234
+        x: 183
         y: 530
         objectName: "cruiseHeightLabel"
         text: qsTr("Cruise Height (m)")
@@ -79,7 +79,7 @@ Item {
     }
     TextField {
         id: cruiseHeightInput
-        x: 413
+        x: 362
         y: 530
         objectName: "cruiseHeightInput"
         width: 80
@@ -109,10 +109,44 @@ Item {
         horizontalAlignment: Text.AlignHCenter
     }
 
+    Text {
+        id: loadWeightLabel
+        x: 489
+        y: 668
+        objectName: "loadWeightLabel"
+        text: qsTr("Payload Weight (kg)")
+        font.pixelSize: 18
+        visible: false
+    }
+    TextField {
+        id: loadWeightInput
+        x: 691
+        y: 662
+        objectName: "loadWeightInput"
+        width: 80
+        height: 36
+        text: qsTr("0")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        visible: false
+    }
+
+    Button {
+        id: returnButton
+        objectName: "returnButton"
+        x: 389
+        y: 855
+        width: 208
+        height: 36
+        text: qsTr("Go Back")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
+
     Button {
         id: continueButton
         objectName: "continueButton"
-        x: 536
+        x: 706
         y: 855
         width: 208
         height: 36

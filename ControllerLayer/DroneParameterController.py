@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject
 
 import sys
 import os
@@ -15,13 +15,16 @@ class DroneParameterController:
 
         self.modelLayer = None
 
-        self.connectEstimationButton()
+        self.connectButtons()
     
-    def connectEstimationButton(self):
+    def connectButtons(self):
         estimateButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "generateResultsButton")
         estimateButton.clicked.connect(self.collectParameters)
         estimateButton.clicked.connect(self.runSimulations)
         estimateButton.clicked.connect(self.goToResults)
+
+        returnButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "returnButton")
+        returnButton.clicked.connect(self.goBack)
     
     def collectParameters(self):
         for child in self.window.findChildren(QObject, "droneParametersPage")[0].children():
@@ -78,5 +81,12 @@ class DroneParameterController:
         paramWindow.setProperty("visible", False)
         resultsWindow.setProperty("visible", True)
         self.resultSignal.emit()
+    
+    def goBack(self):
+        paramWindow = self.window.findChild(QObject, "droneParametersPage")
+        profileWindow = self.window.findChild(QObject, "missionProfilePage")
+
+        profileWindow.setProperty("visible", True)
+        paramWindow.setProperty("visible", False)
 
         

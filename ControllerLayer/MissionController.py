@@ -3,7 +3,7 @@ from PySide6.QtCore import QObject
 import sys
 import os
 sys.path.append(os.path.abspath('../ModelLayer'))
-from ModelLayer.Mission import MissonType, MissionProfile, MissionPerformance, Mission
+from ModelLayer.Mission import *
 
 class MissionController:
     def __init__(self, window):
@@ -21,16 +21,21 @@ class MissionController:
         surveillanceButton = self.typeWindow.findChild(QObject, "surveillanceButton")
         payloadButton = self.typeWindow.findChild(QObject, "payloadDeliveryButton")
         allButton = self.typeWindow.findChild(QObject, "allButton")
+        payloadButton.clicked.connect(self.selectPayloadDelivery)
         surveillanceButton.clicked.connect(self.selectSurveillance)
         # End mission type window configuration
 
         # Start mission parameter window configuration
-        parameterButton = self.parameterWindow.findChild(QObject, "continueButton")
-        parameterButton.clicked.connect(self.confirmParameters)
+        parameterContinueButton = self.parameterWindow.findChild(QObject, "continueButton")
+        parameterReturnButton = self.parameterWindow.findChild(QObject, "returnButton")
+        parameterContinueButton.clicked.connect(self.confirmParameters)
+        parameterReturnButton.clicked.connect(self.returnParameters)
         # End mission parameter window configuration
 
         # Start mission profile window configuration
         profileOneButton = self.profileWindow.findChild(QObject, "selectOneButton")
+        profileReturnButton = self.profileWindow.findChild(QObject, "returnButton")
+        profileReturnButton.clicked.connect(self.returnProfile)
         profileOneButton.clicked.connect(self.selectProfileOne)
         # End mission profile window configuration
 
@@ -52,6 +57,17 @@ class MissionController:
         self.profileWindow.setProperty("visible", False)
         self.window.findChild(QObject, "droneParametersPage").setProperty("visible", True)
 
+    def returnProfile(self):
+        self.parameterWindow.setProperty("visible", True)
+        self.profileWindow.setProperty("visible", False)
+    
+    def returnParameters(self):
+        self.typeWindow.setProperty("visible", True)
+        self.parameterWindow.setProperty("visible", False)
+
+        self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", False)
+
     def confirmParameters(self):
         for child in self.parameterWindow.children():
             if "Input" in child.objectName():
@@ -63,6 +79,15 @@ class MissionController:
         
         self.parameterWindow.setProperty("visible", False)
         self.profileWindow.setProperty("visible", True)
+    
+    def selectPayloadDelivery(self):
+        self.missionType = MissonType.PAYLOAD_DELIVERY
+
+        self.typeWindow.setProperty("visible", False)
+
+        self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", True)
+        self.parameterWindow.setProperty("visible", True)
     
     def selectSurveillance(self):
         self.missionType = MissonType.SURVEILLANCE
