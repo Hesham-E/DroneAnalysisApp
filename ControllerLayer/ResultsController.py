@@ -10,7 +10,7 @@ class ResultsController:
         backButton.clicked.connect(self.goBack)
     
     def populateResults(self, results, mission):
-        #WARNING: mission is passed as a method since enums act funny in Pyside6 and lose their value
+        #WARNING: mission is passed as a function since enums act funny in Pyside6 and lose their value
         mission = mission()
 
         for child in self.resultsWindow.children():
@@ -18,7 +18,10 @@ class ResultsController:
                 if "Output" in grandchild.objectName():
                     name = grandchild.objectName()[ : -1 * len("Output")]
                     print(name, grandchild.objectName())
-                    grandchild.setProperty("text", str(results[name]))
+                    result = f"{results[name]:.3e}"
+                    if result[-4 : ] == "e+00":
+                        result = result[ : -4]
+                    grandchild.setProperty("text", result)
         
 
         self.resultsWindow.findChild(QObject, "typeSummary").setProperty("text", str(mission.missionType))

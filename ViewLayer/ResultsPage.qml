@@ -31,8 +31,8 @@ Item {
 
     Text {
         id: resultsTitle
-        x: 191
-        y: 117
+        x: 179
+        y: 107
         text: qsTr("Cruising Statisitics")
         font.pixelSize: 20
     }
@@ -201,8 +201,8 @@ Item {
     Grid {
         id: summaryGrid
         objectName: "summaryGrid"
-        x: 789
-        y: 156
+        x: 784
+        y: 150
         width: 444
         height: 397
         verticalItemAlignment: Grid.AlignVCenter
