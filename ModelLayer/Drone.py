@@ -13,7 +13,7 @@ class Drone:
                  wingSpan, wingArea, wingThickness,
                  vStabilizerLen, vStabilizerWidth,
                  airFoil,
-                 fuselageRadius, 
+                 fuselageRadius, fuselageLength,
                  weight,
                  angleOfAttack,
                  reynoldsNum,
@@ -33,6 +33,7 @@ class Drone:
         self.vStabilizerWidth = vStabilizerWidth
 
         self.fuselageRadius = fuselageRadius
+        self.fuselageLength = fuselageLength
 
         self.weight = weight
         self.loadWeight = mission.parameters["loadWeight"]
@@ -97,23 +98,33 @@ class Drone:
         airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
-        return 0.5 * airDensity * ( self.calcMaxSpeed() ** 2 ) * self.wingArea * liftCoefficient
+        return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
 
     def calcLiftInducedDrag(self):
         airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
         weight = self.weight + self.loadWeight + self.batteryWeight
         weightChordRatio = ( weight /  airDensity ) ** 2
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
+        q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
 
         return (self.ellipticalDistribution * weightChordRatio) / (q * math.pi)
 
     def calcParasiticDrag(self):
         airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
+        q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
-        parasiticDragoefficent = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
+        wingParasiticDragCoefficient = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
 
-        return ( parasiticDragoefficent + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
+        skinRoughnessFactor = 6.34 * (10 ** -6)
+        reynoldsCutoff = 38.21 * ( (self.fuselageLength / skinRoughnessFactor) ** 1.053 )
+        reynoldsCutoff = reynoldsCutoff if 200000 > reynoldsCutoff else 200000
+        fuselageCoefficientTurbulent = 0.455 / ( (math.log(reynoldsCutoff) ** 2.58) * ((1 + 0.144 * (14 ** 2)) ** 0.65))
+
+        fuselageFormFactor = 1 + (60 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 3) + (self.fuselageLength / (2 * self.fuselageRadius) / 400))
+        #abs() in fuselage area might be a bandaid
+        fuselageArea = math.pi * 2 * self.fuselageRadius * self.fuselageLength * (abs(1 - 2 / (self.fuselageLength / (self.fuselageRadius * 2))) ** (2/3)) * (1 + 1 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 2))
+        fuseLageCoefficient = fuselageCoefficientTurbulent * fuselageFormFactor * (fuselageArea / self.wingArea)
+        
+        return ( (wingParasiticDragCoefficient + fuseLageCoefficient) + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
     def calcDrag(self):        
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
@@ -124,7 +135,7 @@ class Drone:
         dragCoefficient += liftInducedDragCoefficient
 
         airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcMaxSpeed() ) ** 2
+        q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
     
     def calcPeriod1(self):

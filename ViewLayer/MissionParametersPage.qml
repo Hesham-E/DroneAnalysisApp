@@ -34,7 +34,7 @@ Item {
         x: 104
         y: 379
         objectName: "missionDistanceLabel"
-        text: qsTr("Total Mission Distance (km)")
+        text: qsTr("Total Mission Distance (m)")
         font.pixelSize: 18
     }
     TextField {

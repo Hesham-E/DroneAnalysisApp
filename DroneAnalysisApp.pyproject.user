@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-11-26T22:44:55. -->
+<!-- Written by QtCreator 11.0.3, 2023-11-28T15:19:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -100,7 +100,7 @@
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Python.PysideBuildStep</value>
-      <value type="QString" key="Python.PySideProjectTool">C:\Users\shiko\OneDrive - University of Calgary\School Stuff\University\Year 4\ENGG 501\DroneAnalysisApp\venv\Scripts\pyside6-project.exe</value>
+      <value type="QString" key="Python.PySideProjectTool">C:\Users\shiko\AppData\Local\Programs\Python\Python311\Scripts\pyside6-project.exe</value>
      </valuemap>
      <value type="qlonglong" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Build</value>
@@ -146,6 +146,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Users/shiko/OneDrive - University of Calgary/School Stuff/University/Year 4/ENGG 501/DroneAnalysisApp/main.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/shiko/OneDrive - University of Calgary/School Stuff/University/Year 4/ENGG 501/DroneAnalysisApp/main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{a306a652-b82f-4a58-86be-fee2e7053005}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Users\shiko\OneDrive - University of Calgary\School Stuff\University\Year 4\ENGG 501\DroneAnalysisApp\main.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

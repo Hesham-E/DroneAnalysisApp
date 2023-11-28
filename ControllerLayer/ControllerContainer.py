@@ -16,5 +16,5 @@ class ControllerContainer(QObject):
         self.droneParameterController = DroneParameterController(window, self.resultsReady, self.missionController.getMission)
         self.resultsController = ResultsController(window)
 
-        self.resultsReady.connect(partial(self.resultsController.populateResults, self.droneParameterController.getResults()))
+        self.resultsReady.connect(partial(self.resultsController.populateResults, self.droneParameterController.getResults(), self.missionController.getMission))
 

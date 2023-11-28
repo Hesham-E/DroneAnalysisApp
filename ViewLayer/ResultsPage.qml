@@ -29,11 +29,19 @@ Item {
         font.pixelSize: 24
     }
 
+    Text {
+        id: resultsTitle
+        x: 191
+        y: 117
+        text: qsTr("Cruising Statisitics")
+        font.pixelSize: 20
+    }
+
     Grid {
         id: resultsGrid
         objectName: "resultsGrid"
         x: 44
-        y: 106
+        y: 150
         width: 494
         height: 573
         verticalItemAlignment: Grid.AlignVCenter
@@ -180,5 +188,116 @@ Item {
         text: qsTr("Go Back")
         icon.color: "#000000"
         font.pixelSize: 18
+    }
+
+    Text {
+        id: summaryTitle
+        x: 928
+        y: 107
+        text: qsTr("Mission Summary")
+        font.pixelSize: 20
+    }
+
+    Grid {
+        id: summaryGrid
+        objectName: "summaryGrid"
+        x: 789
+        y: 156
+        width: 444
+        height: 397
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignLeft
+        layoutDirection: Qt.LeftToRight
+        flow: Grid.LeftToRight
+        columns: 2
+        spacing: 50
+        columnSpacing: 50
+
+
+        Text {
+            id: typeLabel
+            objectName: "typeLabel"
+            text: qsTr("Mission Type")
+            font.pixelSize: 18
+        }
+        Text {
+            id: typeSummary
+            objectName: "typeSummary"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Text {
+            id: performanceLabel
+            objectName: "performanceLabel"
+            text: qsTr("Performance Profile")
+            font.pixelSize: 18
+        }
+        Text {
+            id: performanceSummary
+            objectName: "performanceSummary"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+
+        Text {
+            id: profileLabel
+            objectName: "profileLabel"
+            text: qsTr("Mission Profile")
+            font.pixelSize: 18
+        }
+        Text {
+            id: profileSummary
+            objectName: "profileSummary"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Text {
+            id: missionDistanceLabel
+            objectName: "missionDistanceLabel"
+            text: qsTr("Target Distance (m)")
+            font.pixelSize: 18
+        }
+        Text {
+            id: missionDistanceSummary
+            objectName: "missionDistanceSummary"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Text {
+            id: cruiseHeightLabel
+            objectName: "cruiseHeightLabel"
+            text: qsTr("Cruise Height (m)")
+            font.pixelSize: 18
+        }
+        Text {
+            id: cruiseHeightSummary
+            objectName: "cruiseHeightSummary"
+            width: 200
+            height: 36
+            text: qsTr("NA")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
     }
 }

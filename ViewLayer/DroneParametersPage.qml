@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
 import QtQuick.Dialogs
+import QtCore
+
 
 Item {
     id: droneParametersPage
@@ -20,7 +22,7 @@ Item {
         layoutDirection: Qt.LeftToRight
         flow: Grid.LeftToRight
         columns: 2
-        spacing: 50
+        spacing: 35
         columnSpacing: 30
 
         Text {
@@ -156,6 +158,22 @@ Item {
         }
 
         Text {
+            id: fuselageLengthLabel
+            objectName: "fuselageLengthLabel"
+            text: qsTr("Fuselage Length (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: fuselageLengthInput
+            objectName: "fuselageLengthInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
             id: angleOfAttackLabel
             objectName: "angleOfAttackLabel"
             text: qsTr("Angle of Attack (degrees)")
@@ -185,7 +203,7 @@ Item {
         layoutDirection: Qt.LeftToRight
         flow: Grid.LeftToRight
         columns: 2
-        spacing: 50
+        spacing: 35
         columnSpacing: 30
 
         Text {
@@ -283,7 +301,7 @@ Item {
         FileDialog {
             id: cruiseMotorTablePathInput
             objectName: "cruiseMotorTablePathInput"
-            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
             onAccepted: {
                 cruiseMotorTableButton.text = selectedFile
             }
@@ -305,7 +323,7 @@ Item {
         FileDialog {
             id: vtolMotorTablePathInput
             objectName: "vtolMotorTablePathInput"
-            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
             onAccepted: {
                 vtolMotorTableButton.text = selectedFile
             }
@@ -330,7 +348,7 @@ Item {
         layoutDirection: Qt.LeftToRight
         flow: Grid.LeftToRight
         columns: 2
-        spacing: 50
+        spacing: 35
         columnSpacing: 30
 
         Text {

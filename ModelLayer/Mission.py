@@ -1,18 +1,33 @@
-from enum import Enum
+from aenum import Enum
 
 class MissonType(Enum):
-    SURVEILLANCE = 1
-    PAYLOAD_DELIVERY = 2
-    PAYLOAD_DELIVERY_RETURN = 3
-    ALL = 4
+    _init_ = 'value string'
+
+    SURVEILLANCE = 1, "Surveillance"
+    PAYLOAD_DELIVERY = 2, "Payload Delivery"
+    PAYLOAD_DELIVERY_RETURN = 3, "Payload Delivery with Return"
+    ALL = 4, "ALL"
+
+    def __str__(self):
+        return self.string
 
 class MissionProfile(Enum):
-    VTOL_STRAIGHT = 1
+    _init_ = 'value string'
+
+    VTOL_STRAIGHT = 1, "Mission Profile #1"
+    
+    def __str__(self):
+        return self.string
 
 class MissionPerformance(Enum):
-    PERFORMANCE = 1
-    EFFICIENT = 2
-    MINIMAL = 3
+    _init_ = 'value string'
+
+    PERFORMANCE = 1, "Performance"
+    EFFICIENT = 2, "Efficient"
+    MINIMAL = 3, "Minimal"
+    
+    def __str__(self):
+        return self.string
 
 class Mission:
     def __init__(self, missionType, parameters, profile, performance):
