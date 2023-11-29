@@ -28,7 +28,7 @@ class MotorTableInterface:
         return df['Electrical power (W)'].values[-1]
 
     def getPowerAtThrust(self, thrust):
-        thrust = thrust / 9.81 # Newtwons / 9.81 = kgf
+        thrust = thrust / 9.81 # Newtons / 9.81 = kgf
         with open(self.filePath, newline='', encoding='utf-8') as fp:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)

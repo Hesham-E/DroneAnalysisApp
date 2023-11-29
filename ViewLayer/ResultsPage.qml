@@ -201,7 +201,7 @@ Item {
     Grid {
         id: summaryGrid
         objectName: "summaryGrid"
-        x: 784
+        x: 790
         y: 150
         width: 444
         height: 397

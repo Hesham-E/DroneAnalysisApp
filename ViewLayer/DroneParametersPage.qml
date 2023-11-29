@@ -418,7 +418,7 @@ Item {
         objectName: "generateResultsButton"
         x: 643
         y: 896
-        width: 208
+        width: 214
         height: 36
         text: qsTr("Generate Results")
         icon.color: "#000000"
@@ -430,9 +430,9 @@ Item {
         objectName: "updateButton"
         x: 406
         y: 896
-        width: 208
+        width: 219
         height: 36
-        text: qsTr("Update Parameters")
+        text: qsTr("(WIP) Update Parameters")
         icon.color: "#000000"
         font.pixelSize: 18
     }
