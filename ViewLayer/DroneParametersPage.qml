@@ -1,9 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+import QtQuick.Dialogs
+import QtCore
+
 
 Item {
     id: droneParametersPage
+    width: 1280
+    height: 960
     objectName: "droneParametersPage"
     anchors.fill: parent
 
@@ -17,7 +22,7 @@ Item {
         layoutDirection: Qt.LeftToRight
         flow: Grid.LeftToRight
         columns: 2
-        spacing: 50
+        spacing: 35
         columnSpacing: 30
 
         Text {
@@ -70,22 +75,6 @@ Item {
         }
 
         Text {
-            id: loadWeightLabel
-            objectName: "loadWeightLabel"
-            text: qsTr("Weight of the Load (kg)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: loadWeightInput
-            objectName: "loadWeightInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
             id: wingAreaLabel
             objectName: "wingAreaLabel"
             height: 20
@@ -106,6 +95,85 @@ Item {
         }
 
         Text {
+            id: airFoilLabel
+            objectName: "airFoilLabel"
+            text: qsTr("Airfoil Shape (NACA Shape)")
+            font.pixelSize: 18
+        }
+        ComboBox {
+            id: airFoilInput
+            objectName: "airFoilInput"
+            width: 90
+            height: 36
+            font.pixelSize: 18
+            model: ["2408"]
+        }
+
+        Text {
+            id: vStabilizerLengthLabel
+            objectName: "vStabilizerLengthLabel"
+            text: qsTr("Vertical Stabilizer Length (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: vStabilizerLengthInput
+            objectName: "vStabilizerLengthInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: vStabilizerThicknessLabel
+            objectName: "vStabilizerThicknessLabel"
+            text: qsTr("Vertical Stabilizer Thickness (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: vStabilizerThicknessInput
+            objectName: "vStabilizerThicknessInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: fuselageRadiusLabel
+            objectName: "fuselageRadiusLabel"
+            text: qsTr("Fuselage Radius (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: fuselageRadiusInput
+            objectName: "fuselageRadiusInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: fuselageLengthLabel
+            objectName: "fuselageLengthLabel"
+            text: qsTr("Fuselage Length (m)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: fuselageLengthInput
+            objectName: "fuselageLengthInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
             id: angleOfAttackLabel
             objectName: "angleOfAttackLabel"
             text: qsTr("Angle of Attack (degrees)")
@@ -114,6 +182,54 @@ Item {
         TextField {
             id: angleOfAttackInput
             objectName: "angleOfAttackInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+
+
+    }
+
+    Grid {
+        id: middleParameterGrid
+        objectName: "middleParameterGrid"
+        x: 403
+        y: 106
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignLeft
+        layoutDirection: Qt.LeftToRight
+        flow: Grid.LeftToRight
+        columns: 2
+        spacing: 35
+        columnSpacing: 30
+
+        Text {
+            id: reynoldsNumLabel
+            objectName: "reynoldsNumLabel"
+            text: qsTr("Reynolds Number")
+            font.pixelSize: 18
+        }
+        ComboBox {
+            id: reynoldsNumInput
+            objectName: "reynoldsNumInput"
+            width: 125
+            height: 36
+            font.pixelSize: 18
+            model: ["50000", "100000", "200000", "500000", "1000000"]
+        }
+
+        Text {
+            id: auxPowerConLabel
+            objectName: "auxPowerConLabel"
+            text: qsTr("Auxiliary Power Consumed (W)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: auxPowerConInput
+            objectName: "auxPowerConInput"
             width: 80
             height: 36
             text: qsTr("1")
@@ -169,148 +285,26 @@ Item {
             horizontalAlignment: Text.AlignHCenter
         }
 
-    }
-
-    Grid {
-        id: middleParameterGrid
-        objectName: "middleParameterGrid"
-        x: 351
-        y: 106
-        verticalItemAlignment: Grid.AlignVCenter
-        horizontalItemAlignment: Grid.AlignLeft
-        layoutDirection: Qt.LeftToRight
-        flow: Grid.LeftToRight
-        columns: 2
-        spacing: 50
-        columnSpacing: 30
-
-        Text {
-            id: reynoldsNumLabel
-            objectName: "reynoldsNumLabel"
-            text: qsTr("(WIP) Reynolds Number")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: reynoldsNumInput
-            objectName: "reynoldsNumInput"
-            width: 100
-            height: 36
-            text: qsTr("500000")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: pressureLabel
-            objectName: "pressureLabel"
-            text: qsTr("Air Pressure (Pa)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: pressureInput
-            objectName: "pressureInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: temperatureLabel
-            objectName: "temperatureLabel"
-            text: qsTr("Temperature (K)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: temperatureInput
-            objectName: "temperatureInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: vStabilizerLengthLabel
-            objectName: "vStabilizerLengthLabel"
-            text: qsTr("Vertical Stabilizer Length (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerLengthInput
-            objectName: "vStabilizerLengthInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: vStabilizerThicknessLabel
-            objectName: "vStabilizerThicknessLabel"
-            text: qsTr("Vertical Stabilizer Thickness (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerThicknessInput
-            objectName: "vStabilizerThicknessInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: fuselageRadiusLabel
-            objectName: "fuselageRadiusLabel"
-            text: qsTr("Fuselage Radius (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: fuselageRadiusInput
-            objectName: "fuselageRadiusInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: targetAltitudeLabel
-            objectName: "targetAltitudeLabel"
-            text: qsTr("Target Altitude (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: targetAltitudeInput
-            objectName: "targetAltitudeInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
         Text {
             id: cruiseMotorTableLabel
             objectName: "cruiseMotorTableLabel"
             text: qsTr("File Path to Cruise Motor Table")
             font.pixelSize: 18
         }
-        TextField {
+        Button {
+            id: cruiseMotorTableButton
+            text: qsTr("Choose Table...")
+            width: 100
+            font.pixelSize: 12
+            onClicked: cruiseMotorTablePathInput.open()
+        }
+        FileDialog {
             id: cruiseMotorTablePathInput
             objectName: "cruiseMotorTablePathInput"
-            width: 400
-            height: 36
-//            text: qsTr("/path/to/MotorTable.csv")
-            text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
+//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+            onAccepted: {
+                cruiseMotorTableButton.text = selectedFile
+            }
         }
 
         Text {
@@ -319,65 +313,20 @@ Item {
             text: qsTr("File Path to VTOL Motor Table")
             font.pixelSize: 18
         }
-        TextField {
+        Button {
+            id: vtolMotorTableButton
+            text: qsTr("Choose Table...")
+            width: 100
+            font.pixelSize: 12
+            onClicked: vtolMotorTablePathInput.open()
+        }
+        FileDialog {
             id: vtolMotorTablePathInput
             objectName: "vtolMotorTablePathInput"
-            width: 400
-            height: 36
-//            text: qsTr("/path/to/MotorTable.csv")
-            text: qsTr("./ModelLayer/T-motor AT2814 KV900 Cam-Carbon Z 10X8 25X20 test - alipoviy.csv")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-
-
-
-      }
-
-    Grid {
-        id: rightParameterGrid
-        objectName: "rightParameterGrid"
-        x: 847
-        y: 106
-        verticalItemAlignment: Grid.AlignVCenter
-        horizontalItemAlignment: Grid.AlignLeft
-        layoutDirection: Qt.LeftToRight
-        flow: Grid.LeftToRight
-        columns: 2
-        spacing: 50
-        columnSpacing: 30
-
-        Text {
-            id: auxPowerConLabel
-            objectName: "auxPowerConLabel"
-            text: qsTr("Auxiliary Power Consumed (W)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: auxPowerConInput
-            objectName: "auxPowerConInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: ascentDecentSpeedLabel
-            objectName: "ascentDecentSpeedLabel"
-            text: qsTr("Desired Ascent and Decent Speed (m/s)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: ascentDecentSpeedInput
-            objectName: "ascentDecentSpeedInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
+//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+            onAccepted: {
+                vtolMotorTableButton.text = selectedFile
+            }
         }
 
         CheckBox {
@@ -387,6 +336,70 @@ Item {
             font.pixelSize: 18
             leftPadding: 0
         }
+      }
+
+    Grid {
+        id: rightParameterGrid
+        objectName: "rightParameterGrid"
+        x: 848
+        y: 364
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignLeft
+        layoutDirection: Qt.LeftToRight
+        flow: Grid.LeftToRight
+        columns: 2
+        spacing: 35
+        columnSpacing: 30
+
+        Text {
+            id: ascentDescentSpeedLabel
+            objectName: "ascentDescentSpeedLabel"
+            text: qsTr("Desired Ascent and Descent Speed (m/s)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: ascentDescentSpeedInput
+            objectName: "ascentDescentSpeedInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: maxSpeedLabel
+            objectName: "maxSpeedLabel"
+            text: qsTr("(WIP) Desired Max Speed (m/s)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: maxSpeedInput
+            objectName: "maxSpeedInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+    }
+    Switch {
+        id: switch1
+        x: 1003
+        y: 297
+        text: qsTr("(WIP) Predict Design")
+        font.pixelSize: 18
+    }
+
+    Label {
+        id: label
+        x: 893
+        y: 300
+        width: 110
+        height: 31
+        text: qsTr("Predict Speed")
+        font.pixelSize: 18
     }
 
     Image {
@@ -401,13 +414,37 @@ Item {
     }
 
     Button {
-        id: estimateButton
-        objectName: "estimateButton"
-        x: 536
-        y: 874
+        id: generateResultsButton
+        objectName: "generateResultsButton"
+        x: 643
+        y: 896
+        width: 214
+        height: 36
+        text: qsTr("Generate Results")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
+
+    Button {
+        id: updateButton
+        objectName: "updateButton"
+        x: 406
+        y: 896
+        width: 219
+        height: 36
+        text: qsTr("(WIP) Update Parameters")
+        icon.color: "#000000"
+        font.pixelSize: 18
+    }
+
+    Button {
+        id: returnButton
+        objectName: "returnButton"
+        x: 17
+        y: 896
         width: 208
         height: 36
-        text: qsTr("Estimate Parameters")
+        text: qsTr("Go Back")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -415,9 +452,9 @@ Item {
     Text {
         id: pageTitle
         objectName: "pageTitle"
-        x: 536
-        y: 17
-        text: qsTr("Input Parameters")
+        x: 545
+        y: 8
+        text: qsTr("Drone Parameters")
         font.pixelSize: 24
     }
 }

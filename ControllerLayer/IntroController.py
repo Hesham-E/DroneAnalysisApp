@@ -14,8 +14,8 @@ class IntroController:
         startButton.clicked.connect(self.goToParameters)
     
     def goToParameters(self):
-        paramWindow = self.window.findChild(QObject, "droneParametersPage")
+        typeWindow = self.window.findChild(QObject, "missionTypePage")
         introWindow = self.window.findChild(QObject, "introPage")
 
-        paramWindow.setProperty("visible", True)
+        typeWindow.setProperty("visible", True)
         introWindow.setProperty("visible", False)

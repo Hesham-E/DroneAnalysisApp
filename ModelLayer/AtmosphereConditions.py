@@ -1,3 +1,5 @@
+import math
+
 class AtmosphereConditions:
     # Conditions are assumed to be ideal for now
     SEA_PRESSURE = 101325.0 # Pascals
@@ -22,5 +24,11 @@ class AtmosphereConditions:
         seaTempLapseRatio = self.SEA_TEMP / self.LAPSE_RATE
 
         return seaTempLapseRatio * tempPressureRatio
+    
+    def calcPressure(self, altitude, temperature):
+        return ( self.SEA_PRESSURE * math.exp( (-1 * self.G_ACCEL * self.AIR_MOLAR_MASS * altitude) / (self.GAS_CONSTANT * temperature) ) )
+    
+    def calcAltitude(self, pressure, temperature):
+        return ( (self.GAS_CONSTANT * temperature * math.log(pressure / self.SEA_PRESSURE)) / (-1 * self.G_ACCEL * self.AIR_MOLAR_MASS) )
 
         
