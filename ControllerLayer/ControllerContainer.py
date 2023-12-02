@@ -10,7 +10,7 @@ class ControllerContainer(QObject):
     resultsReady = Signal()
     
     def __init__(self, window):
-        super().__init__()
+        super().__init__() #Calls the QObject constructor such that we can use Signal()
         self.introController = IntroController(window)
         self.missionController = MissionController(window)
         self.droneParameterController = DroneParameterController(window, self.resultsReady, self.missionController.getMission)
