@@ -79,15 +79,15 @@ class Drone:
         return wingArea + fuselageArea + vStabilizerArea
     
     def calcStallSpeed(self):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
+        airDensity = 1.24 # kg / m^3
+        liftCoefficient = 1.32
         
         vStallSquared = ( 2 * (self.weight + self.loadWeight + self.batteryWeight) ) / ( self.wingArea * airDensity * liftCoefficient )
         return math.sqrt(vStallSquared)
     
     def calcMaxSpeed(self):
         thrust = self.cruiseMotorTableInterface.getMaxThrust()
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         
         vMaxSquared = (2 * thrust) / (airDensity * dragCoefficient * self.calcFrontalArea())
@@ -95,13 +95,13 @@ class Drone:
         return math.sqrt(vMaxSquared)
     
     def calcLift(self):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
         return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
 
     def calcLiftInducedDrag(self):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         weight = self.weight + self.loadWeight + self.batteryWeight
         weightChordRatio = ( weight /  airDensity ) ** 2
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
@@ -109,15 +109,13 @@ class Drone:
         return (self.ellipticalDistribution * weightChordRatio) / (q * math.pi)
 
     def calcParasiticDrag(self):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         wingParasiticDragCoefficient = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
 
-        skinRoughnessFactor = 6.34 * (10 ** -6)
-        reynoldsCutoff = 38.21 * ( (self.fuselageLength / skinRoughnessFactor) ** 1.053 )
-        reynoldsCutoff = reynoldsCutoff if 200000 > reynoldsCutoff else 200000
-        fuselageCoefficientTurbulent = 0.455 / ( (math.log(reynoldsCutoff) ** 2.58) * ((1 + 0.144 * (14 ** 2)) ** 0.65))
+        reynoldsCutoff = 150000
+        fuselageCoefficientTurbulent = 0.455 / ( (math.log(reynoldsCutoff) ** 2.58) * ((1 + 0.144) ** 0.65))
 
         fuselageFormFactor = 1 + (60 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 3) + (self.fuselageLength / (2 * self.fuselageRadius) / 400))
         #abs() in fuselage area might be a bandaid
@@ -134,7 +132,7 @@ class Drone:
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         dragCoefficient += liftInducedDragCoefficient
 
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
     
@@ -190,23 +188,23 @@ class Drone:
         stallSpeed = self.calcStallSpeed()
         cruiseSpeed = self.calcCruiseSpeed()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
-        densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
 
-        time = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * (1 / stallSpeed - 1 / cruiseSpeed)
-        distance = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed)
+        time = ( (2 * totalWeight) / (airDensity * dragCoefficient * self.wingArea) ) * (1 / stallSpeed - 1 / cruiseSpeed)
+        distance = ( (2 * totalWeight) / (airDensity * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed)
         return time, distance
 
     def calcPeriod6(self):
         cruiseSpeed = self.calcCruiseSpeed()
         stallSpeed = self.calcStallSpeed()
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
-        densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         totalWeight = self.weight + self.loadWeight + self.batteryWeight
         time5, distance5 = self.calcPeriod5()
 
-        time6 = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * (2 - 1 / cruiseSpeed) - time5
-        distance6 = ( (2 * totalWeight) / (densityAltitude * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed) - distance5
+        time6 = ( (2 * totalWeight) / (airDensity * dragCoefficient * self.wingArea) ) * (2 - 1 / cruiseSpeed) - time5
+        distance6 = ( (2 * totalWeight) / (airDensity * dragCoefficient * self.wingArea) ) * math.log(stallSpeed / cruiseSpeed) - distance5
         hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
         energy6 = time6 * self.vtolMotorTableInterface.getPowerAtThrust( hoverForce / 4 ) * 4
 
@@ -258,6 +256,8 @@ class Drone:
         return dist4 + dist23
     
     def calcCruiseSpeed(self):
+        return 20
+    
         if self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.calcMaxSpeed()
         elif self.mission.performance == MissionPerformance.MINIMAL:
@@ -266,7 +266,7 @@ class Drone:
             return ( (self.calcMaxSpeed() + self.calcStallSpeed()) / 2 )
     
     def calcCruiseThrust(self):
-        airDensity = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
+        airDensity = 1.24 # kg / m^3
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         cruiseSpeed = self.calcCruiseSpeed()
 
