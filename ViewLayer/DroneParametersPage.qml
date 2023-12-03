@@ -303,8 +303,8 @@ Item {
     Grid {
         id: rightParameterGrid
         objectName: "rightParameterGrid"
-        x: 848
-        y: 364
+        x: 879
+        y: 361
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
