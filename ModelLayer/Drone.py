@@ -80,7 +80,7 @@ class Drone:
         elif self.temperature == None:
             self.temperature = self.atmConditions.calcAltitude(self.pressure, self.temperature)
     
-    def calcFrontalArea(self):
+    def calcFrontalArea(self): #TODO: REMOVE THIS AND wingThickness 
         wingArea = (self.wingSpan - self.fuselageRadius * 2) * self.wingThickness
         fuselageArea = (self.fuselageRadius * math.pi) ** 2
         vStabilizerArea = self.vStabilizerLen * self.vStabilizerWidth
@@ -89,18 +89,16 @@ class Drone:
     
     def calcStallSpeed(self):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
-        
-        totalWeight = self.weight + self.loadWeight + self.batteryWeight
-        wingloading = totalWeight / self.wingArea 
+        maxLiftCoefficient = 2.34 #TODO: Change this
+        wingloading = self.totalWeight / self.wingArea 
 
-        vStallSquared = 2 * wingloading / ( airDensity * liftCoefficient ) * G_ACCEL # G_ACCEL offset due to imperial units
+        vStallSquared = 2 * wingloading / ( airDensity * maxLiftCoefficient )
         return math.sqrt(vStallSquared)
     
     def calcMaxSpeed(self):
         thrust = self.cruiseMotorTableInterface.getMaxThrust()
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-        coefficientK = (self.wingSpan ** 2) / self.wingArea
+        coefficientK = self.calcDragDueToLiftFactor()
         thrustAreaRatio = thrust / self.wingArea
         thrustWeightRatio = thrust / self.totalWeight
         wingLoading = self.totalWeight / self.wingArea
@@ -115,13 +113,11 @@ class Drone:
         return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
     
     def calcZeroLiftDragCoefficient(self):
-        skinRoughnessFactor = 6.34 * (10 ** -6)
-        reynoldsCutoff = 38.21 * ( (self.fuselageLength / skinRoughnessFactor) ** 1.053 )
-        reynoldsCutoff = reynoldsCutoff if 200000 > reynoldsCutoff else 200000
-        fuselageCoefficientTurbulent = 0.455 / ( (math.log(reynoldsCutoff) ** 2.58) * ((1 + 0.144) ** 0.65))
+        skinFrictionCoefficient = 0.0776 * ((math.log(10000000, 10) - 1.88) ** -2) + 60 / 10000000
+        skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
 
         wettedAndReferenceAreaRatio = 4 # Can be approximated as this according to Anderson's textbook for single propellor planes
-        return wettedAndReferenceAreaRatio * fuselageCoefficientTurbulent
+        return wettedAndReferenceAreaRatio * skinFrictionCoefficient
 
     def calcLiftInducedDrag(self):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
@@ -151,8 +147,7 @@ class Drone:
 
     def calcDrag(self):        
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
-        aspectRatio = self.wingSpan ** 2 / self.wingArea 
-        liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * aspectRatio)
+        liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * self.calcAspectRatio())
         
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         dragCoefficient += liftInducedDragCoefficient
@@ -298,14 +293,22 @@ class Drone:
     
     def calcEfficientThrust(self):
         maxThrust = self.cruiseMotorTableInterface.getMaxThrust()
-        if self.mission.performance == MissionPerformance.PERFORMANCE:
-            return maxThrust
-        elif self.mission.performance == MissionPerformance.EFFICIENT:
-            coefficientK = (self.wingSpan ** 2) / self.wingArea
-            thrustWeightRatio = math.sqrt(4 * self.calcZeroLiftDragCoefficient() * coefficientK)
-            thrust = thrustWeightRatio * self.totalWeight # W is used
-            
-            if thrust > maxThrust:
-                pass # TODO: Throw an error because the motor/prop combo cannot generate thrust for steady flight
+        coefficientK = self.calcDragDueToLiftFactor()
+        thrustWeightRatio = math.sqrt(4 * self.calcZeroLiftDragCoefficient() * coefficientK)
+        thrust = thrustWeightRatio * self.totalWeight
+        
+        if thrust > maxThrust:
+            pass # TODO: Throw an error because the motor/prop combo cannot generate thrust for steady flight
 
-            return thrust 
+        return thrust
+        
+    def calcOswaldEfficicency(self):
+        aspectRatio = self.calcAspectRatio()
+        return 1.78 * (1 - 0.045 * (aspectRatio ** 0.68)) - 0.64
+    
+    def calcDragDueToLiftFactor(self):
+        aspectRatio = self.calcAspectRatio()
+        return 1 / (math.pi * aspectRatio * self.calcOswaldEfficicency())
+    
+    def calcAspectRatio(self):
+        return (self.wingSpan ** 2) / self.wingArea

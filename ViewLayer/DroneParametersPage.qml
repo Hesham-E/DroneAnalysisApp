@@ -106,7 +106,7 @@ Item {
             width: 90
             height: 36
             font.pixelSize: 18
-            model: ["2408"]
+            model: ["2408", "23012", "23018"]
         }
 
         Text {

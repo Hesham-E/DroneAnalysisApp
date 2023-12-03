@@ -1,0 +1,67 @@
+<mxfile host="Electron" modified="2023-12-02T02:19:02.592Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="xGm2_dEzSE38tV6o-2GL" version="22.1.2" type="device">
+  <diagram name="Page-1" id="IHGdRuvnINb8nVNlN0z_">
+    <mxGraphModel dx="792" dy="1187" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-2" value="Model" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="30" y="230" width="550" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-3" value="Drone" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="45" y="300" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-4" value="AtmosphereConditions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="45" y="480" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-5" value="DragLiftCoefficientInterface" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="300" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-6" value="Mission" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="395" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-8" value="MotorTableInterface" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="305" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-9" value="Controller" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="180" y="730" width="460" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-10" value="DroneParamaterController" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="780" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-11" value="IntroController" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="875" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-12" value="MissionController" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="970" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-13" value="MissionController" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="780" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-14" value="ResultsController" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="870" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-15" value="View" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="750" y="420" width="270" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-16" value="DroneParametersPage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="455" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-17" value="IntroductionPage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="520" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-18" value="MissionParametersPage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="575" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-19" value="MissionProfilePage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="585" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-20" value="MissionTypePage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="595" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="chvKxMxkXQJxIxyfZGGI-21" value="ResultsPage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="605" width="150" height="55" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
