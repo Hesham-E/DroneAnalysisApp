@@ -49,8 +49,6 @@ class MissionController:
         
         if comboBox.property("currentText") == "Performance":
             self.missionPerformance = MissionPerformance.PERFORMANCE
-        elif comboBox.property("currentText") == "Minimum":
-            self.missionPerformance = MissionPerformance.MINIMAL
         else:
             self.missionPerformance = MissionPerformance.EFFICIENT
         

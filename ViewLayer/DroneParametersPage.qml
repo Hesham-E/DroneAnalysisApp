@@ -286,6 +286,22 @@ Item {
         }
 
         Text {
+            id: ascentDescentSpeedLabel
+            objectName: "ascentDescentSpeedLabel"
+            text: qsTr("Desired Ascent and Descent Speed (m/s)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: ascentDescentSpeedInput
+            objectName: "ascentDescentSpeedInput"
+            width: 80
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
             id: cruiseMotorTableLabel
             objectName: "cruiseMotorTableLabel"
             text: qsTr("File Path to Cruise Motor Table")
@@ -329,13 +345,6 @@ Item {
             }
         }
 
-        CheckBox {
-            id: nonIdealInput
-            text: "(WIP) Use Non-Ideal Conditions?"
-            objectName: "nonIdealConditionsInput"
-            font.pixelSize: 18
-            leftPadding: 0
-        }
       }
 
     Grid {
@@ -351,21 +360,6 @@ Item {
         spacing: 35
         columnSpacing: 30
 
-        Text {
-            id: ascentDescentSpeedLabel
-            objectName: "ascentDescentSpeedLabel"
-            text: qsTr("Desired Ascent and Descent Speed (m/s)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: ascentDescentSpeedInput
-            objectName: "ascentDescentSpeedInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
 
         Text {
             id: maxSpeedLabel
