@@ -79,7 +79,7 @@ class Drone:
         return wingArea + fuselageArea + vStabilizerArea
     
     def calcStallSpeed(self):
-        airDensity = 1.24 # kg / m^3
+        airDensity = 1.28 # kg / m^3
         liftCoefficient = 1.32
         
         vStallSquared = ( 2 * (self.weight + self.loadWeight + self.batteryWeight) ) / ( self.wingArea * airDensity * liftCoefficient )
@@ -96,7 +96,7 @@ class Drone:
     
     def calcLift(self):
         airDensity = 1.24 # kg / m^3
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
+        liftCoefficient = 0.47
 
         return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
 
@@ -125,7 +125,7 @@ class Drone:
         return ( (wingParasiticDragCoefficient + fuseLageCoefficient) + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
     def calcDrag(self):        
-        liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
+        liftCoefficient = 0.47
         aspectRatio = self.wingSpan ** 2 / self.wingArea 
         liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * aspectRatio)
         
