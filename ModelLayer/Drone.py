@@ -11,7 +11,6 @@ UNDER_HOVER_FORCE = 0.5
 class Drone:
     def __init__(self, 
                  wingSpan, wingArea,
-                 vStabilizerLen, vStabilizerWidth,
                  airFoil,
                  fuselageRadius, fuselageLength,
                  weight,
@@ -27,9 +26,6 @@ class Drone:
         self.wingArea = wingArea
         self.airFoil = int(airFoil)
         self.reynoldsNum = int(reynoldsNum)
-        
-        self.vStabilizerLen = vStabilizerLen
-        self.vStabilizerWidth = vStabilizerWidth
 
         self.fuselageRadius = fuselageRadius
         self.fuselageLength = fuselageLength

@@ -94,38 +94,6 @@ Item {
         }
 
         Text {
-            id: vStabilizerLengthLabel
-            objectName: "vStabilizerLengthLabel"
-            text: qsTr("Vertical Stabilizer Length (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerLengthInput
-            objectName: "vStabilizerLengthInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: vStabilizerThicknessLabel
-            objectName: "vStabilizerThicknessLabel"
-            text: qsTr("Vertical Stabilizer Thickness (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerThicknessInput
-            objectName: "vStabilizerThicknessInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
             id: fuselageRadiusLabel
             objectName: "fuselageRadiusLabel"
             text: qsTr("Fuselage Radius (m)")
