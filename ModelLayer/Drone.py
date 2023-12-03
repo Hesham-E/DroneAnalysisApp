@@ -25,7 +25,7 @@ class Drone:
         self.wingSpan = wingSpan
         self.wingArea = wingArea
         self.airFoil = int(airFoil)
-        self.reynoldsNum = int(reynoldsNum)
+        self.reynoldsNum = reynoldsNum
 
         self.fuselageRadius = fuselageRadius
         self.fuselageLength = fuselageLength
@@ -65,7 +65,7 @@ class Drone:
         self.liftDistribution = 0.95
 
         self.atmConditions = AtmosphereConditions()
-        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.reynoldsNum}_Subset_1.csv")
+        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(reynoldsNum)}_Subset_1.csv")
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
 
@@ -75,6 +75,10 @@ class Drone:
         elif self.temperature == None:
             self.temperature = self.atmConditions.calcAltitude(self.pressure, self.temperature)
     
+    def adjustReynoldsNumberToValue(self, num):
+        availableData = [50000, 100000, 200000, 500000, 1000000]
+        print(min(availableData, key=lambda x:abs(x - num)))
+        return min(availableData, key=lambda x:abs(x - num))
     
     def calcStallSpeed(self):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
@@ -125,12 +129,13 @@ class Drone:
         skinRoughnessFactor = 6.34 * (10 ** -6)
         reynoldsCutoff = 38.21 * ( (self.fuselageLength / skinRoughnessFactor) ** 1.053 )
         reynoldsCutoff = reynoldsCutoff if 200000 > reynoldsCutoff else 200000
-        fuselageCoefficientTurbulent = 0.455 / ( (math.log(reynoldsCutoff) ** 2.58) * ((1 + 0.144) ** 0.65))
+        skinFrictionCoefficient = 0.0776 * ((math.log(reynoldsCutoff, 10) - 1.88) ** -2) + 60 / reynoldsCutoff
+        skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
 
         fuselageFormFactor = 1 + (60 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 3) + (self.fuselageLength / (2 * self.fuselageRadius) / 400))
         #abs() in fuselage area might be a bandaid
         fuselageArea = math.pi * 2 * self.fuselageRadius * self.fuselageLength * (abs(1 - 2 / (self.fuselageLength / (self.fuselageRadius * 2))) ** (2/3)) * (1 + 1 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 2))
-        fuseLageCoefficient = fuselageCoefficientTurbulent * fuselageFormFactor * (fuselageArea / self.wingArea)
+        fuseLageCoefficient = skinFrictionCoefficient * fuselageFormFactor * (fuselageArea / self.wingArea)
         
         return ( (wingParasiticDragCoefficient + fuseLageCoefficient) + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 

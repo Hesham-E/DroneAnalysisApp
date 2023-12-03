@@ -164,13 +164,14 @@ Item {
             text: qsTr("Reynolds Number")
             font.pixelSize: 18
         }
-        ComboBox {
+        TextField {
             id: reynoldsNumInput
             objectName: "reynoldsNumInput"
-            width: 125
+            width: 100
             height: 36
+            text: qsTr("1")
             font.pixelSize: 18
-            model: ["50000", "100000", "200000", "500000", "1000000"]
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Text {
