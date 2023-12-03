@@ -42,22 +42,6 @@ Item {
         }
 
         Text {
-            id: wingThicknessLabel
-            objectName: "wingThicknessLabel"
-            text: qsTr("Wing Thickness (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: wingThicknessInput
-            objectName: "wingThicknessInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
             id: droneWeightLabel
             objectName: "droneWeightLabel"
             text: "Weight of the Drone (kg)"

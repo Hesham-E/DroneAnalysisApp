@@ -47,7 +47,7 @@ class DroneParameterController:
                     else:
                         raise Exception("Unrecognized QObject used")
                     
-        self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"], self.params["wingThickness"],
+        self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"],
                                 self.params["vStabilizerLength"], self.params["vStabilizerThickness"],
                                 self.params["airFoil"],
                                 self.params["fuselageRadius"], self.params["fuselageLength"],

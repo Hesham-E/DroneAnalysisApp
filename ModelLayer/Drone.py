@@ -10,7 +10,7 @@ UNDER_HOVER_FORCE = 0.5
 
 class Drone:
     def __init__(self, 
-                 wingSpan, wingArea, wingThickness,
+                 wingSpan, wingArea,
                  vStabilizerLen, vStabilizerWidth,
                  airFoil,
                  fuselageRadius, fuselageLength,
@@ -25,7 +25,6 @@ class Drone:
         
         self.wingSpan = wingSpan
         self.wingArea = wingArea
-        self.wingThickness = wingThickness
         self.airFoil = int(airFoil)
         self.reynoldsNum = int(reynoldsNum)
         
@@ -80,12 +79,6 @@ class Drone:
         elif self.temperature == None:
             self.temperature = self.atmConditions.calcAltitude(self.pressure, self.temperature)
     
-    def calcFrontalArea(self): #TODO: REMOVE THIS AND wingThickness 
-        wingArea = (self.wingSpan - self.fuselageRadius * 2) * self.wingThickness
-        fuselageArea = (self.fuselageRadius * math.pi) ** 2
-        vStabilizerArea = self.vStabilizerLen * self.vStabilizerWidth
-
-        return wingArea + fuselageArea + vStabilizerArea
     
     def calcStallSpeed(self):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
