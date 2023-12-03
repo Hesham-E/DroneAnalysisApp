@@ -79,10 +79,13 @@ class Drone:
         return wingArea + fuselageArea + vStabilizerArea
     
     def calcStallSpeed(self):
-        airDensity = 1.28 # kg / m^3
-        liftCoefficient = 1.32
+        airDensity = 1.225 # kg / m^3
+        liftCoefficient = 2.34
+
+        totalWeight = self.weight + self.loadWeight + self.batteryWeight
+        wingLoading = totalWeight / self.wingArea * G_ACCEL
         
-        vStallSquared = ( 2 * (self.weight + self.loadWeight + self.batteryWeight) ) / ( self.wingArea * airDensity * liftCoefficient )
+        vStallSquared =  2 * wingLoading / ( airDensity * liftCoefficient )
         return math.sqrt(vStallSquared)
     
     def calcMaxSpeed(self):
