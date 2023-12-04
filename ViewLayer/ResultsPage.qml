@@ -31,9 +31,9 @@ Item {
 
     Text {
         id: resultsTitle
-        x: 179
+        x: 178
         y: 107
-        text: qsTr("Cruising Statisitics")
+        text: qsTr("Cruising Performance")
         font.pixelSize: 20
     }
 
@@ -53,66 +53,14 @@ Item {
         columnSpacing: 50
 
         Text {
-            id: liftLabel
-            objectName: "liftLabel"
-            text: qsTr("Lift (N)")
+            id: minimumCruiseThrustSpeedLabel
+            objectName: "minimumCruiseThrustSpeedLabel"
+            text: qsTr("Minimum Cruise Thrust Speed (m/s)")
             font.pixelSize: 18
         }
         Text {
-            id: liftOutput
-            objectName: "liftOutput"
-            width: 200
-            height: 36
-            text: qsTr("NA")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Text {
-            id: liftInducedDragLabel
-            objectName: "liftInducedDragLabel"
-            text: qsTr("Lift Induced Drag (N)")
-            font.pixelSize: 18
-        }
-        Text {
-            id: liftInducedDragOutput
-            objectName: "liftInducedDragOutput"
-            width: 200
-            height: 36
-            text: qsTr("NA")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Text {
-            id: parasiticDragLabel
-            objectName: "parasiticDragLabel"
-            text: "Parasitic Drag (N)"
-            textFormat: Text.RichText
-            font.pixelSize: 18
-        }
-        Text {
-            id: parasiticDragOutput
-            objectName: "parasiticDragOutput"
-            width: 200
-            height: 36
-            text: qsTr("NA")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Text {
-            id: totalDragLabel
-            objectName: "totalDragLabel"
-            text: qsTr("Total Drag (N)")
-            font.pixelSize: 18
-        }
-        Text {
-            id: totalDragOutput
-            objectName: "totalDragOutput"
+            id: minimumCruiseThrustSpeedOutput
+            objectName: "minimumCruiseThrustSpeedOutput"
             width: 200
             height: 36
             text: qsTr("NA")
@@ -299,5 +247,14 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
+    }
+
+    Button {
+        id: button
+        x: 161
+        y: 513
+        width: 231
+        height: 34
+        text: qsTr("(WIP) Export Detailed Results")
     }
 }

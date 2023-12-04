@@ -282,11 +282,7 @@ class Drone:
         if self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.calcMaxSpeed()
         elif self.mission.performance == MissionPerformance.EFFICIENT:
-            airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-            thrustWeightRatio = self.calcEfficientThrust() / self.totalWeight # So we get the error checking from cruiseThrust()
-            wingLoading = self.totalWeight / self.wingArea
-
-            return math.sqrt(thrustWeightRatio * wingLoading / (airDensity * self.calcZeroLiftDragCoefficient()))
+            return self.calcEfficientSpeed()
     
     def calcCruiseThrust(self):
         if self.mission.performance == MissionPerformance.PERFORMANCE:
@@ -294,6 +290,13 @@ class Drone:
         elif self.mission.performance == MissionPerformance.EFFICIENT:
             return self.calcEfficientThrust()
     
+    def calcEfficientSpeed(self):
+        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        thrustWeightRatio = self.calcEfficientThrust() / self.totalWeight # So we get the error checking from cruiseThrust()
+        wingLoading = self.totalWeight / self.wingArea
+
+        return math.sqrt(thrustWeightRatio * wingLoading / (airDensity * self.calcZeroLiftDragCoefficient()))
+
     def calcEfficientThrust(self):
         maxThrust = self.cruiseMotorTableInterface.getMaxThrust()
         coefficientK = self.calcDragDueToLiftFactor()

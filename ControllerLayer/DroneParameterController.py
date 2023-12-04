@@ -63,6 +63,7 @@ class DroneParameterController:
 
     def runSimulations(self):
         self.results["stallSpeed"] = self.modelLayer.calcStallSpeed()
+        self.results["minimumCruiseThrustSpeed"] = self.modelLayer.calcEfficientSpeed()
         self.results["maxSpeed"] = self.modelLayer.calcMaxSpeed()
         self.results["lift"] = self.modelLayer.calcLift()
         self.results["liftInducedDrag"] = self.modelLayer.calcLiftInducedDrag()
