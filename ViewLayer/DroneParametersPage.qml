@@ -34,7 +34,7 @@ Item {
         TextField {
             id: wingSpanInput
             objectName: "wingSpanInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -51,7 +51,7 @@ Item {
         TextField {
             id: droneWeightInput
             objectName: "droneWeightInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -71,7 +71,7 @@ Item {
         TextField {
             id: wingAreaInput
             objectName: "wingAreaInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -102,7 +102,7 @@ Item {
         TextField {
             id: fuselageRadiusInput
             objectName: "fuselageRadiusInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -118,7 +118,7 @@ Item {
         TextField {
             id: fuselageLengthInput
             objectName: "fuselageLengthInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -134,7 +134,7 @@ Item {
         TextField {
             id: angleOfAttackInput
             objectName: "angleOfAttackInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -183,7 +183,7 @@ Item {
         TextField {
             id: auxPowerConInput
             objectName: "auxPowerConInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -199,7 +199,7 @@ Item {
         TextField {
             id: batteryWeightInput
             objectName: "batteryWeightInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -215,7 +215,7 @@ Item {
         TextField {
             id: batteryCapacityInput
             objectName: "batteryCapacityInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -231,7 +231,7 @@ Item {
         TextField {
             id: batteryVoltageInput
             objectName: "batteryVoltageInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -247,7 +247,7 @@ Item {
         TextField {
             id: ascentDescentSpeedInput
             objectName: "ascentDescentSpeedInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -323,7 +323,7 @@ Item {
         TextField {
             id: maxSpeedInput
             objectName: "maxSpeedInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
