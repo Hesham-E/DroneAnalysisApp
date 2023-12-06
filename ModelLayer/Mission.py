@@ -24,7 +24,6 @@ class MissionPerformance(Enum):
 
     PERFORMANCE = 1, "Performance"
     EFFICIENT = 2, "Efficient"
-    MINIMAL = 3, "Minimal"
     
     def __str__(self):
         return self.string

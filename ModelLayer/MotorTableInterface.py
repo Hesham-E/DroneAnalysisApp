@@ -15,6 +15,17 @@ class MotorTableInterface:
         df = df.sort_values(by = ['Thrust (kgf)'])
         
         return df['Thrust (kgf)'].values[-1] * 9.81 # kgf * 9.81 = Newtons
+
+    def getMinThrust(self):
+        with open(self.filePath, newline='', encoding='utf-8') as fp:
+            reader = csv.DictReader(fp)
+            df = pd.DataFrame(data = reader)
+        
+        df = df.apply(pd.to_numeric)
+        df = df.fillna(0)
+        df = df.sort_values(by = ['Thrust (kgf)'])
+        
+        return df['Thrust (kgf)'].values[0] * 9.81 # kgf * 9.81 = Newtons
     
     def getMaxPower(self):
         with open(self.filePath, newline='', encoding='utf-8') as fp:

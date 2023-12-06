@@ -64,7 +64,7 @@ Item {
         objectName: "temperatureInput"
         width: 80
         height: 36
-        text: qsTr("1")
+        text: qsTr("288.15")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }
@@ -104,7 +104,7 @@ Item {
         objectName: "pressureInput"
         width: 80
         height: 36
-        text: qsTr("1")
+        text: qsTr("101325")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }

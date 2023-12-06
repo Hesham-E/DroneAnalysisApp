@@ -124,18 +124,6 @@ Item {
     }
 
     Button {
-        id: createOwnButton
-        objectName: "createOwnButton"
-        x: 953
-        y: 899
-        width: 294
-        height: 36
-        text: qsTr("(WIP) Create Own Mission Profile")
-        icon.color: "#000000"
-        font.pixelSize: 18
-    }
-
-    Button {
         id: returnButton
         objectName: "returnButton"
         x: 37
@@ -162,6 +150,6 @@ Item {
         y: 152
         width: 142
         height: 32
-        model: ["Performance", "Efficicent", "Minimum"]
+        model: ["Performance", "Efficicent"]
     }
 }

@@ -34,23 +34,7 @@ Item {
         TextField {
             id: wingSpanInput
             objectName: "wingSpanInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: wingThicknessLabel
-            objectName: "wingThicknessLabel"
-            text: qsTr("Wing Thickness (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: wingThicknessInput
-            objectName: "wingThicknessInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -67,7 +51,7 @@ Item {
         TextField {
             id: droneWeightInput
             objectName: "droneWeightInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -87,7 +71,7 @@ Item {
         TextField {
             id: wingAreaInput
             objectName: "wingAreaInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -106,39 +90,7 @@ Item {
             width: 90
             height: 36
             font.pixelSize: 18
-            model: ["2408"]
-        }
-
-        Text {
-            id: vStabilizerLengthLabel
-            objectName: "vStabilizerLengthLabel"
-            text: qsTr("Vertical Stabilizer Length (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerLengthInput
-            objectName: "vStabilizerLengthInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: vStabilizerThicknessLabel
-            objectName: "vStabilizerThicknessLabel"
-            text: qsTr("Vertical Stabilizer Thickness (m)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: vStabilizerThicknessInput
-            objectName: "vStabilizerThicknessInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
+            model: ["2408", "23012", "23018"]
         }
 
         Text {
@@ -150,7 +102,7 @@ Item {
         TextField {
             id: fuselageRadiusInput
             objectName: "fuselageRadiusInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -166,7 +118,7 @@ Item {
         TextField {
             id: fuselageLengthInput
             objectName: "fuselageLengthInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -182,7 +134,7 @@ Item {
         TextField {
             id: angleOfAttackInput
             objectName: "angleOfAttackInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -212,13 +164,14 @@ Item {
             text: qsTr("Reynolds Number")
             font.pixelSize: 18
         }
-        ComboBox {
+        TextField {
             id: reynoldsNumInput
             objectName: "reynoldsNumInput"
-            width: 125
+            width: 100
             height: 36
+            text: qsTr("1")
             font.pixelSize: 18
-            model: ["50000", "100000", "200000", "500000", "1000000"]
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Text {
@@ -230,7 +183,7 @@ Item {
         TextField {
             id: auxPowerConInput
             objectName: "auxPowerConInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -246,7 +199,7 @@ Item {
         TextField {
             id: batteryWeightInput
             objectName: "batteryWeightInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -262,7 +215,7 @@ Item {
         TextField {
             id: batteryCapacityInput
             objectName: "batteryCapacityInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -278,7 +231,23 @@ Item {
         TextField {
             id: batteryVoltageInput
             objectName: "batteryVoltageInput"
-            width: 80
+            width: 90
+            height: 36
+            text: qsTr("1")
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: ascentDescentSpeedLabel
+            objectName: "ascentDescentSpeedLabel"
+            text: qsTr("Desired Ascent and Descent Speed (m/s)")
+            font.pixelSize: 18
+        }
+        TextField {
+            id: ascentDescentSpeedInput
+            objectName: "ascentDescentSpeedInput"
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18
@@ -329,20 +298,13 @@ Item {
             }
         }
 
-        CheckBox {
-            id: nonIdealInput
-            text: "(WIP) Use Non-Ideal Conditions?"
-            objectName: "nonIdealConditionsInput"
-            font.pixelSize: 18
-            leftPadding: 0
-        }
       }
 
     Grid {
         id: rightParameterGrid
         objectName: "rightParameterGrid"
-        x: 848
-        y: 364
+        x: 879
+        y: 361
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -351,21 +313,6 @@ Item {
         spacing: 35
         columnSpacing: 30
 
-        Text {
-            id: ascentDescentSpeedLabel
-            objectName: "ascentDescentSpeedLabel"
-            text: qsTr("Desired Ascent and Descent Speed (m/s)")
-            font.pixelSize: 18
-        }
-        TextField {
-            id: ascentDescentSpeedInput
-            objectName: "ascentDescentSpeedInput"
-            width: 80
-            height: 36
-            text: qsTr("1")
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-        }
 
         Text {
             id: maxSpeedLabel
@@ -376,7 +323,7 @@ Item {
         TextField {
             id: maxSpeedInput
             objectName: "maxSpeedInput"
-            width: 80
+            width: 90
             height: 36
             text: qsTr("1")
             font.pixelSize: 18

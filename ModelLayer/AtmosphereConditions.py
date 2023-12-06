@@ -30,5 +30,8 @@ class AtmosphereConditions:
     
     def calcAltitude(self, pressure, temperature):
         return ( (self.GAS_CONSTANT * temperature * math.log(pressure / self.SEA_PRESSURE)) / (-1 * self.G_ACCEL * self.AIR_MOLAR_MASS) )
+    
+    def calcAirDensity(self, pressure, temperature):
+        return pressure * self.AIR_MOLAR_MASS / (self.GAS_CONSTANT * temperature)
 
         

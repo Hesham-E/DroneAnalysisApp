@@ -47,8 +47,7 @@ class DroneParameterController:
                     else:
                         raise Exception("Unrecognized QObject used")
                     
-        self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"], self.params["wingThickness"],
-                                self.params["vStabilizerLength"], self.params["vStabilizerThickness"],
+        self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"],
                                 self.params["airFoil"],
                                 self.params["fuselageRadius"], self.params["fuselageLength"],
                                 self.params["droneWeight"],
@@ -64,6 +63,7 @@ class DroneParameterController:
 
     def runSimulations(self):
         self.results["stallSpeed"] = self.modelLayer.calcStallSpeed()
+        self.results["minimumCruiseThrustSpeed"] = self.modelLayer.calcEfficientSpeed()
         self.results["maxSpeed"] = self.modelLayer.calcMaxSpeed()
         self.results["lift"] = self.modelLayer.calcLift()
         self.results["liftInducedDrag"] = self.modelLayer.calcLiftInducedDrag()
