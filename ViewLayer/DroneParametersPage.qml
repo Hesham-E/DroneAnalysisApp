@@ -3,14 +3,19 @@ import QtQuick.Controls
 import QtQuick.Controls.Universal
 import QtQuick.Dialogs
 import QtCore
+import "."
 
 
 Item {
     id: droneParametersPage
-    width: 1280
-    height: 960
+    width: Style.screenWidth
+    height: Style.screenHeight
     objectName: "droneParametersPage"
     anchors.fill: parent
+
+    property var inputWidth: 90
+    property var inputHeight: 36
+    property var bodyFontSize: 18
 
     Grid {
         id: leftParameterGrid
@@ -29,15 +34,15 @@ Item {
             id: wingSpanLabel
             objectName: "wingSpanLabel"
             text: qsTr("Wing Span (m)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: wingSpanInput
             objectName: "wingSpanInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -46,15 +51,15 @@ Item {
             objectName: "droneWeightLabel"
             text: "Weight of the Drone (kg)"
             textFormat: Text.RichText
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: droneWeightInput
             objectName: "droneWeightInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -63,7 +68,7 @@ Item {
             objectName: "wingAreaLabel"
             height: 20
             text: "Area of the Wings (m<sup>2</sup>)"
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.RichText
@@ -71,10 +76,10 @@ Item {
         TextField {
             id: wingAreaInput
             objectName: "wingAreaInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -82,14 +87,14 @@ Item {
             id: airFoilLabel
             objectName: "airFoilLabel"
             text: qsTr("Airfoil Shape (NACA Shape)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         ComboBox {
             id: airFoilInput
             objectName: "airFoilInput"
-            width: 90
-            height: 36
-            font.pixelSize: 18
+            width: inputWidth
+            height: inputHeight
+            font.pixelSize: bodyFontSize
             model: ["2408", "23012", "23018"]
         }
 
@@ -97,15 +102,15 @@ Item {
             id: fuselageRadiusLabel
             objectName: "fuselageRadiusLabel"
             text: qsTr("Fuselage Radius (m)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: fuselageRadiusInput
             objectName: "fuselageRadiusInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -113,15 +118,15 @@ Item {
             id: fuselageLengthLabel
             objectName: "fuselageLengthLabel"
             text: qsTr("Fuselage Length (m)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: fuselageLengthInput
             objectName: "fuselageLengthInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -129,15 +134,15 @@ Item {
             id: angleOfAttackLabel
             objectName: "angleOfAttackLabel"
             text: qsTr("Angle of Attack (degrees)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: angleOfAttackInput
             objectName: "angleOfAttackInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -162,15 +167,15 @@ Item {
             id: reynoldsNumLabel
             objectName: "reynoldsNumLabel"
             text: qsTr("Reynolds Number")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: reynoldsNumInput
             objectName: "reynoldsNumInput"
             width: 100
-            height: 36
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -178,15 +183,15 @@ Item {
             id: auxPowerConLabel
             objectName: "auxPowerConLabel"
             text: qsTr("Auxiliary Power Consumed (W)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: auxPowerConInput
             objectName: "auxPowerConInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -194,15 +199,15 @@ Item {
             id: batteryWeightLabel
             objectName: "batteryWeightLabel"
             text: qsTr("Weight of the Battery (kg)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: batteryWeightInput
             objectName: "batteryWeightInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -210,15 +215,15 @@ Item {
             id: batteryCapactiyLabel
             objectName: "batteryCapactiyLabel"
             text: qsTr("Battery Capacity (mAh)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: batteryCapacityInput
             objectName: "batteryCapacityInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -226,15 +231,15 @@ Item {
             id: batteryVoltageLabel
             objectName: "batteryVoltageLabel"
             text: qsTr("Battery Voltage (V)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: batteryVoltageInput
             objectName: "batteryVoltageInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -242,15 +247,15 @@ Item {
             id: ascentDescentSpeedLabel
             objectName: "ascentDescentSpeedLabel"
             text: qsTr("Desired Ascent and Descent Speed (m/s)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: ascentDescentSpeedInput
             objectName: "ascentDescentSpeedInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -258,7 +263,7 @@ Item {
             id: cruiseMotorTableLabel
             objectName: "cruiseMotorTableLabel"
             text: qsTr("File Path to Cruise Motor Table")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         Button {
             id: cruiseMotorTableButton
@@ -280,7 +285,7 @@ Item {
             id: vtolMotorTableLabel
             objectName: "vtolMotorTableLabel"
             text: qsTr("File Path to VTOL Motor Table")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         Button {
             id: vtolMotorTableButton
@@ -318,15 +323,15 @@ Item {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
             text: qsTr("(WIP) Desired Max Speed (m/s)")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
         }
         TextField {
             id: maxSpeedInput
             objectName: "maxSpeedInput"
-            width: 90
-            height: 36
+            width: inputWidth
+            height: inputHeight
             text: qsTr("1")
-            font.pixelSize: 18
+            font.pixelSize: bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -336,7 +341,7 @@ Item {
         x: 1003
         y: 297
         text: qsTr("(WIP) Predict Design")
-        font.pixelSize: 18
+        font.pixelSize: bodyFontSize
     }
 
     Label {
@@ -346,7 +351,7 @@ Item {
         width: 110
         height: 31
         text: qsTr("Predict Speed")
-        font.pixelSize: 18
+        font.pixelSize: bodyFontSize
     }
 
     Image {
@@ -366,10 +371,10 @@ Item {
         x: 643
         y: 896
         width: 214
-        height: 36
+        height: inputHeight
         text: qsTr("Generate Results")
         icon.color: "#000000"
-        font.pixelSize: 18
+        font.pixelSize: bodyFontSize
     }
 
     Button {
@@ -378,10 +383,10 @@ Item {
         x: 406
         y: 896
         width: 219
-        height: 36
+        height: inputHeight
         text: qsTr("(WIP) Update Parameters")
         icon.color: "#000000"
-        font.pixelSize: 18
+        font.pixelSize: bodyFontSize
     }
 
     Button {
@@ -390,10 +395,10 @@ Item {
         x: 17
         y: 896
         width: 208
-        height: 36
+        height: inputHeight
         text: qsTr("Go Back")
         icon.color: "#000000"
-        font.pixelSize: 18
+        font.pixelSize: bodyFontSize
     }
 
     Text {

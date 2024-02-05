@@ -66,7 +66,7 @@ class DragLiftCoefficientInterface:
 
         return (y2 - y1) / (x2 - x1)
     
-    def getLifeSlopeAt(self, angleOfAttack):
+    def getLiftSlopeAt(self, angleOfAttack):
         with open(self.filePath, newline='', encoding='utf-8') as fp:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)

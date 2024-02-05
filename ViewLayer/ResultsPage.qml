@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+import "."
 
 Item {
     id: resultsPage
-    width: 1280
-    height: 960
+    width: Style.screenWidth
+    height: Style.screenHeight
     objectName: "resultsPage"
     anchors.fill: parent
 
