@@ -37,6 +37,15 @@ Item {
         objectName: "missionDistanceLabel"
         text: qsTr("Total Mission Distance (m)")
         font.pixelSize: 18
+
+        property string tip: "The total distance between each point of the mission."
+        ToolTip.visible: tip ? missionDistanceMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: missionDistanceMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: missionDistanceInput
@@ -57,6 +66,15 @@ Item {
         objectName: "temperatureLabel"
         text: qsTr("Temperature (K)")
         font.pixelSize: 18
+
+        property string tip: "The current air temperature."
+        ToolTip.visible: tip ? temperatureMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: temperatureMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: temperatureInput
@@ -77,6 +95,15 @@ Item {
         objectName: "cruiseHeightLabel"
         text: qsTr("Cruise Height (m)")
         font.pixelSize: 18
+
+        property string tip: "The maximum cruise height of the mission."
+        ToolTip.visible: tip ? cruiseHeightMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseHeightMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: cruiseHeightInput
@@ -97,6 +124,15 @@ Item {
         objectName: "pressureLabel"
         text: qsTr("Air Pressure (Pa)")
         font.pixelSize: 18
+
+        property string tip: "The current air pressure."
+        ToolTip.visible: tip ? pressureMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: pressureMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: pressureInput
@@ -118,6 +154,15 @@ Item {
         text: qsTr("Payload Weight (kg)")
         font.pixelSize: 18
         visible: false
+
+        property string tip: "The weight of the payload transported."
+        ToolTip.visible: tip ? loadWeightMA.containsMouse && loadWeightLabel.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: loadWeightMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: loadWeightInput
