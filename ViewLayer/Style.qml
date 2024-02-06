@@ -3,6 +3,6 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    property int screenWidth: 1280
-    property int screenHeight: 960
+    property var screenWidth: 1280
+    property var screenHeight: 960
 }

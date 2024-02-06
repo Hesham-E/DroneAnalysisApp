@@ -194,6 +194,20 @@ class Drone:
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
     
+    def calcRateOfClimb(self):
+        velocityROCMax =  2 / self.atmConditions.calcAirDensity() * \
+                          math.sqrt(self.liftDistribution / 3 * self.calcZeroLiftDragCoefficient()) * \
+                          self.totalWeight / self.wingArea
+        velocityROCMax = velocityROCMax ** 0.5
+
+        return self.cruiseMotorTableInterface.getMaxThrust() / self.totalMass \
+               - velocityROCMax * 1.155 / ( self.calcLift() / self.calcDrag() )
+    
+    def calcRateOfDescent(self):
+        return math.sqrt( 2 / self.atmConditions.calcAirDensity() \
+                          * math.sqrt( self.liftDistribution / self.calcZeroLiftDragCoefficient() ) \
+                          * ( self.totalWeight / self.wingArea ) )
+
     def calcTakeOff1(self):
         thrust = self.vtolMotorTableInterface.getMaxThrust() * 4
         takeOffAccel = thrust / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL

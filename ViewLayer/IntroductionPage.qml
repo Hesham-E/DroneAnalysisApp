@@ -28,6 +28,15 @@ Item {
         y: 17
         text: qsTr("Drone Analysis App")
         font.pixelSize: 24
+
+        property string tip: "Hello"
+        ToolTip.visible: tip ? pageTitleMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: pageTitleMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
 
     Text {
