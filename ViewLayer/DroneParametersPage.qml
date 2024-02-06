@@ -34,15 +34,24 @@ Item {
             id: wingSpanLabel
             objectName: "wingSpanLabel"
             text: qsTr("Wing Span (m)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The total wing span from tip to tip."
+            ToolTip.visible: tip ? wingSpanMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: wingSpanMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: wingSpanInput
             objectName: "wingSpanInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -51,15 +60,24 @@ Item {
             objectName: "droneWeightLabel"
             text: "Weight of the Drone (kg)"
             textFormat: Text.RichText
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The dry weight of the drone (excluding the battery and payload)."
+            ToolTip.visible: tip ? droneWeightMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: droneWeightMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: droneWeightInput
             objectName: "droneWeightInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -68,18 +86,27 @@ Item {
             objectName: "wingAreaLabel"
             height: 20
             text: "Area of the Wings (m<sup>2</sup>)"
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.RichText
+
+            property string tip: "The surface area of the wings as viewed from above."
+            ToolTip.visible: tip ? wingAreaMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: wingAreaMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: wingAreaInput
             objectName: "wingAreaInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -87,14 +114,23 @@ Item {
             id: airFoilLabel
             objectName: "airFoilLabel"
             text: qsTr("Airfoil Shape (NACA Shape)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The shape of the airfoil based on the available NACA database shapes."
+            ToolTip.visible: tip ? airFoilMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: airFoilMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         ComboBox {
             id: airFoilInput
             objectName: "airFoilInput"
-            width: inputWidth
-            height: inputHeight
-            font.pixelSize: bodyFontSize
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            font.pixelSize: droneParametersPage.bodyFontSize
             model: ["2408", "23012", "23018"]
         }
 
@@ -102,15 +138,24 @@ Item {
             id: fuselageRadiusLabel
             objectName: "fuselageRadiusLabel"
             text: qsTr("Fuselage Radius (m)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The radius of the fuselage at its widest point."
+            ToolTip.visible: tip ? fuselageRadiusMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: fuselageRadiusMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: fuselageRadiusInput
             objectName: "fuselageRadiusInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -118,15 +163,24 @@ Item {
             id: fuselageLengthLabel
             objectName: "fuselageLengthLabel"
             text: qsTr("Fuselage Length (m)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The length of the fuselage from tip to tail."
+            ToolTip.visible: tip ? fuselageLengthMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: fuselageLengthMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: fuselageLengthInput
             objectName: "fuselageLengthInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -134,20 +188,26 @@ Item {
             id: angleOfAttackLabel
             objectName: "angleOfAttackLabel"
             text: qsTr("Angle of Attack (degrees)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The angle of attack during cruising."
+            ToolTip.visible: tip ? angleOfAttackMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: angleOfAttackMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: angleOfAttackInput
             objectName: "angleOfAttackInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
-
-
-
     }
 
     Grid {
@@ -167,15 +227,15 @@ Item {
             id: reynoldsNumLabel
             objectName: "reynoldsNumLabel"
             text: qsTr("Reynolds Number")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
         }
         TextField {
             id: reynoldsNumInput
             objectName: "reynoldsNumInput"
             width: 100
-            height: inputHeight
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -183,15 +243,24 @@ Item {
             id: auxPowerConLabel
             objectName: "auxPowerConLabel"
             text: qsTr("Auxiliary Power Consumed (W)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The power consumed by peripheral systems (ICs, boards, etc.) that are not the motors."
+            ToolTip.visible: tip ? auxPowerConMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: auxPowerConMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: auxPowerConInput
             objectName: "auxPowerConInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -199,31 +268,49 @@ Item {
             id: batteryWeightLabel
             objectName: "batteryWeightLabel"
             text: qsTr("Weight of the Battery (kg)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The weight of the battery used to power the drone."
+            ToolTip.visible: tip ? batteryWeightMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: batteryWeightMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: batteryWeightInput
             objectName: "batteryWeightInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
         Text {
-            id: batteryCapactiyLabel
-            objectName: "batteryCapactiyLabel"
+            id: batteryCapacityLabel
+            objectName: "batteryCapacityLabel"
             text: qsTr("Battery Capacity (mAh)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The capacity of the battery used to power the drone."
+            ToolTip.visible: tip ? batteryCapacityMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: batteryCapacityMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: batteryCapacityInput
             objectName: "batteryCapacityInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -231,15 +318,24 @@ Item {
             id: batteryVoltageLabel
             objectName: "batteryVoltageLabel"
             text: qsTr("Battery Voltage (V)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The voltage of the battery used to power the drone."
+            ToolTip.visible: tip ? batteryVoltageMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: batteryVoltageMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: batteryVoltageInput
             objectName: "batteryVoltageInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -247,15 +343,15 @@ Item {
             id: ascentDescentSpeedLabel
             objectName: "ascentDescentSpeedLabel"
             text: qsTr("Desired Ascent and Descent Speed (m/s)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
         }
         TextField {
             id: ascentDescentSpeedInput
             objectName: "ascentDescentSpeedInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -263,7 +359,16 @@ Item {
             id: cruiseMotorTableLabel
             objectName: "cruiseMotorTableLabel"
             text: qsTr("File Path to Cruise Motor Table")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used."
+            ToolTip.visible: tip ? cruiseMotorTableMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: cruiseMotorTableMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         Button {
             id: cruiseMotorTableButton
@@ -275,7 +380,6 @@ Item {
         FileDialog {
             id: cruiseMotorTablePathInput
             objectName: "cruiseMotorTablePathInput"
-//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
             onAccepted: {
                 cruiseMotorTableButton.text = selectedFile
             }
@@ -285,7 +389,16 @@ Item {
             id: vtolMotorTableLabel
             objectName: "vtolMotorTableLabel"
             text: qsTr("File Path to VTOL Motor Table")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used."
+            ToolTip.visible: tip ? vtolMotorTableMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolMotorTableMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         Button {
             id: vtolMotorTableButton
@@ -297,7 +410,6 @@ Item {
         FileDialog {
             id: vtolMotorTablePathInput
             objectName: "vtolMotorTablePathInput"
-//            currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
             onAccepted: {
                 vtolMotorTableButton.text = selectedFile
             }
@@ -323,15 +435,15 @@ Item {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
             text: qsTr("(WIP) Desired Max Speed (m/s)")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
         }
         TextField {
             id: maxSpeedInput
             objectName: "maxSpeedInput"
-            width: inputWidth
-            height: inputHeight
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
             text: qsTr("1")
-            font.pixelSize: bodyFontSize
+            font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -341,7 +453,7 @@ Item {
         x: 1003
         y: 297
         text: qsTr("(WIP) Predict Design")
-        font.pixelSize: bodyFontSize
+        font.pixelSize: droneParametersPage.bodyFontSize
     }
 
     Label {
@@ -351,7 +463,7 @@ Item {
         width: 110
         height: 31
         text: qsTr("Predict Speed")
-        font.pixelSize: bodyFontSize
+        font.pixelSize: droneParametersPage.bodyFontSize
     }
 
     Image {
@@ -371,10 +483,10 @@ Item {
         x: 643
         y: 896
         width: 214
-        height: inputHeight
+        height: droneParametersPage.inputHeight
         text: qsTr("Generate Results")
         icon.color: "#000000"
-        font.pixelSize: bodyFontSize
+        font.pixelSize: droneParametersPage.bodyFontSize
     }
 
     Button {
@@ -383,10 +495,10 @@ Item {
         x: 406
         y: 896
         width: 219
-        height: inputHeight
+        height: droneParametersPage.inputHeight
         text: qsTr("(WIP) Update Parameters")
         icon.color: "#000000"
-        font.pixelSize: bodyFontSize
+        font.pixelSize: droneParametersPage.bodyFontSize
     }
 
     Button {
@@ -395,10 +507,10 @@ Item {
         x: 17
         y: 896
         width: 208
-        height: inputHeight
+        height: droneParametersPage.inputHeight
         text: qsTr("Go Back")
         icon.color: "#000000"
-        font.pixelSize: bodyFontSize
+        font.pixelSize: droneParametersPage.bodyFontSize
     }
 
     Text {
