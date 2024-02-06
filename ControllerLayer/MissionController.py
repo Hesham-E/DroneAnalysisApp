@@ -53,7 +53,7 @@ class MissionController:
             self.missionPerformance = MissionPerformance.EFFICIENT
         
         self.profileWindow.setProperty("visible", False)
-        self.window.findChild(QObject, "droneParametersPage").setProperty("visible", True)
+        self.parameterWindow.setProperty("visible", True)
 
     def goBackProfile(self):
         self.parameterWindow.setProperty("visible", True)
@@ -77,7 +77,7 @@ class MissionController:
                     self.missionParameters[name] = child.property("text")
         
         self.parameterWindow.setProperty("visible", False)
-        self.profileWindow.setProperty("visible", True)
+        self.window.findChild(QObject, "droneParametersPage").setProperty("visible", True)
     
     def selectPayloadDelivery(self):
         self.missionType = MissonType.PAYLOAD_DELIVERY
@@ -86,10 +86,10 @@ class MissionController:
 
         self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", True)
         self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", True)
-        self.parameterWindow.setProperty("visible", True)
+        self.profileWindow.setProperty("visible", True)
     
     def selectSurveillance(self):
         self.missionType = MissonType.SURVEILLANCE
 
         self.typeWindow.setProperty("visible", False)
-        self.parameterWindow.setProperty("visible", True)
+        self.profileWindow.setProperty("visible", True)
