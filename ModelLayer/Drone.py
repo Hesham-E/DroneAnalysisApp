@@ -77,7 +77,6 @@ class Drone:
     
     def adjustReynoldsNumberToValue(self, num):
         availableData = [50000, 100000, 200000, 500000, 1000000]
-        print(min(availableData, key=lambda x:abs(x - num)))
         return min(availableData, key=lambda x:abs(x - num))
     
     def calcStallSpeed(self):
@@ -99,11 +98,14 @@ class Drone:
         vMaxSquared = (thrustAreaRatio + wingLoading * math.sqrt( ( thrustWeightRatio ** 2 ) - 4 * self.calcZeroLiftDragCoefficient() * coefficientK ) ) / ( airDensity * self.calcZeroLiftDragCoefficient() )
         return math.sqrt(vMaxSquared)
     
-    def calcLift(self):
+    def calcLift(self, max = False):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
-        return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
+        if ( max ):
+            return 0.5 * airDensity * ( self.calcEfficientSpeed() ** 2 ) * self.wingArea * liftCoefficient
+        else:
+            return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
     
     def calcTailWettedArea(self):
         lambdaC = 0.5
@@ -183,7 +185,7 @@ class Drone:
         
         return ( (wingParasiticDragCoefficient + fuseLageCoefficient) + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
-    def calcDrag(self):        
+    def calcDrag(self, max = False):        
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * self.calcAspectRatio())
         
@@ -191,8 +193,15 @@ class Drone:
         dragCoefficient += liftInducedDragCoefficient
 
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
+
+        if (max):
+            q = 0.5 * airDensity * math.pi * ( self.calcEfficientSpeed() ) ** 2
+        else:
+            q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
+    
+    def calcMaxLiftDragRatio(self):
+        return self.calcLift( max = True ) / self.calcDrag( max = True )
     
     def calcRateOfClimb(self):
         velocityROCMax =  2 / self.atmConditions.calcAirDensity() * \
@@ -200,8 +209,8 @@ class Drone:
                           self.totalWeight / self.wingArea
         velocityROCMax = velocityROCMax ** 0.5
 
-        return self.cruiseMotorTableInterface.getMaxThrust() / self.totalMass \
-               - velocityROCMax * 1.155 / ( self.calcLift() / self.calcDrag() )
+        return self.cruiseMotorTableInterface.getMechanicalPowerAtThrust( self.cruiseMotorTableInterface.getMaxThrust() ) / self.totalMass \
+               - velocityROCMax * 1.155 / ( self.calcMaxLiftDragRatio() )
     
     def calcRateOfDescent(self):
         return math.sqrt( 2 / self.atmConditions.calcAirDensity() \
