@@ -28,7 +28,7 @@ class ResultsController:
         self.resultsWindow.findChild(QObject, "performanceSummary").setProperty("text", str(mission.performance))
         self.resultsWindow.findChild(QObject, "profileSummary").setProperty("text", str(mission.profile))
         self.resultsWindow.findChild(QObject, "missionDistanceSummary").setProperty("text", str(mission.parameters["missionDistance"]))
-        self.resultsWindow.findChild(QObject, "cruiseHeightSummary").setProperty("text", str(mission.parameters["cruiseHeight"]))
+        self.resultsWindow.findChild(QObject, "cruiseAltitudeSummary").setProperty("text", str(mission.parameters["cruiseAltitude"]))
         
 
     def goBack(self):

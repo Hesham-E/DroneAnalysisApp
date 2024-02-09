@@ -237,14 +237,14 @@ Item {
         }
 
         Text {
-            id: cruiseHeightLabel
-            objectName: "cruiseHeightLabel"
-            text: qsTr("Cruise Height (m)")
+            id: cruiseAltitudeLabel
+            objectName: "cruiseAltitudeLabel"
+            text: qsTr("Cruise Altitude (m)")
             font.pixelSize: resultsPage.labelSize
         }
         Text {
-            id: cruiseHeightSummary
-            objectName: "cruiseHeightSummary"
+            id: cruiseAltitudeSummary
+            objectName: "cruiseAltitudeSummary"
             width: resultsPage.outputWidth
             height: resultsPage.outputHeight
             text: qsTr("NA")
