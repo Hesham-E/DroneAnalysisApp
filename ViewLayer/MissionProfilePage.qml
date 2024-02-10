@@ -77,7 +77,7 @@ Item {
         y: 531
         width: 208
         height: 36
-        text: qsTr("(WIP) Select Profile #3")
+        text: qsTr("Select Profile #3")
         icon.color: "#000000"
         font.pixelSize: 18
     }

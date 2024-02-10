@@ -33,10 +33,12 @@ class MissionController:
         # End mission parameter window configuration
 
         # Start mission profile window configuration
-        profileOneButton = self.profileWindow.findChild(QObject, "selectOneButton")
         profileReturnButton = self.profileWindow.findChild(QObject, "returnButton")
         profileReturnButton.clicked.connect(self.goBackProfile)
+        profileOneButton = self.profileWindow.findChild(QObject, "selectOneButton")
         profileOneButton.clicked.connect(self.selectProfileOne)
+        profileThreeButton = self.profileWindow.findChild(QObject, "selectThreeButton")
+        profileThreeButton.clicked.connect(self.selectProfileThree)
         # End mission profile window configuration
 
     def getMission(self):
@@ -45,23 +47,54 @@ class MissionController:
     
     def selectProfileOne(self):
         self.missionProfile = MissionProfile.VTOL_STRAIGHT
-        comboBox = self.profileWindow.findChild(QObject, "selectPerformanceInput")
+        self.selectProfileHelper()
+    
+    def selectProfileThree(self):
+        self.missionProfile = MissionProfile.BASIC_FIXED_WING
         
+        self.parameterWindow.findChild(QObject, "vtolClimbLabel").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("text", "0")
+
+        self.parameterWindow.findChild(QObject, "vtolDescentLabel").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("text", "0")
+
+        self.parameterWindow.findChild(QObject, "vtolClimbLabel").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("visible", True)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("text", "0")
+
+        self.selectProfileHelper()
+
+    def selectProfileHelper(self):
+        comboBox = self.profileWindow.findChild(QObject, "selectPerformanceInput")
         if comboBox.property("currentText") == "Performance":
             self.missionPerformance = MissionPerformance.PERFORMANCE
         else:
             self.missionPerformance = MissionPerformance.EFFICIENT
-        
+
         self.profileWindow.setProperty("visible", False)
         self.parameterWindow.setProperty("visible", True)
-
+    
     def goBackProfile(self):
-        self.parameterWindow.setProperty("visible", True)
+        self.typeWindow.setProperty("visible", True)
         self.profileWindow.setProperty("visible", False)
     
     def goBackParameters(self):
-        self.typeWindow.setProperty("visible", True)
+        self.profileWindow.setProperty("visible", True)
         self.parameterWindow.setProperty("visible", False)
+
+        self.parameterWindow.findChild(QObject, "vtolClimbLabel").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("text", "0")
+
+        self.parameterWindow.findChild(QObject, "vtolDescentLabel").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("text", "0")
+
+        self.parameterWindow.findChild(QObject, "vtolClimbLabel").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("visible", False)
+        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("text", "0")
 
         self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", False)
         self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", False)
