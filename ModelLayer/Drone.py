@@ -380,14 +380,19 @@ class Drone:
         cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
         timeC = ( self.batteryEnergy - energyInPeriods - self.auxPowerCon * timeInPeriods ) / ( cruisePower + self.auxPowerCon )
         distC = timeC * self.calcCruiseSpeed()
+        energyC = cruisePower * timeC
 
-        return timeC, distC
+        return timeC, distC, energyC
 
     def calcMaxRange(self):
-        timeA, distA, energyA = self.calcAccelerationPeriod()
-        timeC, distC = self.calcCruisePeriod()
+        timeC, distC, energyC = self.calcCruisePeriod()
 
-        return distC + distA
+        if MissionLeg.ACCELERATION in self.mission.legs:
+            timeA, distA, energyA = self.calcAccelerationPeriod()
+            distA *= self.mission.legs.count( MissionLeg.ACCELERATION )
+            return distC + distA
+        else:
+            return distC
     
     def calcCruiseSpeed(self):
         if self.mission.performance == MissionPerformance.PERFORMANCE:
