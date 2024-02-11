@@ -50,7 +50,8 @@ class Drone:
 
         self.mission = mission
 
-        self.cruiseAltitude = mission.parameters["cruiseAltitude"] # TODO: Replace this as per a mission profile, for the none simple ones
+        self.cruiseAltitude = mission.parameters["cruiseAltitude"]
+        self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
         self.currentAltitude = mission.parameters["baseStationAltitude"]
         self.ascentDecentSpeed = ascentDecentSpeed
         if mission.profile == MissionProfile.VTOL_STRAIGHT:
@@ -371,7 +372,10 @@ class Drone:
             if leg == MissionLeg.CRUISE:
                 continue
             
-            time, dist, energy = eval( "self." + leg.string + "()" )
+            if self.mission.profile == MissionProfile.DOUBLE_CRUISE and ( leg == MissionLeg.ASCENT or leg == MissionLeg.DESCENT ):
+                time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
+            else:
+                time, dist, energy = eval( "self." + leg.string + "()" )
 
             timeInPeriods += time
             distInPeriods += dist

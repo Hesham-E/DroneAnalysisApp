@@ -119,8 +119,8 @@ Item {
 
     Text {
         id: cruiseAltitudeLabel
-        x: 174
-        y: 367
+        x: 176
+        y: 328
         objectName: "cruiseAltitudeLabel"
         text: qsTr("Cruise Altitude (m)")
         font.pixelSize: 18
@@ -137,7 +137,7 @@ Item {
     TextField {
         id: cruiseAltitudeInput
         x: 362
-        y: 361
+        y: 322
         objectName: "cruiseAltitudeInput"
         width: 80
         height: 36
@@ -148,8 +148,8 @@ Item {
 
     Text {
         id: baseStationAltitudeLabel
-        x: 126
-        y: 267
+        x: 128
+        y: 246
         text: qsTr("Base Station Altitude (m)")
         font.pixelSize: 18
         objectName: "baseStationAltitudeLabel"
@@ -166,7 +166,7 @@ Item {
     TextField {
         id: baseStationAltitudeInput
         x: 362
-        y: 261
+        y: 240
         width: 80
         height: 36
         text: qsTr("1")
@@ -178,7 +178,7 @@ Item {
     Text {
         id: vtolClimbLabel
         x: 128
-        y: 468
+        y: 407
         text: qsTr("VTOL Climb Altitude (m)")
         font.pixelSize: 18
         objectName: "vtolClimbLabel"
@@ -196,7 +196,7 @@ Item {
     TextField {
         id: vtolClimbInput
         x: 362
-        y: 462
+        y: 401
         width: 80
         height: 36
         text: qsTr("1")
@@ -208,8 +208,8 @@ Item {
 
     Text {
         id: vtolDescentLabel
-        x: 111
-        y: 552
+        x: 113
+        y: 488
         text: qsTr("VTOL Descent Altitude (m)")
         font.pixelSize: 18
         objectName: "vtolDescentLabel"
@@ -227,13 +227,44 @@ Item {
     TextField {
         id: vtolDescentInput
         x: 362
-        y: 546
+        y: 482
         width: 80
         height: 36
         text: qsTr("1")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         objectName: "vtolDescentInput"
+        visible: false
+    }
+
+    Text {
+        id: cruiseAltitude2Label
+        x: 113
+        y: 560
+        text: qsTr("Second Cruise Altitude (m)")
+        font.pixelSize: 18
+        objectName: "cruiseAltitude2Label"
+        visible: false
+
+        property string tip: "The second cruise altitude of the mission."
+        ToolTip.visible: tip ? cruiseAltitude2MA.containsMouse && cruiseAltitude2Label.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseAltitude2MA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: cruiseAltitude2Input
+        x: 362
+        y: 554
+        width: 80
+        height: 36
+        text: qsTr("1")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        objectName: "cruiseAltitude2Input"
         visible: false
     }
 

@@ -56,7 +56,7 @@ Item {
         y: 529
         width: 208
         height: 36
-        text: qsTr("(WIP) Select Profile #2")
+        text: qsTr("Select Profile #2")
         icon.color: "#000000"
         font.pixelSize: 18
     }
@@ -98,28 +98,7 @@ Item {
         y: 822
         width: 208
         height: 36
-        text: qsTr("(WIP) Select Profile #4")
-        icon.color: "#000000"
-        font.pixelSize: 18
-    }
-
-    Image {
-        id: imageProfile5
-        objectName: "imageProfile5"
-        x: 646
-        y: 625
-        width: 400
-        source: "images/MissionProfile5.png"
-        fillMode: Image.PreserveAspectFit
-    }
-    Button {
-        id: selectFiveButton
-        objectName: "selectFiveButton"
-        x: 742
-        y: 822
-        width: 208
-        height: 36
-        text: qsTr("(WIP) Select Profile #5")
+        text: qsTr("Select Profile #4")
         icon.color: "#000000"
         font.pixelSize: 18
     }
