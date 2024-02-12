@@ -22,9 +22,10 @@ Item {
     Image {
         id: imageProfile1
         objectName: "imageProfile1"
-        x: 25
-        y: 338
-        width: 400
+        x: 57
+        y: 322
+        width: 377
+        height: 190
         source: "images/MissionProfile1.png"
         fillMode: Image.PreserveAspectFit
     }
@@ -32,7 +33,7 @@ Item {
         id: selectOneButton
         objectName: "selectOneButton"
         x: 121
-        y: 529
+        y: 531
         width: 208
         height: 36
         text: qsTr("Select Profile #1")
@@ -44,7 +45,7 @@ Item {
         id: imageProfile2
         objectName: "imageProfile2"
         x: 440
-        y: 338
+        y: 327
         width: 400
         source: "images/MissionProfile2.png"
         fillMode: Image.PreserveAspectFit
@@ -53,7 +54,7 @@ Item {
         id: selectTwoButton
         objectName: "selectTwoButton"
         x: 536
-        y: 529
+        y: 531
         width: 208
         height: 36
         text: qsTr("Select Profile #2")
@@ -65,7 +66,7 @@ Item {
         id: imageProfile3
         objectName: "imageProfile3"
         x: 850
-        y: 342
+        y: 343
         width: 400
         source: "images/MissionProfile3.png"
         fillMode: Image.PreserveAspectFit
@@ -85,8 +86,8 @@ Item {
     Image {
         id: imageProfile4
         objectName: "imageProfile4"
-        x: 231
-        y: 625
+        x: 440
+        y: 614
         width: 400
         source: "images/MissionProfile4.png"
         fillMode: Image.PreserveAspectFit
@@ -94,8 +95,8 @@ Item {
     Button {
         id: selectFourButton
         objectName: "selectFourButton"
-        x: 327
-        y: 822
+        x: 536
+        y: 811
         width: 208
         height: 36
         text: qsTr("Select Profile #4")
