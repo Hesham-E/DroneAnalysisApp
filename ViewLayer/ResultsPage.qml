@@ -1,13 +1,18 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+import "."
 
 Item {
     id: resultsPage
-    width: 1280
-    height: 960
+    width: Style.screenWidth
+    height: Style.screenHeight
     objectName: "resultsPage"
     anchors.fill: parent
+
+    property var labelSize: 18
+    property var outputWidth: 200
+    property var outputHeight: 36
 
     Image {
         id: epJrE5C6_400x400
@@ -56,15 +61,15 @@ Item {
             id: minimumCruiseThrustSpeedLabel
             objectName: "minimumCruiseThrustSpeedLabel"
             text: qsTr("Minimum Cruise Thrust Speed (m/s)")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: minimumCruiseThrustSpeedOutput
             objectName: "minimumCruiseThrustSpeedOutput"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -74,7 +79,7 @@ Item {
             objectName: "stallSpeedLabel"
             height: 20
             text: "Stall Speed (m/s)"
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.RichText
@@ -82,10 +87,10 @@ Item {
         Text {
             id: stallSpeedOutput
             objectName: "stallSpeedOutput"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -94,15 +99,15 @@ Item {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
             text: qsTr("Maximum Speed (m/s)")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: maxSpeedOutput
             objectName: "maxSpeedOutput"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -111,15 +116,15 @@ Item {
             id: totalRangeLabel
             objectName: "totalRangeLabel"
             text: qsTr("Total Range (m)")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: totalRangeOutput
             objectName: "totalRangeOutput"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -132,10 +137,10 @@ Item {
         x: 536
         y: 874
         width: 208
-        height: 36
+        height: resultsPage.outputHeight
         text: qsTr("Go Back")
         icon.color: "#000000"
-        font.pixelSize: 18
+        font.pixelSize: resultsPage.labelSize
     }
 
     Text {
@@ -166,15 +171,15 @@ Item {
             id: typeLabel
             objectName: "typeLabel"
             text: qsTr("Mission Type")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: typeSummary
             objectName: "typeSummary"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -183,15 +188,15 @@ Item {
             id: performanceLabel
             objectName: "performanceLabel"
             text: qsTr("Performance Profile")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: performanceSummary
             objectName: "performanceSummary"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -201,15 +206,15 @@ Item {
             id: profileLabel
             objectName: "profileLabel"
             text: qsTr("Mission Profile")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: profileSummary
             objectName: "profileSummary"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -218,32 +223,32 @@ Item {
             id: missionDistanceLabel
             objectName: "missionDistanceLabel"
             text: qsTr("Target Distance (m)")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
             id: missionDistanceSummary
             objectName: "missionDistanceSummary"
-            width: 200
-            height: 36
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
 
         Text {
-            id: cruiseHeightLabel
-            objectName: "cruiseHeightLabel"
-            text: qsTr("Cruise Height (m)")
-            font.pixelSize: 18
+            id: cruiseAltitudeLabel
+            objectName: "cruiseAltitudeLabel"
+            text: qsTr("Cruise Altitude (m)")
+            font.pixelSize: resultsPage.labelSize
         }
         Text {
-            id: cruiseHeightSummary
-            objectName: "cruiseHeightSummary"
-            width: 200
-            height: 36
+            id: cruiseAltitudeSummary
+            objectName: "cruiseAltitudeSummary"
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
             text: qsTr("NA")
-            font.pixelSize: 18
+            font.pixelSize: resultsPage.labelSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }

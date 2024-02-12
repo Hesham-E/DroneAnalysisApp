@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+import "."
 
 Item {
     id: missionParametersPage
-    width: 1280
-    height: 960
+    width: Style.screenWidth
+    height: Style.screenHeight
     objectName: "missionParametersPage"
     anchors.fill: parent
 
@@ -31,16 +32,25 @@ Item {
 
     Text {
         id: missionDistanceLabel
-        x: 104
-        y: 379
+        x: 113
+        y: 167
         objectName: "missionDistanceLabel"
         text: qsTr("Total Mission Distance (m)")
         font.pixelSize: 18
+
+        property string tip: "The total distance between the start and finish points of the mission."
+        ToolTip.visible: tip ? missionDistanceMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: missionDistanceMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: missionDistanceInput
         x: 362
-        y: 373
+        y: 161
         objectName: "missionDistanceInput"
         width: 80
         height: 36
@@ -51,16 +61,25 @@ Item {
 
     Text {
         id: temperatureLabel
-        x: 818
-        y: 379
+        x: 826
+        y: 167
         objectName: "temperatureLabel"
         text: qsTr("Temperature (K)")
         font.pixelSize: 18
+
+        property string tip: "The current air temperature at the base station."
+        ToolTip.visible: tip ? temperatureMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: temperatureMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: temperatureInput
-        x: 985
-        y: 373
+        x: 998
+        y: 161
         objectName: "temperatureInput"
         width: 80
         height: 36
@@ -68,20 +87,58 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }
-
+    
     Text {
-        id: cruiseHeightLabel
-        x: 183
-        y: 530
-        objectName: "cruiseHeightLabel"
-        text: qsTr("Cruise Height (m)")
+        id: pressureLabel
+        x: 824
+        y: 267
+        objectName: "pressureLabel"
+        text: qsTr("Air Pressure (Pa)")
         font.pixelSize: 18
+
+        property string tip: "The current air pressure at the base station."
+        ToolTip.visible: tip ? pressureMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: pressureMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
-        id: cruiseHeightInput
+        id: pressureInput
+        x: 998
+        y: 261
+        objectName: "pressureInput"
+        width: 80
+        height: 36
+        text: qsTr("101325")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Text {
+        id: cruiseAltitudeLabel
+        x: 176
+        y: 328
+        objectName: "cruiseAltitudeLabel"
+        text: qsTr("Cruise Altitude (m)")
+        font.pixelSize: 18
+
+        property string tip: "The cruise altitude of the mission."
+        ToolTip.visible: tip ? cruiseAltitudeMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseAltitudeMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: cruiseAltitudeInput
         x: 362
-        y: 530
-        objectName: "cruiseHeightInput"
+        y: 322
+        objectName: "cruiseAltitudeInput"
         width: 80
         height: 36
         text: qsTr("1")
@@ -90,23 +147,125 @@ Item {
     }
 
     Text {
-        id: pressureLabel
-        x: 816
-        y: 530
-        objectName: "pressureLabel"
-        text: qsTr("Air Pressure (Pa)")
+        id: baseStationAltitudeLabel
+        x: 128
+        y: 246
+        text: qsTr("Base Station Altitude (m)")
         font.pixelSize: 18
+        objectName: "baseStationAltitudeLabel"
+        
+        property string tip: "The base station altitude. Used as a reference point for the takeoff altitude and atmosphereic conditions in the air."
+        ToolTip.visible: tip ? baseStationAltitudeMA.containsMouse && baseStationAltitudeLabel.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: baseStationAltitudeMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
-        id: pressureInput
-        x: 985
-        y: 530
-        objectName: "pressureInput"
+        id: baseStationAltitudeInput
+        x: 362
+        y: 240
         width: 80
         height: 36
-        text: qsTr("101325")
+        text: qsTr("1")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        objectName: "baseStationAltitudeInput"
+    }
+
+    Text {
+        id: vtolClimbLabel
+        x: 128
+        y: 407
+        text: qsTr("VTOL Climb Altitude (m)")
+        font.pixelSize: 18
+        objectName: "vtolClimbLabel"
+        visible: false
+        
+        property string tip: "The altitude to climb to after take off in VTOL mode. The drone will switch to fixed wing ascent after reaching this altitude."
+        ToolTip.visible: tip ? vtolClimbMA.containsMouse && vtolClimbLabel.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: vtolClimbMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: vtolClimbInput
+        x: 362
+        y: 401
+        width: 80
+        height: 36
+        text: qsTr("1")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        objectName: "vtolClimbInput"
+        visible: false
+    }
+
+    Text {
+        id: vtolDescentLabel
+        x: 113
+        y: 488
+        text: qsTr("VTOL Descent Altitude (m)")
+        font.pixelSize: 18
+        objectName: "vtolDescentLabel"
+        visible: false
+
+        property string tip: "The altitude to begin VTOL landing from. The drone will have descended to this altitude in fixed wing mode from the cruise altitude."
+        ToolTip.visible: tip ? vtolDescentMA.containsMouse && vtolDescentLabel.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: vtolDescentMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: vtolDescentInput
+        x: 362
+        y: 482
+        width: 80
+        height: 36
+        text: qsTr("1")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        objectName: "vtolDescentInput"
+        visible: false
+    }
+
+    Text {
+        id: cruiseAltitude2Label
+        x: 113
+        y: 560
+        text: qsTr("Second Cruise Altitude (m)")
+        font.pixelSize: 18
+        objectName: "cruiseAltitude2Label"
+        visible: false
+
+        property string tip: "The second cruise altitude of the mission."
+        ToolTip.visible: tip ? cruiseAltitude2MA.containsMouse && cruiseAltitude2Label.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseAltitude2MA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: cruiseAltitude2Input
+        x: 362
+        y: 554
+        width: 80
+        height: 36
+        text: qsTr("1")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        objectName: "cruiseAltitude2Input"
+        visible: false
     }
 
     Text {
@@ -117,6 +276,15 @@ Item {
         text: qsTr("Payload Weight (kg)")
         font.pixelSize: 18
         visible: false
+
+        property string tip: "The weight of the payload transported."
+        ToolTip.visible: tip ? loadWeightMA.containsMouse && loadWeightLabel.visible : false
+        ToolTip.text: tip
+        MouseArea {
+            id: loadWeightMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
     TextField {
         id: loadWeightInput

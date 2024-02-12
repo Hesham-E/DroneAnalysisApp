@@ -25,17 +25,17 @@ class Drone:
         self.wingSpan = wingSpan
         self.wingArea = wingArea
         self.airFoil = int(airFoil)
-        self.reynoldsNum = reynoldsNum
+        self.reynoldsNum = 100000 # Reynolds number for model aircrafts
 
         self.fuselageRadius = fuselageRadius
         self.fuselageLength = fuselageLength
 
         # IMPORTANT NOTE:
-        # Anderson's book uses a variable W for weight.
+        # Anderson's book uses sometimes uses W/S, a variable W for weight.
         # This appears to be weight in it's most literal sense.
-        # As in order to convert the equations found in this book,
+        # As in order to convert the WING LOADING equations found in this book,
         # we must multiply any W by acceleration of gravity.
-        # We surmise this may be to the imperial unit of "slug"
+        # We surmise this may be to the imperial unit of "slug" found in wing loading.
         self.weight = weight
         self.loadWeight = mission.parameters["loadWeight"]
         self.totalMass = weight + batteryWeight + mission.parameters["loadWeight"]
@@ -48,9 +48,15 @@ class Drone:
         self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
-        self.cruiseAltitude = mission.parameters["cruiseHeight"] # TODO: Replace this as per a mission profile, for the none simple ones
-        self.targetAltitude = mission.parameters["cruiseHeight"]
+        self.mission = mission
+
+        self.cruiseAltitude = mission.parameters["cruiseAltitude"]
+        self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
+        self.currentAltitude = mission.parameters["baseStationAltitude"]
         self.ascentDecentSpeed = ascentDecentSpeed
+        if mission.profile == MissionProfile.VTOL_STRAIGHT:
+            self.mission.parameters["vtolClimb"] = self.cruiseAltitude
+        print(self.mission.parameters)
 
         self.targetDistance = mission.parameters["missionDistance"]
 
@@ -58,8 +64,6 @@ class Drone:
 
         self.pressure = mission.parameters["pressure"]
         self.temperature = mission.parameters["temperature"]
-
-        self.mission = mission
 
         self.ellipticalDistribution = 1.1
         self.liftDistribution = 0.95
@@ -77,7 +81,6 @@ class Drone:
     
     def adjustReynoldsNumberToValue(self, num):
         availableData = [50000, 100000, 200000, 500000, 1000000]
-        print(min(availableData, key=lambda x:abs(x - num)))
         return min(availableData, key=lambda x:abs(x - num))
     
     def calcStallSpeed(self):
@@ -96,24 +99,73 @@ class Drone:
         thrustWeightRatio = thrust / self.totalWeight
         wingLoading = self.totalWeight / self.wingArea
 
-        vMaxSquared = (thrustAreaRatio + wingLoading * math.sqrt((thrustWeightRatio ** 2) - 4 * self.calcZeroLiftDragCoefficient() * coefficientK)) / (airDensity * self.calcZeroLiftDragCoefficient())
+        vMaxSquared = (thrustAreaRatio + wingLoading * math.sqrt( ( thrustWeightRatio ** 2 ) - 4 * self.calcZeroLiftDragCoefficient() * coefficientK ) ) / ( airDensity * self.calcZeroLiftDragCoefficient() )
         return math.sqrt(vMaxSquared)
     
-    def calcLift(self):
+    def calcLift(self, max = False):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
 
-        return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
+        if ( max ):
+            return 0.5 * airDensity * ( self.calcEfficientSpeed() ** 2 ) * self.wingArea * liftCoefficient
+        else:
+            return 0.5 * airDensity * ( self.calcCruiseSpeed() ** 2 ) * self.wingArea * liftCoefficient
+    
+    def calcTailWettedArea(self):
+        lambdaC = 0.5
+        cR = 2 * self.wingArea / ( ( lambdaC + 1 ) * self.wingSpan )
+        cBar = 2 / 3 * cR * ( ( 1 + lambdaC + lambdaC ** 2 ) / ( 1 + lambdaC ) )
+
+        Lht = self.fuselageLength / 1.511
+        Lvt = self.fuselageLength / 1.619
+
+        VHT = 0.7
+        VVT = 0.04
+
+        horizontalWettedArea = cBar * self.wingArea * VHT / Lht
+        verticalWettedArea = self.wingSpan * self.wingArea * VVT / Lvt
+
+        return horizontalWettedArea + verticalWettedArea
+    
+    def calcFuselageWettedArea(self):
+        # Fuselage is split into three sections according to page 450, figure 8.28 of Anderson book
+
+        secA1 = 2 * 0.6845 * math.pi * self.fuselageRadius ** 2
+        secA2 = 2 * math.pi * math.sqrt( ( self.fuselageRadius ** 2 + ( 2 * self.fuselageRadius * 0.6845 ) ** 2 ) / 2 )
+        secA3 = self.fuselageLength * 0.2495
+
+        secA = secA1 + secA2 * secA3
+
+        secB1 = ( 2 * self.fuselageRadius ) ** 2 * math.pi / 4
+        secB2 = 2 * math.pi * 0.6845 * self.fuselageRadius ** 2
+        secB3 = 2 * math.pi * self.fuselageRadius * self.fuselageLength * 0.4177
+
+        secB = secB1 - secB2 + secB3
+
+        secC = math.pi * self.fuselageRadius ** 3 + self.fuselageLength * 0.33
+
+        return secA + secB + secC
+    
+    def calcWettedArea(self):
+        return self.calcFuselageWettedArea() + self.calcTailWettedArea() + self.wingArea
+    
+    def calcReferenceArea(self):
+        lambdaC = 0.5
+        cR = 2 * self.wingArea / ( ( lambdaC + 1 ) * self.wingSpan )
+
+        # should never be negative, abs() just makes it easier to test the code with dummy values
+        return abs( self.wingArea - cR * self.fuselageRadius )
     
     def calcZeroLiftDragCoefficient(self):
-        skinFrictionCoefficient = 0.0776 * ((math.log(10000000, 10) - 1.88) ** -2) + 60 / 10000000
+        skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
         skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
 
-        wettedAndReferenceAreaRatio = 4 # Can be approximated as this according to Anderson's textbook for single propellor planes
+        wettedAndReferenceAreaRatio = self.calcWettedArea() / self.calcReferenceArea()
+
         return wettedAndReferenceAreaRatio * skinFrictionCoefficient
 
     def calcLiftInducedDrag(self):
-        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        airDensity = self.atmConditions.calcAirDensity( self.pressure, self.temperature )
         weight = self.weight + self.loadWeight + self.batteryWeight
         weightChordRatio = ( weight /  airDensity ) ** 2
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
@@ -121,25 +173,21 @@ class Drone:
         return (self.ellipticalDistribution * weightChordRatio) / (q * math.pi)
 
     def calcParasiticDrag(self):
-        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        airDensity = self.atmConditions.calcAirDensity( self.pressure, self.temperature )
         q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
-        liftCoefficent = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
-        wingParasiticDragCoefficient = self.dragLiftInterface.getParasiticDragCoefficient(self.angleOfAttack)
+        liftCoefficent = self.dragLiftInterface.getLiftCoefficient( self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution )
+        wingParasiticDragCoefficient = self.dragLiftInterface.getParasiticDragCoefficient( self.angleOfAttack )
 
-        skinRoughnessFactor = 6.34 * (10 ** -6)
-        reynoldsCutoff = 38.21 * ( (self.fuselageLength / skinRoughnessFactor) ** 1.053 )
-        reynoldsCutoff = reynoldsCutoff if 200000 > reynoldsCutoff else 200000
-        skinFrictionCoefficient = 0.0776 * ((math.log(reynoldsCutoff, 10) - 1.88) ** -2) + 60 / reynoldsCutoff
+        skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
         skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
 
         fuselageFormFactor = 1 + (60 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 3) + (self.fuselageLength / (2 * self.fuselageRadius) / 400))
-        #abs() in fuselage area might be a bandaid
         fuselageArea = math.pi * 2 * self.fuselageRadius * self.fuselageLength * (abs(1 - 2 / (self.fuselageLength / (self.fuselageRadius * 2))) ** (2/3)) * (1 + 1 / ((self.fuselageLength / (2 * self.fuselageRadius)) ** 2))
         fuseLageCoefficient = skinFrictionCoefficient * fuselageFormFactor * (fuselageArea / self.wingArea)
         
         return ( (wingParasiticDragCoefficient + fuseLageCoefficient) + self.ellipticalDistribution * (liftCoefficent ** 2) ) / (q * self.wingArea)
 
-    def calcDrag(self):        
+    def calcDrag(self, max = False):        
         liftCoefficient = self.dragLiftInterface.getLiftCoefficient(self.angleOfAttack, self.wingSpan, self.wingArea, self.liftDistribution)
         liftInducedDragCoefficient = liftCoefficient ** 2 / (math.pi * self.ellipticalDistribution * self.calcAspectRatio())
         
@@ -147,136 +195,208 @@ class Drone:
         dragCoefficient += liftInducedDragCoefficient
 
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-        q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
+
+        if (max):
+            q = 0.5 * airDensity * math.pi * ( self.calcEfficientSpeed() ) ** 2
+        else:
+            q = 0.5 * airDensity * math.pi * ( self.calcCruiseSpeed() ) ** 2
         return dragCoefficient * q * self.wingArea
     
-    def calcTakeOff1(self):
-        thrust = self.vtolMotorTableInterface.getMaxThrust() * 4
-        takeOffAccel = thrust / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time11 = self.ascentDecentSpeed / takeOffAccel
-        dist11 = 0.5 * takeOffAccel * (time11 ** 2)
-        energy11 = self.vtolMotorTableInterface.getMaxPower() * 4 * time11
-        return time11, dist11, energy11
+    def calcMaxLiftDragRatio(self):
+        return self.calcLift( max = True ) / self.calcDrag( max = True )
     
-    def calcTakeOff3(self):
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
-        accel = hoverForce / (self.weight + self.loadWeight + self.batteryWeight)
-        time13 = -1 * self.ascentDecentSpeed / accel
-        dist13 = self.ascentDecentSpeed * time13 + 0.5 * accel * (time13 ** 2)
-        energy13 = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * time13 * 4
+    def calcRateOfClimb(self):
+        velocityROCMax =  2 / self.atmConditions.calcAirDensity( self.pressure, self.temperature ) * \
+                          math.sqrt(self.liftDistribution / 3 * self.calcZeroLiftDragCoefficient()) * \
+                          self.totalWeight / self.wingArea
+        velocityROCMax = velocityROCMax ** 0.5
 
-        return time13, dist13, energy13
+        return self.cruiseMotorTableInterface.getMechanicalPowerAtThrust( self.cruiseMotorTableInterface.getMaxThrust() ) / self.totalMass \
+               - velocityROCMax * 1.155 / ( self.calcMaxLiftDragRatio() )
+    
+    def calcRateOfDescent(self):
+        vThetaMin = math.sqrt( 2 / self.atmConditions.calcAirDensity( self.pressure, self.temperature ) \
+                          * math.sqrt( self.liftDistribution / self.calcZeroLiftDragCoefficient() ) \
+                          * ( self.totalWeight / self.wingArea ) )
+        thetaMin = math.atan( 1 / self.calcMaxLiftDragRatio() )
+
+        return vThetaMin *  math.sin(thetaMin)
+    
+    def calcFixedWingClimb(self, targetAltitude = None, currentAltitude = None):
+        if targetAltitude == None:
+            targetAltitude = self.cruiseAltitude
+        if currentAltitude == None:
+            currentAltitude = self.currentAltitude
+
+        distFWC = targetAltitude - currentAltitude # vertical height
+        timeFWC = distFWC / self.calcRateOfClimb()
+        energyFWC = self.cruiseMotorTableInterface.getMaxPower() * timeFWC
+
+        # converting distFWC to a horizontal component
+        thrust = self.cruiseMotorTableInterface.getMaxThrust()
+        
+        # abs() for testing with dummy values
+        # if statement for testing with dummy values
+        sinTheta = abs( thrust / self.totalMass - 1 / self.calcMaxLiftDragRatio() )
+        if sinTheta < -1:
+            sinTheta = -1
+        elif sinTheta > 1:
+            sinTheta = 1
+
+        theta = math.asin( sinTheta )
+        distFWC = distFWC / math.tan( theta ) # horizontal height
+
+        self.currentAltitude = targetAltitude
+
+        return timeFWC, distFWC, energyFWC
+    
+    def calcFixedWingDescent(self, targetAltitude = None, currentAltitude = None):
+        if targetAltitude == None:
+            targetAltitude = self.mission.parameters["vtolDescent"]
+        if currentAltitude == None:
+            currentAltitude = self.currentAltitude
+        
+        distFWD = currentAltitude - targetAltitude # vertical height
+        timeFWD = distFWD / self.calcRateOfDescent() # time based on vertical speed
+        energyFWD = self.auxPowerCon * timeFWD # Unpowered glide
+        
+        # convert distFWD to a horizontal component
+        thetaMin = math.atan( 1 / self.calcMaxLiftDragRatio() )
+        distFWD = distFWD / math.tan( thetaMin ) # convert distance to horizontal distance
+
+        self.currentAltitude = targetAltitude
+
+        return timeFWD, distFWD, energyFWD
+
+    def calcVTOLTakeOffAcceleration(self):
+        # Acceleration Stage Time
+        thrust = self.vtolMotorTableInterface.getMaxThrust() * 4
+        takeOffAccel = thrust / self.totalMass - G_ACCEL
+        timeTA = self.ascentDecentSpeed / takeOffAccel
+        distTA = 0.5 * takeOffAccel * (timeTA ** 2)
+        energyTA = self.vtolMotorTableInterface.getMaxPower() * 4 * timeTA
+        return timeTA, distTA, energyTA
+    
+    def calcVTOLTakeOffDeceleration(self):
+        # Deceleration Stage Time
+        hoverForce = self.totalMass * G_ACCEL * UNDER_HOVER_FORCE
+        accel = hoverForce / self.totalMass
+        timeTD = self.ascentDecentSpeed / accel
+        distTD = self.ascentDecentSpeed * timeTD + 0.5 * accel * (timeTD ** 2)
+        energyTD = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * timeTD * 4
+
+        return timeTD, distTD, energyTD
     
     def calcTakeOff(self):
-        time11, dist11, energy11 = self.calcTakeOff1()
-        time13, dist13, energy13 = self.calcTakeOff3()
+        timeTA, distTA, energyTA = self.calcVTOLTakeOffAcceleration()
+        timeTD, distTD, energyTD = self.calcVTOLTakeOffDeceleration()
 
-        dist12 = self.targetAltitude - dist11 - dist13
-        time12 = dist12 / self.ascentDecentSpeed
+        dist = self.mission.parameters["vtolClimb"] - self.mission.parameters["baseStationAltitude"] - distTA - distTD
+        time = dist / self.ascentDecentSpeed
 
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy12 = time12 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
+        hoverForce = self.totalMass * G_ACCEL
+        energy = time * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
 
-        totalTime = time11 + time12 + time13
-        totalDist = dist11 + dist12 + dist13
-        totalEnergy = energy11 + energy12 + energy13
+        totalTime = timeTA + time + timeTD
+        totalDist = distTA + dist + distTD
+        totalEnergy = energyTA + energy + energyTD
+
+        self.currentAltitude += totalDist
         
         return totalTime, totalDist, totalEnergy
     
-    def calcPeriod2(self):
+    def calcAccelerationTransitionPeriod(self):
+        # Period 2: where we transfer from VTOL to fixed wing mode
         cruiseThrust = self.calcCruiseThrust()
-        cruiseAccel = cruiseThrust / (self.weight + self.loadWeight + self.batteryWeight)
-        time2 = ( self.calcCruiseSpeed() / cruiseAccel ) * math.atanh( self.calcStallSpeed() / self.calcCruiseSpeed() )
+        cruiseAccel = cruiseThrust / self.totalMass
+        timeAT = ( self.calcCruiseSpeed() / cruiseAccel ) * math.atanh( self.calcStallSpeed() / self.calcCruiseSpeed() )
+        distAT = 0.5 * cruiseAccel * ( timeAT ** 2 )
         
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy2 = time2 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
+        hoverForce = self.totalMass * G_ACCEL
+        energyAT = timeAT * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
 
-        return time2, energy2
+        return timeAT, distAT, energyAT
     
-    def calcPeriod23(self):
+    def calcAccelerationPeriod(self):
+        # Period 23: Acceleration to cruise speed
         cruiseSpeed = self.calcCruiseSpeed()
-
         cruiseThrust = self.calcCruiseThrust()
-        cruiseAccel = cruiseThrust / (self.weight + self.loadWeight + self.batteryWeight)
-        time23 = (cruiseSpeed / cruiseAccel) * math.atanh(0.99)
-        dist23 = cruiseSpeed * math.log( math.cosh(time23 * cruiseAccel / cruiseSpeed) ) / (cruiseAccel / cruiseSpeed)
-        energy23 = time23 * cruiseThrust
+        cruiseAccel = cruiseThrust / self.totalMass
+        timeA = (cruiseSpeed / cruiseAccel) * math.atanh( 0.99 )
+        distA = ( cruiseSpeed ** 2 ) * math.log( math.cosh( timeA * cruiseAccel / cruiseSpeed ) ) / ( cruiseThrust / self.totalMass )
+        energyA = timeA * self.cruiseMotorTableInterface.getPowerAtThrust( cruiseThrust )
 
-        return time23, dist23, energy23
+        return timeA, distA, energyA
     
-    def calcPeriod5(self):
-        stallSpeed = self.calcStallSpeed()
-        cruiseSpeed = self.calcCruiseSpeed()
-        densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        totalWeight = self.weight + self.loadWeight + self.batteryWeight
+    def calcVTOLLandingAcceleration(self):
+        hoverForce = self.totalMass * G_ACCEL * UNDER_HOVER_FORCE
+        accel = hoverForce / self.totalMass - G_ACCEL
+        timeLA = self.ascentDecentSpeed / accel
+        distLA = self.ascentDecentSpeed * timeLA + 0.5 * accel * (timeLA ** 2)
+        energyLA = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4 * timeLA
 
-        time5 = (1 / stallSpeed - 1 / cruiseSpeed) - ( densityAltitude * self.calcDrag() / (2 * totalWeight))
-        return time5
+        return timeLA, distLA, energyLA
 
-    def calcPeriod6(self):
-        cruiseSpeed = self.calcCruiseSpeed()
-        densityAltitude = self.atmConditions.calcIdealDensityAltitude(self.pressure, self.temperature)
-        totalWeight = self.weight + self.loadWeight + self.batteryWeight
-        time5 = self.calcPeriod5()
-
-        time6 = (1 / 0.5 - 1 / cruiseSpeed) - ( densityAltitude * self.calcDrag() / (2 * totalWeight)) - time5
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy6 = time6 * self.vtolMotorTableInterface.getPowerAtThrust( hoverForce / 4 ) * 4
-
-        return time6, energy6
-    
-    def calcLanding1(self):
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL * UNDER_HOVER_FORCE
-        accel = hoverForce / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time71 = -1 * self.ascentDecentSpeed / accel
-        dist71 = self.ascentDecentSpeed * time71 + 0.5 * accel * (time71 ** 2)
-        energy71 = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4 * time71
-
-        return time71, dist71, energy71
-
-    def calcLanding3(self):
+    def calcVTOLLandingDeceleration(self):
         maxThrust = self.vtolMotorTableInterface.getMaxThrust() * 4
-        accel = maxThrust / (self.weight + self.loadWeight + self.batteryWeight) - G_ACCEL
-        time73 = self.ascentDecentSpeed / accel
-        dist73 = 0.5 * accel * (time73 ** 2)
-        energy73 = self.vtolMotorTableInterface.getMaxPower() * 4 * time73
+        accel = maxThrust / self.totalMass - G_ACCEL
+        timeLD = self.ascentDecentSpeed / accel
+        distLD = 0.5 * accel * (timeLD ** 2)
+        energyLD = self.vtolMotorTableInterface.getMaxPower() * 4 * timeLD
 
-        return time73, dist73, energy73
+        return timeLD, distLD, energyLD
     
     def calcLanding(self):
-        time71, dist71, energy71 = self.calcLanding1()
-        time73, dist73, energy73 = self.calcLanding3()
+        timeLA, distLA, energyLA = self.calcVTOLLandingAcceleration()
+        timeLD, distLD, energyLD = self.calcVTOLLandingDeceleration()
 
-        dist72 = self.targetAltitude - dist71 - dist73
-        time72 = dist72 / self.ascentDecentSpeed
-        hoverForce = (self.weight + self.loadWeight + self.batteryWeight) * G_ACCEL
-        energy72 = time72 * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
+        dist = self.currentAltitude - self.mission.parameters["baseStationAltitude"] - distLA - distLD
+        time = dist / self.ascentDecentSpeed
+        hoverForce = self.totalMass * G_ACCEL
+        energy = time * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
 
-        totalTime = time71 + time72 + time73
-        totalDist = dist71 + dist72 + dist73
-        totalEnergy = energy71 + energy72 + energy73
+        totalTime = timeLA + time + timeLD
+        totalDist = distLA + dist + distLD
+        totalEnergy = energyLA + energy + energyLD
+
+        self.currentAltitude -= totalDist
 
         return totalTime, totalDist, totalEnergy
     
-    def calcPeriod4(self):
-        time1, dist1, energy1 = self.calcTakeOff()
-        time2, energy2 = self.calcPeriod2()
-        time23, dist23, energy23 = self.calcPeriod23()
-        time5 = self.calcPeriod5()
-        time6, energy6 = self.calcPeriod6()
-        time7, dist7, energy7 = self.calcLanding()
+    def calcCruisePeriod(self):
+        timeInPeriods = 0
+        distInPeriods = 0
+        energyInPeriods = 0
 
-        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(self.calcCruiseThrust())
-        time4 = ( self.batteryEnergy - energy1 - energy2 - energy23 - energy6 - energy7 - self.auxPowerCon * (time1 + time23 + time5 + time6 + time7) ) / (cruisePower + self.auxPowerCon)
-        dist4 = time4 * self.calcCruiseSpeed()
+        for leg in self.mission.legs:
+            if leg == MissionLeg.CRUISE:
+                continue
+            
+            if self.mission.profile == MissionProfile.DOUBLE_CRUISE and ( leg == MissionLeg.ASCENT or leg == MissionLeg.DESCENT ):
+                time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
+            else:
+                time, dist, energy = eval( "self." + leg.string + "()" )
 
-        return time4, dist4
-    
+            timeInPeriods += time
+            distInPeriods += dist
+            energyInPeriods += energy
+
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+        timeC = ( self.batteryEnergy - energyInPeriods - self.auxPowerCon * timeInPeriods ) / ( cruisePower + self.auxPowerCon )
+        distC = timeC * self.calcCruiseSpeed()
+        energyC = cruisePower * timeC
+
+        return timeC, distC, energyC
+
     def calcMaxRange(self):
-        time23, dist23, energy23 = self.calcPeriod23()
-        time4, dist4 = self.calcPeriod4()
+        timeC, distC, energyC = self.calcCruisePeriod()
 
-        return dist4 + dist23
+        if MissionLeg.ACCELERATION in self.mission.legs:
+            timeA, distA, energyA = self.calcAccelerationPeriod()
+            distA *= self.mission.legs.count( MissionLeg.ACCELERATION )
+            return distC + distA
+        else:
+            return distC
     
     def calcCruiseSpeed(self):
         if self.mission.performance == MissionPerformance.PERFORMANCE:

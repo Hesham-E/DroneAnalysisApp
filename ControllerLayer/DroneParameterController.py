@@ -84,7 +84,7 @@ class DroneParameterController:
     
     def goBack(self):
         paramWindow = self.window.findChild(QObject, "droneParametersPage")
-        profileWindow = self.window.findChild(QObject, "missionProfilePage")
+        profileWindow = self.window.findChild(QObject, "missionParamtersPage")
 
         profileWindow.setProperty("visible", True)
         paramWindow.setProperty("visible", False)
