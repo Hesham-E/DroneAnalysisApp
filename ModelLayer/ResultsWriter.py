@@ -19,6 +19,7 @@ class ResultsWriter:
         currSOC = 100
         currEnergy = self.batteryEnergy
 
+        print(currEnergy)
         print(self.legInfos)
 
         for leg in self.legInfos:
@@ -26,16 +27,23 @@ class ResultsWriter:
             steps = totalTime / self.timeStep
             distanceStep = leg["distanceTravelled"] / steps
             energyStep = leg["energyExpended"] / steps
+            print(energyStep)
             altitudeStep = ( leg["altitudeEnd"] - leg["altitudeStart"] ) / steps
 
-            while currTime <= leg["timeEnd"]:
-                self.rows.append( [f"{currTime}", f"{currAltitude}", f"{currDistance}", f"{currSOC:3f}"] )
+            periodTime = 0
+
+            while periodTime <= leg["timeEnd"]:
+                self.rows.append( [f"{currTime}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
 
                 currTime += self.timeStep
                 currDistance += distanceStep
                 currAltitude += altitudeStep
                 currEnergy -= energyStep
                 currSOC = currEnergy / self.batteryEnergy * 100
+
+                periodTime += self.timeStep
+            
+            self.rows.append(["Next Period"])
     
     def exportToCSV(self, filePath):
         fileName = "detailedResults.csv"

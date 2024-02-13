@@ -246,7 +246,7 @@ class Drone:
             sinTheta = 1
 
         theta = math.asin( sinTheta )
-        distFWC = distFWC / math.tan( theta ) # horizontal height
+        distFWC = distFWC / math.tan( theta ) # horizontal distance
 
         self.currentAltitude = targetAltitude
 
@@ -365,6 +365,9 @@ class Drone:
         totalDist = distLA + dist + distLD
         totalEnergy = energyLA + energy + energyLD
 
+        print(energyLA, energy, energyLD)
+        print(distLA, dist, distLD)
+
         self.currentAltitude -= totalDist
 
         return totalTime, totalDist, totalEnergy
@@ -385,6 +388,7 @@ class Drone:
         timeInPeriods = 0
         distInPeriods = 0
         energyInPeriods = 0
+        horizontalDistance = 0
 
         cruisePeriods = []
 
@@ -401,8 +405,6 @@ class Drone:
                 time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
             else:
                 time, dist, energy = eval( "self." + leg.string + "()" )
-                print(leg.string)
-                print(time, dist, energy)
 
             self.resultsWriter.legInfos[count]["timeStart"] = timeInPeriods
             self.resultsWriter.legInfos[count]["timeEnd"] = timeInPeriods + time
@@ -414,10 +416,16 @@ class Drone:
             distInPeriods += dist
             energyInPeriods += energy
 
-        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
-        timeC = ( self.batteryEnergy - energyInPeriods - self.auxPowerCon * timeInPeriods ) / ( cruisePower + self.auxPowerCon )
-        distC = timeC * self.calcCruiseSpeed()
+            if leg != MissionLeg.VTOL_LANDING and leg != MissionLeg.VTOL_TAKEOFF:
+                horizontalDistance += dist
+
+        distC = horizontalDistance
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() ) + self.auxPowerCon
+        timeC = distC / self.calcCruiseSpeed()
         energyC = cruisePower * timeC
+
+        print("cruise")
+        print(timeC, distC, energyC)
 
         for count, cruisePeriod in enumerate( cruisePeriods ):
             self.resultsWriter.legInfos[cruisePeriod]["timeStart"] = self.resultsWriter.legInfos[cruisePeriod - 1]["timeEnd"]
