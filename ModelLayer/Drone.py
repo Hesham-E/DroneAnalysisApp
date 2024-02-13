@@ -2,6 +2,7 @@ from .AtmosphereConditions import AtmosphereConditions
 from .DragLiftCoefficientInterface import DragLiftCoefficientInterface
 from .MotorTableInterface import MotorTableInterface
 from .Mission import *
+from .ResultsWriter import ResultsWriter
 import math
 
 
@@ -72,6 +73,7 @@ class Drone:
         self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(reynoldsNum)}_Subset_1.csv")
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
+        self.resultsWriter = ResultsWriter()
 
         # For future reverse engineering purposes
         if self.pressure == None:
@@ -368,8 +370,11 @@ class Drone:
         distInPeriods = 0
         energyInPeriods = 0
 
+        cruisePeriods = 0
+
         for leg in self.mission.legs:
             if leg == MissionLeg.CRUISE:
+                cruisePeriods += 1
                 continue
             
             if self.mission.profile == MissionProfile.DOUBLE_CRUISE and ( leg == MissionLeg.ASCENT or leg == MissionLeg.DESCENT ):

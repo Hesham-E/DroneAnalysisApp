@@ -254,12 +254,13 @@ Item {
         }
     }
 
-    Button {
-        id: button
+    Button { // TODO: Make this into a file dialog
+        id: csvButton
+        objectName: "csvButton"
         x: 161
         y: 513
         width: 231
         height: 34
-        text: qsTr("(WIP) Export Detailed Results")
+        text: qsTr("Export Detailed Results")
     }
 }
