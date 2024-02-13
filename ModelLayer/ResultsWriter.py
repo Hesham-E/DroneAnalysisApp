@@ -29,13 +29,13 @@ class ResultsWriter:
             altitudeStep = ( leg["altitudeEnd"] - leg["altitudeStart"] ) / steps
 
             while currTime <= leg["timeEnd"]:
-                self.rows.append( [f"{currTime}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
+                self.rows.append( [f"{currTime}", f"{currAltitude}", f"{currDistance}", f"{currSOC:3f}"] )
 
                 currTime += self.timeStep
                 currDistance += distanceStep
                 currAltitude += altitudeStep
                 currEnergy -= energyStep
-                currSOC = currEnergy / self.batteryEnergy
+                currSOC = currEnergy / self.batteryEnergy * 100
     
     def exportToCSV(self, filePath):
         fileName = "detailedResults.csv"

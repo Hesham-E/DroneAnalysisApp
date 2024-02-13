@@ -369,6 +369,18 @@ class Drone:
 
         return totalTime, totalDist, totalEnergy
     
+    # def calcCruisePeriod(self):
+    #     timeT, distT, energyT = self.calcTakeOff()
+    #     timeAT, energyAT = self.calcAccelerationTransitionPeriod()
+    #     timeA, distA, energyA = self.calcAccelerationPeriod()
+    #     timeL, distL, energyL = self.calcLanding()
+
+    #     cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust(self.calcCruiseThrust())
+    #     timeC = ( self.batteryEnergy - energyT - energyAT - energyA - energyL - self.auxPowerCon * (timeT + timeA + timeL) ) / (cruisePower + self.auxPowerCon)
+    #     distC = timeC * self.calcCruiseSpeed()
+
+    #     return timeC, distC
+    
     def calcCruisePeriod(self):
         timeInPeriods = 0
         distInPeriods = 0
