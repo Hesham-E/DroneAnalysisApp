@@ -293,7 +293,11 @@ class Drone:
         timeTA, distTA, energyTA = self.calcVTOLTakeOffAcceleration()
         timeTD, distTD, energyTD = self.calcVTOLTakeOffDeceleration()
 
-        dist = self.mission.parameters["vtolClimb"] - self.mission.parameters["baseStationAltitude"] - distTA - distTD
+        if self.mission.profile == MissionProfile.VTOL_STRAIGHT or self.mission.profile == MissionProfile.DOUBLE_CRUISE:
+            dist = self.cruiseAltitude - self.mission.parameters["baseStationAltitude"] - distTA - distTD
+        else:
+            dist = self.mission.parameters["vtolClimb"] - self.mission.parameters["baseStationAltitude"] - distTA - distTD
+        
         time = dist / self.ascentDecentSpeed
 
         hoverForce = self.totalMass * G_ACCEL
@@ -377,7 +381,7 @@ class Drone:
                 cruisePeriods += 1
                 continue
             
-            if self.mission.profile == MissionProfile.DOUBLE_CRUISE and ( leg == MissionLeg.ASCENT or leg == MissionLeg.DESCENT ):
+            if self.mission.profile == MissionProfile.DOUBLE_CRUISE and leg == MissionLeg.ASCENT:
                 time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
             else:
                 time, dist, energy = eval( "self." + leg.string + "()" )

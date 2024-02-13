@@ -81,10 +81,6 @@ class MissionController:
 
     def selectProfileFour(self):
         self.missionProfile = MissionProfile.SWEEP
-        
-        self.parameterWindow.findChild(QObject, "vtolClimbLabel").setProperty("visible", True)
-        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("visible", True)
-        self.parameterWindow.findChild(QObject, "vtolClimbInput").setProperty("text", "0")
 
         self.parameterWindow.findChild(QObject, "vtolDescentLabel").setProperty("visible", True)
         self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("visible", True)

@@ -9,7 +9,7 @@ class ResultsController:
 
         backButton = self.resultsWindow.findChild(QObject, "backButton")
         backButton.clicked.connect(self.goBack)
-        csvButton = self.resultsWindow.findFChild(QObject, "csvButton")
+        csvButton = self.resultsWindow.findChild(QObject, "csvButton")
         csvButton.clicked.connect(self.exportAllResults)
 
         self.getModelLayer = getModelLayer
