@@ -82,6 +82,12 @@ class DroneParameterController:
         resultsWindow.setProperty("visible", True)
         self.resultSignal.emit()
     
+    def getModelLayer(self):
+        # TODO: move "self.modelLayer out of this class and pass a reference originating from ControllerContainer"
+        # Might not be feasible considering we create the object based on data from this page, though
+
+        return self.modelLayer 
+    
     def goBack(self):
         paramWindow = self.window.findChild(QObject, "droneParametersPage")
         profileWindow = self.window.findChild(QObject, "missionParamtersPage")

@@ -3,11 +3,16 @@ from PySide6.QtCore import QObject
 from ModelLayer.Mission import *
 
 class ResultsController:
-    def __init__(self, window):
+    def __init__(self, window, getModelLayer):
         self.window = window
         self.resultsWindow = window.findChild(QObject, "resultsPage")
+
         backButton = self.resultsWindow.findChild(QObject, "backButton")
         backButton.clicked.connect(self.goBack)
+        csvButton = self.resultsWindow.findFChild(QObject, "csvButton")
+        csvButton.clicked.connect(self.exportAllResults)
+
+        self.getModelLayer = getModelLayer
     
     def populateResults(self, results, mission):
         #WARNING: mission is passed as a function since enums act funny in Pyside6 and lose their value
@@ -37,3 +42,7 @@ class ResultsController:
 
         paramWindow.setProperty("visible", True)
         self.resultsWindow.setProperty("visible", False)
+
+    def exportAllResults(self):
+        modelLayer = self.getModelLayer()
+        modelLayer.resultsWriter.exportToCSV("./")
