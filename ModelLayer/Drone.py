@@ -73,7 +73,7 @@ class Drone:
         self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(reynoldsNum)}_Subset_1.csv")
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
-        self.resultsWriter = ResultsWriter()
+        self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy)
 
         # For future reverse engineering purposes
         if self.pressure == None:
@@ -374,17 +374,29 @@ class Drone:
         distInPeriods = 0
         energyInPeriods = 0
 
-        cruisePeriods = 0
+        cruisePeriods = []
 
-        for leg in self.mission.legs:
+        for count, leg in enumerate( self.mission.legs ):
+            self.resultsWriter.legInfos.append({})
+
             if leg == MissionLeg.CRUISE:
-                cruisePeriods += 1
+                cruisePeriods.append( count )
                 continue
+            
+            self.resultsWriter.legInfos[count]["altitudeStart"] = self.currentAltitude
             
             if self.mission.profile == MissionProfile.DOUBLE_CRUISE and leg == MissionLeg.ASCENT:
                 time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
             else:
                 time, dist, energy = eval( "self." + leg.string + "()" )
+                print(leg.string)
+                print(time, dist, energy)
+
+            self.resultsWriter.legInfos[count]["timeStart"] = timeInPeriods
+            self.resultsWriter.legInfos[count]["timeEnd"] = timeInPeriods + time
+            self.resultsWriter.legInfos[count]["distanceTravelled"] = dist
+            self.resultsWriter.legInfos[count]["energyExpended"] = energy
+            self.resultsWriter.legInfos[count]["altitudeEnd"] = self.currentAltitude
 
             timeInPeriods += time
             distInPeriods += dist
@@ -394,6 +406,14 @@ class Drone:
         timeC = ( self.batteryEnergy - energyInPeriods - self.auxPowerCon * timeInPeriods ) / ( cruisePower + self.auxPowerCon )
         distC = timeC * self.calcCruiseSpeed()
         energyC = cruisePower * timeC
+
+        for count, cruisePeriod in enumerate( cruisePeriods ):
+            self.resultsWriter.legInfos[cruisePeriod]["timeStart"] = self.resultsWriter.legInfos[cruisePeriod - 1]["timeEnd"]
+            self.resultsWriter.legInfos[cruisePeriod]["timeEnd"] = self.resultsWriter.legInfos[cruisePeriod - 1]["timeEnd"] + timeC / len( cruisePeriods )
+            self.resultsWriter.legInfos[cruisePeriod]["distanceTravelled"] = distC / len( cruisePeriods )
+            self.resultsWriter.legInfos[cruisePeriod]["energyExpended"] = energyC / len( cruisePeriods )
+            self.resultsWriter.legInfos[cruisePeriod]["altitudeStart"] = self.cruiseAltitude if count == 0 else self.cruiseAltitude2
+            self.resultsWriter.legInfos[cruisePeriod]["altitudeEnd"] = self.cruiseAltitude if count == 0 else self.cruiseAltitude2
 
         return timeC, distC, energyC
 
