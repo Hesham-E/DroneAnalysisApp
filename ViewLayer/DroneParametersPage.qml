@@ -184,30 +184,32 @@ Item {
             horizontalAlignment: Text.AlignHCenter
         }
 
-    //     Text {
-    //         id: angleOfAttackLabel
-    //         objectName: "angleOfAttackLabel"
-    //         text: qsTr("Angle of Attack (degrees)")
-    //         font.pixelSize: droneParametersPage.bodyFontSize
+        Text {
+            id: angleOfAttackLabel
+            objectName: "angleOfAttackLabel"
+            text: qsTr("Angle of Attack (degrees)")
+            font.pixelSize: droneParametersPage.bodyFontSize
 
-    //         property string tip: "The angle of attack during cruising."
-    //         ToolTip.visible: tip ? angleOfAttackMA.containsMouse : false
-    //         ToolTip.text: tip
-    //         MouseArea {
-    //             id: angleOfAttackMA
-    //             anchors.fill: parent
-    //             hoverEnabled: true
-    //         }
-    //     }
-    //     TextField {
-    //         id: angleOfAttackInput
-    //         objectName: "angleOfAttackInput"
-    //         width: droneParametersPage.inputWidth
-    //         height: droneParametersPage.inputHeight
-    //         text: qsTr("1")
-    //         font.pixelSize: droneParametersPage.bodyFontSize
-    //         horizontalAlignment: Text.AlignHCenter
-    //     }
+            property string tip: "The angle of attack during cruising."
+            ToolTip.visible: tip ? angleOfAttackMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: angleOfAttackMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+            visible: false
+        }
+        TextField {
+            id: angleOfAttackInput
+            objectName: "angleOfAttackInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            visible: false
+        }
     }
 
     Grid {

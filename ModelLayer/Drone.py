@@ -16,7 +16,6 @@ class Drone:
                  fuselageRadius, fuselageLength,
                  weight,
                  angleOfAttack,
-                 reynoldsNum,
                  batteryWeight, batteryCapacity, batteryVoltage,
                  cruiseMotorTablePath, vtolMotorTablePath,
                  auxPowerCon,
@@ -70,7 +69,7 @@ class Drone:
         self.liftDistribution = 0.95
 
         self.atmConditions = AtmosphereConditions()
-        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(reynoldsNum)}_Subset_1.csv")
+        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(self.reynoldsNum)}_Subset_1.csv")
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath)
         self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy)

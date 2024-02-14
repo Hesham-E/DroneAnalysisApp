@@ -75,7 +75,6 @@ class DroneParameterController:
                                 self.params["fuselageRadius"], self.params["fuselageLength"],
                                 self.params["droneWeight"],
                                 self.params["angleOfAttack"],
-                                self.params["reynoldsNum"],
                                 self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
                                 self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
                                 self.params["auxPowerCon"],
