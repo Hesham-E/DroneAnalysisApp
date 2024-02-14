@@ -8,24 +8,47 @@ from ModelLayer.Drone import Drone
 class DroneParameterController:
     def __init__(self, window, resultSignal, getMission):
         self.window = window
+        self.paramWindow = self.window.findChild(QObject, "droneParametersPage")
         self.resultSignal = resultSignal
         self.results = {}
         self.params = {}
         self.getMission = getMission
+        self.designToggled = False
 
         self.modelLayer = None
 
         self.connectButtons()
     
     def connectButtons(self):
-        estimateButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "generateResultsButton")
+        estimateButton = self.paramWindow.findChild(QObject, "generateResultsButton")
         estimateButton.clicked.connect(self.collectParameters)
         estimateButton.clicked.connect(self.runSimulations)
         estimateButton.clicked.connect(self.goToResults)
 
-        returnButton = self.window.findChild(QObject, "droneParametersPage").findChild(QObject, "returnButton")
+        returnButton = self.paramWindow.findChild(QObject, "returnButton")
         returnButton.clicked.connect(self.goBack)
+
+        predictDesignSwitch = self.paramWindow.findChild(QObject, "predictDesignSwitch")
+        predictDesignSwitch.clicked.connect(self.toggleDesign)
     
+    def toggleDesign(self):
+        self.designToggled = not self.designToggled
+        self.paramWindow.findChild(QObject, "rightParameterGrid").setProperty("visible", self.designToggled)
+
+        leftChildren = self.paramWindow.findChild(QObject, "leftParameterGrid").findChildren(QObject)
+        if self.designToggled:
+            self.paramWindow.findChild(QObject, "batteryCapacityLabel").setProperty("color", "#AD3A1A")
+
+            for child in leftChildren:
+                if "Label" in child.property("objectName"):
+                    child.setProperty("color", "#AD3A1A")
+        else:
+            self.paramWindow.findChild(QObject, "batteryCapacityLabel").setProperty("color", "black")
+
+            for child in leftChildren:
+                if "Label" in child.property("objectName"):
+                    child.setProperty("color", "black")
+
     def collectParameters(self):
         for child in self.window.findChildren(QObject, "droneParametersPage")[0].children():
             for grandchild in child.children():
@@ -56,7 +79,7 @@ class DroneParameterController:
                                 self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
                                 self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
                                 self.params["auxPowerCon"],
-                                self.params["ascentDescentSpeed"],
+                                self.params["vtolSpeed"],
                                 self.getMission())
 
         print(self.params)
@@ -75,10 +98,9 @@ class DroneParameterController:
         return self.results
 
     def goToResults(self):
-        paramWindow = self.window.findChild(QObject, "droneParametersPage")
         resultsWindow = self.window.findChild(QObject, "resultsPage")
 
-        paramWindow.setProperty("visible", False)
+        self.paramWindow.setProperty("visible", False)
         resultsWindow.setProperty("visible", True)
         self.resultSignal.emit()
     
@@ -89,10 +111,9 @@ class DroneParameterController:
         return self.modelLayer 
     
     def goBack(self):
-        paramWindow = self.window.findChild(QObject, "droneParametersPage")
         profileWindow = self.window.findChild(QObject, "missionParamtersPage")
 
         profileWindow.setProperty("visible", True)
-        paramWindow.setProperty("visible", False)
+        self.paramWindow.setProperty("visible", False)
 
         

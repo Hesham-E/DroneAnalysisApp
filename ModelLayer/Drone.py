@@ -20,7 +20,7 @@ class Drone:
                  batteryWeight, batteryCapacity, batteryVoltage,
                  cruiseMotorTablePath, vtolMotorTablePath,
                  auxPowerCon,
-                 ascentDecentSpeed,
+                 vtolSpeed,
                  mission):
         
         self.wingSpan = wingSpan
@@ -54,7 +54,7 @@ class Drone:
         self.cruiseAltitude = mission.parameters["cruiseAltitude"]
         self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
         self.currentAltitude = mission.parameters["baseStationAltitude"]
-        self.ascentDecentSpeed = ascentDecentSpeed
+        self.vtolSpeed = vtolSpeed
         if mission.profile == MissionProfile.VTOL_STRAIGHT:
             self.mission.parameters["vtolClimb"] = self.cruiseAltitude
         print(self.mission.parameters)
@@ -274,7 +274,7 @@ class Drone:
         # Acceleration Stage Time
         thrust = self.vtolMotorTableInterface.getMaxThrust() * 4
         takeOffAccel = thrust / self.totalMass - G_ACCEL
-        timeTA = self.ascentDecentSpeed / takeOffAccel
+        timeTA = self.vtolSpeed / takeOffAccel
         distTA = 0.5 * takeOffAccel * (timeTA ** 2)
         energyTA = self.vtolMotorTableInterface.getMaxPower() * 4 * timeTA
         return timeTA, distTA, energyTA
@@ -283,8 +283,8 @@ class Drone:
         # Deceleration Stage Time
         hoverForce = self.totalMass * G_ACCEL * UNDER_HOVER_FORCE
         accel = hoverForce / self.totalMass
-        timeTD = self.ascentDecentSpeed / accel
-        distTD = self.ascentDecentSpeed * timeTD + 0.5 * accel * (timeTD ** 2)
+        timeTD = self.vtolSpeed / accel
+        distTD = self.vtolSpeed * timeTD + 0.5 * accel * (timeTD ** 2)
         energyTD = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * timeTD * 4
 
         return timeTD, distTD, energyTD
@@ -298,7 +298,7 @@ class Drone:
         else:
             dist = self.mission.parameters["vtolClimb"] - self.mission.parameters["baseStationAltitude"] - distTA - distTD
         
-        time = dist / self.ascentDecentSpeed
+        time = dist / self.vtolSpeed
 
         hoverForce = self.totalMass * G_ACCEL
         energy = time * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
@@ -337,8 +337,8 @@ class Drone:
     def calcVTOLLandingAcceleration(self):
         hoverForce = self.totalMass * G_ACCEL * UNDER_HOVER_FORCE
         accel = hoverForce / self.totalMass - G_ACCEL
-        timeLA = self.ascentDecentSpeed / accel
-        distLA = self.ascentDecentSpeed * timeLA + 0.5 * accel * (timeLA ** 2)
+        timeLA = self.vtolSpeed / accel
+        distLA = self.vtolSpeed * timeLA + 0.5 * accel * (timeLA ** 2)
         energyLA = self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4 * timeLA
 
         return timeLA, distLA, energyLA
@@ -346,7 +346,7 @@ class Drone:
     def calcVTOLLandingDeceleration(self):
         maxThrust = self.vtolMotorTableInterface.getMaxThrust() * 4
         accel = maxThrust / self.totalMass - G_ACCEL
-        timeLD = self.ascentDecentSpeed / accel
+        timeLD = self.vtolSpeed / accel
         distLD = 0.5 * accel * (timeLD ** 2)
         energyLD = self.vtolMotorTableInterface.getMaxPower() * 4 * timeLD
 
@@ -357,7 +357,7 @@ class Drone:
         timeLD, distLD, energyLD = self.calcVTOLLandingDeceleration()
 
         dist = self.currentAltitude - self.mission.parameters["baseStationAltitude"] - distLA - distLD
-        time = dist / self.ascentDecentSpeed
+        time = dist / self.vtolSpeed
         hoverForce = self.totalMass * G_ACCEL
         energy = time * self.vtolMotorTableInterface.getPowerAtThrust(hoverForce / 4) * 4
 
