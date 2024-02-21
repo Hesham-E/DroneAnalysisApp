@@ -4,7 +4,7 @@ class ResultsWriter:
     def __init__(self, mission, batteryEnergy):
         self.legInfos = [] # array of dictionaries, in order in mission 
         self.rows = [] # processed data from legInfos to be written
-        self.timeStep = 1 # second
+        self.timeStep = 0.1 # second
         self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", "State of Charge (%)"]
 
         self.mission = mission

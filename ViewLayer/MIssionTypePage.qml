@@ -54,17 +54,4 @@ Item {
         font.pixelSize: 18
     }
 
-    Button {
-        id: allButton
-        objectName: "allButton"
-        x: 536
-        y: 562
-        width: 208
-        height: 36
-        text: qsTr("(WIP) All")
-        icon.color: "#000000"
-        font.pixelSize: 18
-    }
-
-
 }

@@ -50,7 +50,7 @@ Item {
             objectName: "wingSpanInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("2.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -76,7 +76,7 @@ Item {
             objectName: "droneWeightInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("6")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -105,7 +105,7 @@ Item {
             objectName: "wingAreaInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("0.53")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -154,7 +154,7 @@ Item {
             objectName: "fuselageRadiusInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("0.1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -179,7 +179,7 @@ Item {
             objectName: "fuselageLengthInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("1.1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -245,7 +245,7 @@ Item {
             objectName: "auxPowerConInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("10")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -295,7 +295,7 @@ Item {
             objectName: "batteryCapacityInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("6000")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -320,7 +320,7 @@ Item {
             objectName: "batteryVoltageInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("22.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
@@ -345,7 +345,7 @@ Item {
             objectName: "vtolSpeedInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("5")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }

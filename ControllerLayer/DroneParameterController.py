@@ -37,11 +37,14 @@ class DroneParameterController:
 
         leftChildren = self.paramWindow.findChild(QObject, "leftParameterGrid").findChildren(QObject)
         if self.designToggled:
-            self.paramWindow.findChild(QObject, "batteryCapacityLabel").setProperty("color", "#AD3A1A")
-
             for child in leftChildren:
                 if "Label" in child.property("objectName"):
-                    child.setProperty("color", "#AD3A1A")
+                    child.setProperty("color", "#3f7a23")
+
+            # components that we don't want to be green / we want them to be a special color
+            self.paramWindow.findChild(QObject, "droneWeightLabel").setProperty("color", "black")
+            self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#e6bf40")
+            self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#e6bf40")
         else:
             self.paramWindow.findChild(QObject, "batteryCapacityLabel").setProperty("color", "black")
 

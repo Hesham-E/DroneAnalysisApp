@@ -86,21 +86,35 @@ class Drone:
     
     def calcStallSpeed(self):
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
-        maxLiftCoefficient = 2.34 #TODO: Change this
+        maxLiftCoefficient = 0.9 * 1.7 #TODO: Change this
         wingloading = self.totalWeight / self.wingArea 
+        
+        print("Air Density: ", airDensity)
+        print("CL,MAX ", maxLiftCoefficient)
+        print("Wing Loading ", wingloading)
 
         vStallSquared = 2 * wingloading / ( airDensity * maxLiftCoefficient )
         return math.sqrt(vStallSquared)
     
     def calcMaxSpeed(self):
-        thrust = self.cruiseMotorTableInterface.getMaxThrust()
+        # thrust = self.cruiseMotorTableInterface.getMaxThrust()
+        thrust = 5.66138
         airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
         coefficientK = self.calcDragDueToLiftFactor()
         thrustAreaRatio = thrust / self.wingArea
         thrustWeightRatio = thrust / self.totalWeight
         wingLoading = self.totalWeight / self.wingArea
 
+        print("Thrust: ", thrust)
+        print("Air Density: ", airDensity)
+        print("DragDueToLiftFactor: ", coefficientK)
+        print("Thrust / Area: ", thrustAreaRatio)
+        print("Thrust / Weight: ", thrustWeightRatio)
+        print("Wing Loading: ", wingLoading)
+
         vMaxSquared = (thrustAreaRatio + wingLoading * math.sqrt( ( thrustWeightRatio ** 2 ) - 4 * self.calcZeroLiftDragCoefficient() * coefficientK ) ) / ( airDensity * self.calcZeroLiftDragCoefficient() )
+        print("Max Speed: ", math.sqrt(vMaxSquared))
+
         return math.sqrt(vMaxSquared)
     
     def calcLift(self, max = False):
@@ -161,8 +175,13 @@ class Drone:
         skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
         skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
 
+        print("skinFrictionCoefficient ", skinFrictionCoefficient)
+        print("Wetted Area ", self.calcWettedArea())
+        print("Reference Area ", self.calcReferenceArea())
+
         wettedAndReferenceAreaRatio = self.calcWettedArea() / self.calcReferenceArea()
 
+        print("CD0 ", wettedAndReferenceAreaRatio * skinFrictionCoefficient)
         return wettedAndReferenceAreaRatio * skinFrictionCoefficient
 
     def calcLiftInducedDrag(self):
@@ -478,6 +497,8 @@ class Drone:
         
     def calcOswaldEfficicency(self):
         aspectRatio = self.calcAspectRatio()
+
+        print("Oswald Efficicency ", 1.78 * (1 - 0.045 * (aspectRatio ** 0.68)) - 0.64)
         return 1.78 * (1 - 0.045 * (aspectRatio ** 0.68)) - 0.64
     
     def calcDragDueToLiftFactor(self):
