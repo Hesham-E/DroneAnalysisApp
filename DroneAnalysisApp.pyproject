@@ -10,6 +10,7 @@
         "ModelLayer/Drone.py",
         "ModelLayer/Mission.py",
         "ModelLayer/MotorTableInterface.py",
+        "ModelLayer/ResultsWriter.py",
         "ViewLayer/DroneParametersPage.qml",
         "ViewLayer/IntroductionPage.qml",
         "ViewLayer/LayerPurpose.md",

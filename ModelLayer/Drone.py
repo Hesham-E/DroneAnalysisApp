@@ -412,6 +412,7 @@ class Drone:
 
         for count, leg in enumerate( self.mission.legs ):
             self.resultsWriter.legInfos.append({})
+            self.resultsWriter.legInfos[count]["mass"] = self.totalMass
 
             if leg == MissionLeg.CRUISE:
                 cruisePeriods.append( count )
@@ -429,6 +430,34 @@ class Drone:
             self.resultsWriter.legInfos[count]["distanceTravelled"] = dist
             self.resultsWriter.legInfos[count]["energyExpended"] = energy
             self.resultsWriter.legInfos[count]["altitudeEnd"] = self.currentAltitude
+            
+
+            if leg == MissionLeg.VTOL_TAKEOFF:
+                timeA, distA, energyA = self.calcVTOLTakeOffAcceleration()
+                timeD, distD, energyD = self.calcVTOLTakeOffDeceleration()
+
+                self.resultsWriter.legInfos[count]["timeAccelerating"] = timeA
+                self.resultsWriter.legInfos[count]["distanceAccelerating"] = distA
+                self.resultsWriter.legInfos[count]["energyAccelerating"] = energyA
+
+                self.resultsWriter.legInfos[count]["timeDecelerating"] = timeD
+                self.resultsWriter.legInfos[count]["distanceDecelerating"] = distD
+                self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
+            elif leg == MissionLeg.VTOL_LANDING:
+                timeA, distA, energyA = self.calcVTOLLandingAcceleration()
+                timeD, distD, energyD = self.calcVTOLLandingDeceleration()
+
+                self.resultsWriter.legInfos[count]["timeAccelerating"] = timeA
+                self.resultsWriter.legInfos[count]["distanceAccelerating"] = distA
+                self.resultsWriter.legInfos[count]["energyAccelerating"] = energyA
+
+                self.resultsWriter.legInfos[count]["timeDecelerating"] = timeD
+                self.resultsWriter.legInfos[count]["distanceDecelerating"] = distD
+                self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
+            elif leg == MissionLeg.ACCELERATION or leg == MissionLeg.TRANSITION:
+                self.resultsWriter.legInfos[count]["timeAccelerating"] = time
+                self.resultsWriter.legInfos[count]["distanceAccelerating"] = dist
+                self.resultsWriter.legInfos[count]["energyAccelerating"] = energy
 
             timeInPeriods += time
             distInPeriods += dist
@@ -437,7 +466,7 @@ class Drone:
             if leg != MissionLeg.VTOL_LANDING and leg != MissionLeg.VTOL_TAKEOFF:
                 horizontalDistance += dist
 
-        distC = horizontalDistance
+        distC = self.mission.parameters["missionDistance"] - horizontalDistance
         cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() ) + self.auxPowerCon
         timeC = distC / self.calcCruiseSpeed()
         energyC = cruisePower * timeC
