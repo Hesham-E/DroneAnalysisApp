@@ -50,20 +50,21 @@ class ResultsWriter:
                 periodTime = 0
                 periodDistance = 0
                 while periodTime < timeA:
-                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
+                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
 
                     currTime += self.timeStep
                     periodTime += self.timeStep
 
                     print(periodDistance)
+                    prevPeriodDistance = periodDistance
                     periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
-                    currDistance += abs( currDistance - periodDistance )
+                    currDistance += abs( prevPeriodDistance - periodDistance )
                     
                     currEnergy -= acceleration * self.timeStep * leg["mass"]
                     currSOC = currEnergy / self.batteryEnergy * 100
 
                     if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
-                        currAltitude += 0.5 * acceleration * accelDirection * ( self.timeStep ** 2 )
+                        currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
                 
                 print("Done VTOL Accel")
                 self.rows.append(["Done VTOL Accel"])
@@ -77,7 +78,7 @@ class ResultsWriter:
                     steps = time / self.timeStep
 
                     distanceStep = dist / steps
-                    altitudeStep = ( leg["altitudeEnd"] - currAltitude ) / steps
+                    altitudeStep = distanceStep #TODO: Try to calculate this somehow to make the program more dynamic. Works currently given all our use cases though
                     energyStep = energy / steps
 
                     print(steps)
@@ -92,7 +93,7 @@ class ResultsWriter:
 
                     periodTime = 0
                     while periodTime <= time:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -124,20 +125,21 @@ class ResultsWriter:
                     periodTime = 0
                     periodDistance = 0
                     while periodTime < timeD:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
 
                         print(periodDistance)
+                        prevPeriodDistance = periodDistance
                         periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
-                        currDistance += abs( currDistance - periodDistance )
+                        currDistance += abs( prevPeriodDistance - periodDistance )
                         
                         currEnergy -= acceleration * self.timeStep * leg["mass"]
                         currSOC = currEnergy / self.batteryEnergy * 100
 
                         if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
-                            currAltitude += 0.5 * acceleration * accelDirection * ( self.timeStep ** 2 )
+                            currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
                     
                     print("Done VTOL Decel")
                     self.rows.append(["Done VTOL Decel"])
@@ -151,7 +153,7 @@ class ResultsWriter:
                 altitudeStep = ( leg["altitudeEnd"] - leg["altitudeStart"] ) / steps
 
                 while periodTime <= leg["timeEnd"]:
-                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude}", f"{currDistance}", f"{currSOC}"] )
+                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
 
                     currTime += self.timeStep
                     currDistance += distanceStep
