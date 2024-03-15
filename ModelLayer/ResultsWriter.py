@@ -6,19 +6,27 @@ class ResultsWriter:
         self.legInfos = [] # array of dictionaries, in order in mission 
         self.rows = [] # processed data from legInfos to be written
         self.timeStep = 0.1 # seconds
-        self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", "State of Charge (%)"]
+        self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", "Current Horizontal Speed (m/s)", "Current Vertical Speed (m/s)", "State of Charge (%)"]
 
         self.mission = mission
         # self.batteryCapactiy = batteryCapacity
         # self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryEnergy
+
+        self.cruiseDistance = None
     
     def createRows(self):
+        self.rows = [] # reset in case we are doing 2 runs
+
         currTime = 0
         currDistance = 0
+        horizontalDistance = 0
         currAltitude = self.legInfos[0]["altitudeStart"]
         currSOC = 100
         currEnergy = self.batteryEnergy
+        currVerticalSpeed = 0
+        currHorizontalSpeed = 0
+        numOfCruisePeriods = self.mission.legs.count(MissionLeg.CRUISE)
 
         print(currEnergy)
         print(self.legInfos)
@@ -27,143 +35,218 @@ class ResultsWriter:
             totalTime = leg["timeEnd"] - leg["timeStart"]
             totalDistance = leg['distanceTravelled']
             totalEnergy = leg["energyExpended"]
+            print(f"Total Distance: {totalDistance}")
+            print(f"Total Time: {totalTime}")
             
             if "timeAccelerating" in leg.keys(): # non-linear rate of change
-                
-                # acceleration period
-                timeA = leg["timeAccelerating"]
-                distA = leg["distanceAccelerating"]
-                energyA = leg["energyAccelerating"]
-                
-                acceleration = 2 * distA / (timeA ** 2)
-                accelDirection = -1 if leg["altitudeEnd"] - leg["altitudeStart"] < 0 else 1
-
-                print(timeA)
-                print(distA)
-                print(energyA)
-                print(acceleration)
-                print(accelDirection)
-                print(self.timeStep)
-                print(leg["mass"])
-                print()
-
-                periodTime = 0
-                periodDistance = 0
-                while periodTime < timeA:
-                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
-
-                    currTime += self.timeStep
-                    periodTime += self.timeStep
-
-                    print(periodDistance)
-                    prevPeriodDistance = periodDistance
-                    periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
-                    currDistance += abs( prevPeriodDistance - periodDistance )
+                if "timeDecelerating" in leg.keys(): # only the VTOL modes do this
+                    # acceleration period
+                    timeA = leg["timeAccelerating"]
+                    distA = leg["distanceAccelerating"]
+                    energyA = leg["energyAccelerating"]
                     
-                    currEnergy -= acceleration * self.timeStep * leg["mass"]
-                    currSOC = currEnergy / self.batteryEnergy * 100
-
-                    if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
-                        currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
-                
-                print("Done VTOL Accel")
-                self.rows.append(["Done VTOL Accel"])
-                # break
-
-                if "timeDecelerating" in leg.keys(): # only the VTOL modes do this, so we know the next two periods
-                    # linear period
-                    time = totalTime - timeA - leg["timeDecelerating"]
-                    dist = totalDistance - distA - leg["distanceDecelerating"]
-                    energy = totalEnergy - energyA - leg["energyDecelerating"]
-                    steps = time / self.timeStep
-
-                    distanceStep = dist / steps
-                    altitudeStep = distanceStep #TODO: Try to calculate this somehow to make the program more dynamic. Works currently given all our use cases though
-                    energyStep = energy / steps
-
-                    print(steps)
-                    print(time)
-                    print(dist)
-                    print(energy)
-                    print(self.timeStep)
-                    print(distanceStep)
-                    print(altitudeStep)
-                    print(energyStep)
-                    print()
-
-                    periodTime = 0
-                    while periodTime <= time:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
-
-                        currTime += self.timeStep
-                        periodTime += self.timeStep
-                        currDistance += distanceStep
-                        currAltitude += altitudeStep
-                        currEnergy -= energyStep
-                        currSOC = currEnergy / self.batteryEnergy * 100
-                    
-                    print("Done VTOL Linear")
-                    self.rows.append(["Done VTOL Linear"])
-
-                    # deceleration period
-                    timeD = leg["timeDecelerating"]
-                    distD = leg["distanceDecelerating"]
-                    energyD = leg["energyDecelerating"]
-                    
-                    acceleration = 2 * distD / (timeD ** 2)
+                    accelerationOld = 2 * distA / (timeA ** 2)
+                    acceleration = leg["thrust"] / leg["mass"]
                     accelDirection = -1 if leg["altitudeEnd"] - leg["altitudeStart"] < 0 else 1
 
-                    print(timeD)
-                    print(distD)
-                    print(energyD)
-                    print(acceleration)
-                    print(accelDirection)
-                    print(self.timeStep)
-                    print(leg["mass"])
+                    print("Time: ", timeA)
+                    print("Distance: ", distA)
+                    print("Energy: ", energyA)
+                    print("AccelerationOld: ", accelerationOld)
+                    print("Acceleration: ", acceleration)
+                    print("AccelDirection: ", accelDirection)
+                    print("Time Step: ", self.timeStep)
+                    print("Mass: ", leg["mass"])
+                    print("VTOL Speed: ", leg["targetSpeed"])
                     print()
 
                     periodTime = 0
                     periodDistance = 0
-                    while periodTime < timeD:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
+
+                    while currVerticalSpeed < leg["targetSpeed"]:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                        currTime += self.timeStep
+                        periodTime += self.timeStep
+                        currVerticalSpeed += acceleration * self.timeStep
+
+                        if currVerticalSpeed < leg["targetSpeed"]:
+                            # print(periodDistance)
+                            prevPeriodDistance = periodDistance
+                            periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
+                            currDistance += abs( prevPeriodDistance - periodDistance )
+                            
+                            currEnergy -= acceleration * self.timeStep * leg["mass"]
+                            currSOC = currEnergy / self.batteryEnergy * 100
+
+                            if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
+                                currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
+                    
+                    currVerticalSpeed = leg["targetSpeed"] # Correct overshoot based on timeStep chosen
+                    accelDistance = periodDistance
+
+                    print("Done VTOL Accel")
+                    self.rows.append(["Done VTOL Accel"])
+                    # break
+
+                    # calculate deceleration distance, we do this first in order to know how long the linear period is
+                    acceleration = 9.80665 * 0.5 # half of the acceleration needed to hover
+                    decelDistance = leg["targetSpeed"] / acceleration
+
+                    # linear period
+                    distL = abs( leg["altitudeEnd"] - leg["altitudeStart"] ) - accelDistance - decelDistance
+                    timeL = distL / leg["targetSpeed"]
+                    energyL = totalEnergy - energyA - leg["energyDecelerating"]
+                    steps = timeL / self.timeStep
+
+                    distanceStep = distL / steps
+                    altitudeStep = distanceStep * accelDirection #Try to calculate this somehow to make the program more dynamic. Works currently given all our use cases though
+                    energyStep = energyL / steps
+
+                    print("Steps: ", steps)
+                    print("Time: ", timeL)
+                    print("Distance: ", distL)
+                    print("Energy: ", energyL)
+                    print("Time Step: ", self.timeStep)
+                    print("Distance Step: ", distanceStep)
+                    print("Altitude Step: ", altitudeStep)
+                    print("Energy Step: ", energyStep)
+                    print()
+
+                    periodTime = 0
+                    while periodTime < timeL:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
 
-                        print(periodDistance)
-                        prevPeriodDistance = periodDistance
-                        periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
-                        currDistance += abs( prevPeriodDistance - periodDistance )
+                        if periodTime < timeL:
+                            currDistance += distanceStep
+                            currAltitude += altitudeStep
+                            currEnergy -= energyStep
+                            currSOC = currEnergy / self.batteryEnergy * 100
+                    
+                    print("Done VTOL Linear")
+                    self.rows.append(["Done VTOL Linear"])
+
+                    # deceleration period, yes we do this first in order to know how long the linear period is
+                    timeD = leg["timeDecelerating"]
+                    distD = leg["distanceDecelerating"]
+                    energyD = leg["energyDecelerating"]
+                    
+                    accelerationOld = 2 * distA / (timeA ** 2)
+                    acceleration = 9.80665 * 0.5 # half of the acceleration needed to hover
+                    accelDirection = -1 if leg["altitudeEnd"] - leg["altitudeStart"] < 0 else 1
+
+                    print("Time: ", timeD)
+                    print("Distance: ", distD)
+                    print("Energy: ", energyD)
+                    print("AccelerationOld: ", accelerationOld)
+                    print("Acceleration: ", acceleration)
+                    print("AccelDirection: ", accelDirection)
+                    print("Time Step: ", self.timeStep)
+                    print("Mass: ", leg["mass"])
+                    print()
+
+                    periodTime = 0
+                    periodDistance = 0
+                    while currVerticalSpeed > 0:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                        currTime += self.timeStep
+                        periodTime += self.timeStep
+                        currVerticalSpeed -= acceleration * self.timeStep
+
+                        if currVerticalSpeed > 0:
+                            # print(periodDistance)
+                            prevPeriodDistance = periodDistance
+                            periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
+                            currDistance += abs( prevPeriodDistance - periodDistance )
+                            
+                            currEnergy -= acceleration * self.timeStep * leg["mass"]
+                            currSOC = currEnergy / self.batteryEnergy * 100
+
+                            if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
+                                currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
+
+                    decelDistance = periodDistance
+                    currVerticalSpeed = 0 # Correct overshoot based on timeStep chosen
+                else: # We are in Transition or Fixed Wing Acceleration
+                    acceleration = leg["thrust"] / leg["mass"]
+
+                    while currHorizontalSpeed < leg["targetSpeed"]:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                        horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                        currDistance = totalDistance
+                        currHorizontalSpeed += acceleration * self.timeStep
+                        totalTime += self.timeStep
+
+                        if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
+                            acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
                         
-                        currEnergy -= acceleration * self.timeStep * leg["mass"]
+                        # print("HERE!")
+                        # print(leg["thrust"] / leg["mass"])
+                        # print(acceleration)
+                        # print(leg["propellorPower"] / currHorizontalSpeed / leg["mass"])
+                        # print(leg["mass"])
+                        # print(leg["thrust"])
+                        # print(leg["propellorPower"])
+  
+            else: # linear rate of change, ie. no acceleration in this period
+                if leg["legObject"] == MissionLeg.CRUISE:
+                    if self.cruiseDistance == None and numOfCruisePeriods != 0:
+                        continue # need to resolve cruise distance first
+                    else:
+                        currVerticalSpeed = 0
+                        print("CRUISE")
+                        print(self.cruiseDistance)
+                        print(horizontalDistance)
+                        print(numOfCruisePeriods)
+                        print(currHorizontalSpeed)
+
+                        periodDistance = 0
+                        while periodDistance < self.cruiseDistance / numOfCruisePeriods:
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                            currTime += self.timeStep
+                            currDistance += currHorizontalSpeed * self.timeStep
+                            horizontalDistance += currHorizontalSpeed * self.timeStep
+                            periodDistance += currHorizontalSpeed * self.timeStep
+                            currEnergy -= energyStep
+                            currSOC = currEnergy / self.batteryEnergy * 100
+
+                        print(horizontalDistance)
+                else:
+                    pass # is a useless section
+                    steps = totalTime / self.timeStep
+                    distanceStep = totalDistance / steps
+                    energyStep = totalEnergy / steps
+                    altitudeStep = ( leg["altitudeEnd"] - leg["altitudeStart"] ) / steps
+
+                    # if altitudeStep == 0: #Ie. not ascent or descent
+                    periodTime = 0
+                    while periodTime < totalTime:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                        currTime += self.timeStep
+                        currDistance += distanceStep
+                        horizontalDistance += distanceStep
+                        currAltitude += altitudeStep
+                        currEnergy -= energyStep
                         currSOC = currEnergy / self.batteryEnergy * 100
 
-                        if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
-                            currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
-                    
-                    print("Done VTOL Decel")
-                    self.rows.append(["Done VTOL Decel"])
-                    break
-
-            else: # linear rate of change, ie. no acceleration in this period
-                steps = totalTime / self.timeStep
-                distanceStep = totalDistance / steps
-                energyStep = totalEnergy / steps
-                print(energyStep)
-                altitudeStep = ( leg["altitudeEnd"] - leg["altitudeStart"] ) / steps
-
-                while periodTime <= leg["timeEnd"]:
-                    self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{currDistance:.2f}", f"{currSOC:.2f}"] )
-
-                    currTime += self.timeStep
-                    currDistance += distanceStep
-                    currAltitude += altitudeStep
-                    currEnergy -= energyStep
-                    currSOC = currEnergy / self.batteryEnergy * 100
-
-                    periodTime += self.timeStep
+                        periodTime += self.timeStep
+                    # else:
+                    #     pass
             
             self.rows.append(["Next Period"])
+            print("Next Period")
+        
+        if self.cruiseDistance == None and numOfCruisePeriods != 0:
+            self.cruiseDistance = self.mission.parameters["missionDistance"] - horizontalDistance
+            self.cruiseDistance /= numOfCruisePeriods
+            self.createRows() # need to run twice in order to get the cruise distance
     
     def exportToCSV(self, filePath):
         fileName = "detailedResults.csv"

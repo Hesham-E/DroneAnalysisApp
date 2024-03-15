@@ -1,14 +1,22 @@
 import csv
 import pandas as pd
+from .AtmosphereConditions import AtmosphereConditions
 
 class MotorTableInterface:
-    def __init__(self, filePath):
+    def __init__(self, filePath, pressure, temperature):
         self.filePath = filePath
-    
-    def getMaxThrust(self):
+        self.table = None
+        self.atmCond = AtmosphereConditions()
+
         with open(self.filePath, newline='', encoding='utf-8') as fp:
             reader = csv.DictReader(fp)
-            df = pd.DataFrame(data = reader)
+            self.table = pd.DataFrame(data = reader)
+        
+        airDensity = self.atmCond.calcAirDensity(pressure, temperature)
+        self.table["Thrust (kgf)"] = self.table["Thrust (kgf)"].apply( lambda x: ( airDensity / self.atmCond.SEA_AIR_DENSITY ) ** ( 1/3 ) * float(x) )
+    
+    def getMaxThrust(self):
+        df = self.table.copy()
         
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
@@ -17,9 +25,7 @@ class MotorTableInterface:
         return df['Thrust (kgf)'].values[-1] * 9.81 # kgf * 9.81 = Newtons
 
     def getMinThrust(self):
-        with open(self.filePath, newline='', encoding='utf-8') as fp:
-            reader = csv.DictReader(fp)
-            df = pd.DataFrame(data = reader)
+        df = self.table.copy()
         
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
@@ -28,9 +34,7 @@ class MotorTableInterface:
         return df['Thrust (kgf)'].values[0] * 9.81 # kgf * 9.81 = Newtons
     
     def getMaxPower(self):
-        with open(self.filePath, newline='', encoding='utf-8') as fp:
-            reader = csv.DictReader(fp)
-            df = pd.DataFrame(data = reader)
+        df = self.table.copy()
         
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
@@ -40,9 +44,7 @@ class MotorTableInterface:
 
     def getPowerAtThrust(self, thrust):
         thrust = thrust / 9.81 # Newtons / 9.81 = kgf
-        with open(self.filePath, newline='', encoding='utf-8') as fp:
-            reader = csv.DictReader(fp)
-            df = pd.DataFrame(data = reader)
+        df = self.table.copy()
         
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
@@ -65,9 +67,7 @@ class MotorTableInterface:
         
     def getMechanicalPowerAtThrust(self, thrust):
         thrust = thrust / 9.81 # Newtons / 9.81 = kgf
-        with open(self.filePath, newline='', encoding='utf-8') as fp:
-            reader = csv.DictReader(fp)
-            df = pd.DataFrame(data = reader)
+        df = self.table.copy()
         
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
