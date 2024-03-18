@@ -511,6 +511,13 @@ class Drone:
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
                 self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
+            elif leg == MissionLeg.ASCENT:
+                self.resultsWriter.legInfos[count]["timeAccelerating"] = time
+                self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
+                self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
+                self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
+                self.resultsWriter.legInfos[count]["ROC"], self.resultsWriter.legInfos[count]["compositeROC"] = self.calcRateOfClimb()
 
             timeInPeriods += time
             distInPeriods += dist

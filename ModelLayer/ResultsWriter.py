@@ -1,4 +1,6 @@
 import csv
+import math
+
 from .Mission import *
 
 class ResultsWriter:
@@ -174,25 +176,87 @@ class ResultsWriter:
                 else: # We are in Transition or Fixed Wing Acceleration
                     acceleration = leg["thrust"] / leg["mass"]
 
-                    while currHorizontalSpeed < leg["targetSpeed"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
-                        totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
-                        horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
-                        currDistance = totalDistance
-                        currHorizontalSpeed += acceleration * self.timeStep
-                        totalTime += self.timeStep
+                    if leg["legObject"] == MissionLeg.ASCENT:
+                        compositeSpeed = math.sqrt( currHorizontalSpeed ** 2 + currVerticalSpeed ** 2 )
+                        climbAngle = math.asin( leg["ROC"] / leg["compositeROC"] )
+                        horizontalAcceleration = acceleration * math.cos( climbAngle )
+                        verticalAcceleration = acceleration * math.sin( climbAngle )
 
-                        if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
-                            acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
+                        while compositeSpeed < leg["compositeROC"] and currAltitude < leg["altitudeEnd"]:
+                            # acceleration phase
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                            horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
+                            currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
+                            currDistance = totalDistance
+
+                            
+                            currHorizontalSpeed += horizontalAcceleration * self.timeStep
+                            currVerticalSpeed += verticalAcceleration * self.timeStep
+                            compositeSpeed = math.sqrt( currHorizontalSpeed ** 2 + currVerticalSpeed ** 2 )
+
+                            if leg["thrust"] > leg["propellorPower"] / compositeSpeed: #put this after so that compositeSpeed isn't 0
+                                acceleration = leg["propellorPower"] / compositeSpeed / leg["mass"]
+
+                                horizontalAcceleration = acceleration * math.cos( climbAngle )
+                                verticalAcceleration = acceleration * math.sin( climbAngle )
+
+                        deceleration = 9.80665 * 0.5 # half of the acceleration needed to hover
+                        decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
+
+                        while currAltitude < leg["altitudeEnd"] - decelDistance:
+                            # do not accelerate but hold speed until target altitude
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            totalDistance += compositeSpeed * self.timeStep
+                            horizontalDistance += currHorizontalSpeed * self.timeStep
+                            currAltitude += currVerticalSpeed * self.timeStep
+                            currDistance = totalDistance
+
+                        while currVerticalSpeed > 0:
+                            # decelerate
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            totalDistance += compositeSpeed * self.timeStep
+                            horizontalDistance += currHorizontalSpeed * self.timeStep
+                            currAltitude += currVerticalSpeed * self.timeStep
+                            currDistance = totalDistance
+
+                            currVerticalSpeed -= verticalAcceleration * self.timeStep
                         
-                        # print("HERE!")
-                        # print(leg["thrust"] / leg["mass"])
-                        # print(acceleration)
-                        # print(leg["propellorPower"] / currHorizontalSpeed / leg["mass"])
-                        # print(leg["mass"])
-                        # print(leg["thrust"])
-                        # print(leg["propellorPower"])
-  
+                        while currHorizontalSpeed < leg["targetSpeed"]: #accelerate to cruising speed
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                            horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                            currDistance = totalDistance
+                            currHorizontalSpeed += acceleration * self.timeStep
+                            totalTime += self.timeStep
+
+                            if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
+                                acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
+
+                        
+                    elif leg["legObject"] == MissionLeg.DESCENT:
+                        pass
+                    else:
+                        while currHorizontalSpeed < leg["targetSpeed"]:
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                            horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
+                            currDistance = totalDistance
+                            currHorizontalSpeed += acceleration * self.timeStep
+                            totalTime += self.timeStep
+
+                            if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
+                                acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
+                            
+                            # print("HERE!")
+                            # print(leg["thrust"] / leg["mass"])
+                            # print(acceleration)
+                            # print(leg["propellorPower"] / currHorizontalSpeed / leg["mass"])
+                            # print(leg["mass"])
+                            # print(leg["thrust"])
+                            # print(leg["propellorPower"])
+                            
+
             else: # linear rate of change, ie. no acceleration in this period
                 if leg["legObject"] == MissionLeg.CRUISE:
                     if self.cruiseDistance == None and numOfCruisePeriods != 0:
