@@ -90,8 +90,8 @@ Item {
     
     Text {
         id: pressureLabel
-        x: 824
-        y: 267
+        x: 826
+        y: 246
         objectName: "pressureLabel"
         text: qsTr("Air Pressure (Pa)")
         font.pixelSize: 18
@@ -108,7 +108,7 @@ Item {
     TextField {
         id: pressureInput
         x: 998
-        y: 261
+        y: 240
         objectName: "pressureInput"
         width: 80
         height: 36
@@ -142,6 +142,35 @@ Item {
         width: 80
         height: 36
         text: qsTr("40")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Text {
+        id: cruiseSpeedLabel
+        x: 803
+        y: 328
+        objectName: "cruiseSpeedLabel"
+        text: qsTr("Cruise Speed (m/s)")
+        font.pixelSize: 18
+
+        property string tip: "The speed at which to cruise at during the flight. Leave this at zero if you wish the program to calculate it for you."
+        ToolTip.visible: tip ? cruiseSpeedMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseSpeedMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: cruiseSpeedInput
+        x: 998
+        y: 322
+        objectName: "cruiseSpeedInput"
+        width: 80
+        height: 36
+        text: qsTr("0")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }

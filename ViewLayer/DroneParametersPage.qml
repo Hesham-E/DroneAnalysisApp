@@ -185,6 +185,31 @@ Item {
         }
 
         Text {
+            id: propellorDiameterLabel
+            objectName: "propellorDiameterLabel"
+            text: qsTr("Cruise Propellor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the cruise propellor. Used in drag and thrust calculations."
+            ToolTip.visible: tip ? propellorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: propellorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: propellorDiameterInput
+            objectName: "propellorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.4572")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
             id: angleOfAttackLabel
             objectName: "angleOfAttackLabel"
             text: qsTr("Angle of Attack (degrees)")

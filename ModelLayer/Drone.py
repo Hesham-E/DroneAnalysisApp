@@ -14,6 +14,7 @@ class Drone:
                  wingSpan, wingArea,
                  airFoil,
                  fuselageRadius, fuselageLength,
+                 propellorDiameter,
                  weight,
                  angleOfAttack,
                  batteryWeight, batteryCapacity, batteryVoltage,
@@ -40,7 +41,7 @@ class Drone:
         self.loadWeight = mission.parameters["loadWeight"]
         self.totalMass = weight + batteryWeight + mission.parameters["loadWeight"]
         self.totalWeight = self.totalMass * G_ACCEL # W is used
-        self.propellorDiameter = 0.4572
+        self.propellorDiameter = propellorDiameter
 
         self.angleOfAttack = angleOfAttack
 
@@ -53,6 +54,7 @@ class Drone:
 
         self.cruiseAltitude = mission.parameters["cruiseAltitude"]
         self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
+        self.cruiseSpeed = mission.parameters["cruiseSpeed"]
         self.currentAltitude = mission.parameters["baseStationAltitude"]
         self.baseAltitude = mission.parameters["baseStationAltitude"]
         self.vtolSpeed = vtolSpeed
@@ -89,7 +91,7 @@ class Drone:
         return min(availableData, key=lambda x:abs(x - num))
     
     def calcStallSpeed(self):
-        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
         maxLiftCoefficient = 0.9 * 1.7 #TODO: Change this
         wingloading = self.totalWeight / self.wingArea 
         
@@ -103,7 +105,7 @@ class Drone:
     # def calcMaxSpeed(self):
     #     # thrust = self.cruiseMotorTableInterface.getMaxThrust()
     #     thrust = 5.66138 # TODO: REMOVE THIS, TESTING PURPOSES ONLY 
-    #     airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+    #     airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
     #     coefficientK = self.calcDragDueToLiftFactor()
     #     thrustAreaRatio = thrust / self.wingArea
     #     thrustWeightRatio = thrust / self.totalWeight
@@ -239,7 +241,7 @@ class Drone:
         dragCoefficient = self.dragLiftInterface.getDragCoefficient(self.angleOfAttack)
         dragCoefficient += liftInducedDragCoefficient
 
-        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
 
         if (max):
             q = 0.5 * airDensity * math.pi * ( self.calcEfficientSpeed() ) ** 2
@@ -558,19 +560,25 @@ class Drone:
             return distC
     
     def calcCruiseSpeed(self):
-        if self.mission.performance == MissionPerformance.PERFORMANCE:
+        if self.cruiseSpeed != 0:
+            return self.cruiseSpeed
+        elif self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.calcMaxSpeed()
         elif self.mission.performance == MissionPerformance.EFFICIENT:
             return self.calcEfficientSpeed()
     
     def calcCruiseThrust(self):
-        if self.mission.performance == MissionPerformance.PERFORMANCE:
+        if self.cruiseSpeed != 0:
+            propellorPower = self.calcPropellorPower()
+            thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter **2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
+            return thrust
+        elif self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.cruiseMotorTableInterface.getMaxThrust()
         elif self.mission.performance == MissionPerformance.EFFICIENT:
             return self.calcEfficientStaticThrust()
     
     def calcEfficientSpeed(self):
-        airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+        airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
         thrustWeightRatio = self.calcEfficientDynamicThrust() / self.totalWeight
         wingLoading = self.totalWeight / self.wingArea
 
@@ -578,7 +586,7 @@ class Drone:
 
     def calcEfficientStaticThrust(self):
         propellorPower = self.calcEfficientSpeed() * self.calcEfficientDynamicThrust()
-        thrust = ( math.pi / 2 * self.atmConditions.calcAirDensity(self.pressure, self.temperature) * self.propellorDiameter * propellorPower ) ** ( 1 / 3 )
+        thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter **2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
         
         if thrust > self.cruiseMotorTableInterface.getMaxThrust():
             pass # throw an error!
@@ -593,10 +601,16 @@ class Drone:
         return thrust
     
     def calcPropellorPower(self):
-        if self.mission.performance == MissionPerformance.PERFORMANCE:
+        if self.cruiseSpeed != 0:
+            airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
+            CD0 = self.calcZeroLiftDragCoefficient()
+            dragDueToLiftCoefficient = self.calcDragDueToLiftFactor()
+            dynamicThrust = 0.5 * airDensity * ( self.cruiseSpeed ** 2 ) * self.wingArea * dragDueToLiftCoefficient + 2 * dragDueToLiftCoefficient * self.wingArea / ( airDensity * ( self.cruiseSpeed ** 2 ) ) * ( self.weight / self.wingArea ) ** 2
+            return dynamicThrust * self.cruiseSpeed
+        elif self.mission.performance == MissionPerformance.PERFORMANCE:
             CD0 = self.calcZeroLiftDragCoefficient()
             coefficientK = self.calcDragDueToLiftFactor()
-            airDensity = self.atmConditions.calcAirDensity(self.pressure, self.temperature)
+            airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
             return 0.5 * airDensity * ( self.calcMaxSpeed() ** 3 ) * self.wingArea * CD0 + ( 2 * coefficientK * self.wingArea ) / (airDensity * self.calcMaxSpeed()) * ( (self.totalWeight / self.wingArea) ** 2 )
         elif self.mission.performance == MissionPerformance.EFFICIENT:
             return self.calcEfficientDynamicThrust() * self.calcEfficientSpeed()

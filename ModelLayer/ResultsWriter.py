@@ -43,6 +43,8 @@ class ResultsWriter:
             
             if "timeAccelerating" in leg.keys(): # non-linear rate of change
                 if "timeDecelerating" in leg.keys(): # only the VTOL modes do this
+                    currHorizontalSpeed = 0
+                    
                     # acceleration period
                     timeA = leg["timeAccelerating"]
                     distA = leg["distanceAccelerating"]
