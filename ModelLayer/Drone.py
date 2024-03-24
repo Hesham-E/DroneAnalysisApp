@@ -266,7 +266,7 @@ class Drone:
                           * ( self.totalWeight / self.wingArea ) )
         thetaMin = math.atan( 1 / self.calcMaxLiftDragRatio() )
 
-        return vThetaMin *  math.sin(thetaMin)
+        return vThetaMin *  math.sin(thetaMin), vThetaMin
     
     def calcFixedWingClimb(self, targetAltitude = None, currentAltitude = None):
         if targetAltitude == None:
@@ -295,7 +295,8 @@ class Drone:
             currentAltitude = self.currentAltitude
         
         distFWD = currentAltitude - targetAltitude # vertical height
-        timeFWD = distFWD / self.calcRateOfDescent() # time based on vertical speed
+        ROD, _ = self.calcRateOfDescent()
+        timeFWD = distFWD / ROD # time based on vertical speed
         energyFWD = self.auxPowerCon * timeFWD # Unpowered glide
         
         # convert distFWD to a horizontal component
@@ -518,7 +519,8 @@ class Drone:
                 self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
                 self.resultsWriter.legInfos[count]["ROC"], self.resultsWriter.legInfos[count]["compositeROC"] = self.calcRateOfClimb()
-
+            elif leg == MissionLeg.ASCENT:
+                self.resultsWriter.legInfos[count]["ROD"], self.resultsWriter.legInfos[count]["compositeROD"] = self.calcRateOfDescent()
             timeInPeriods += time
             distInPeriods += dist
             energyInPeriods += energy
