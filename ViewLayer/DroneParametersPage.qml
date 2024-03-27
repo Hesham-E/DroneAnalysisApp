@@ -370,7 +370,7 @@ Item {
             objectName: "vtolSpeedInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("5")
+            text: qsTr("1.5")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }

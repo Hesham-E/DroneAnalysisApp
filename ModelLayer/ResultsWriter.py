@@ -2,6 +2,7 @@ import csv
 import math
 
 from .Mission import *
+from .AtmosphereConditions import *
 from inspect import currentframe, getframeinfo
 
 class ResultsWriter:
@@ -15,8 +16,12 @@ class ResultsWriter:
         # self.batteryCapactiy = batteryCapacity
         # self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryEnergy
+        self.atmConditions = AtmosphereConditions()
 
         self.cruiseDistance = None
+    
+    def quadradicCurve(self, x):
+        return -2 * x ** 2
     
     def createRows(self):
         self.rows = [] # reset in case we are doing 2 runs
@@ -31,6 +36,19 @@ class ResultsWriter:
         currHorizontalSpeed = 0
         numOfCruisePeriods = self.mission.legs.count(MissionLeg.CRUISE)
 
+        def calcDrag(speed):
+            airDensity = self.atmConditions.calcAirDensityAtAltitude(currAltitude, self.mission.parameters["temperature"])
+            dragDueToLiftCoefficient = leg["dragDueToLiftFactor"]
+        
+            # print(airDensity)
+            # print(dragDueToLiftCoefficient)
+            # print(speed)
+            # print(leg["wingArea"])
+            # print(leg["CD0"])
+            # print(leg["weight"])
+            # print()
+            return 0.5 * airDensity * ( speed ** 2 ) * leg["wingArea"] * leg["CD0"] + 2 * dragDueToLiftCoefficient * leg["wingArea"] / ( airDensity * ( speed ** 2 ) ) * ( ( leg["mass"] /leg["wingArea"] ) ** 2 )
+
         print(currEnergy)
         print(self.legInfos)
 
@@ -44,7 +62,7 @@ class ResultsWriter:
             if "timeAccelerating" in leg.keys(): # non-linear rate of change
                 if "timeDecelerating" in leg.keys(): # only the VTOL modes do this
                     currHorizontalSpeed = 0
-                    
+
                     # acceleration period
                     timeA = leg["timeAccelerating"]
                     distA = leg["distanceAccelerating"]
@@ -68,6 +86,7 @@ class ResultsWriter:
                     periodTime = 0
                     periodDistance = 0
 
+                    originalAccel = acceleration
                     while currVerticalSpeed < leg["targetSpeed"]:
                         self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
 
@@ -86,12 +105,14 @@ class ResultsWriter:
 
                             if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
                                 currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
+                            if currVerticalSpeed > 1: # because the calcDrag is dumb with small values
+                                acceleration = originalAccel - ( calcDrag(currVerticalSpeed) / leg["mass"] )
                     
                     currVerticalSpeed = leg["targetSpeed"] # Correct overshoot based on timeStep chosen
                     accelDistance = periodDistance
 
                     print("Done VTOL Accel")
-                    self.rows.append(["Done VTOL Accel"])
+                    # self.rows.append(["Done VTOL Accel"])
                     # break
 
                     # calculate deceleration distance, we do this first in order to know how long the linear period is
@@ -132,7 +153,7 @@ class ResultsWriter:
                             currSOC = currEnergy / self.batteryEnergy * 100
                     
                     print("Done VTOL Linear")
-                    self.rows.append(["Done VTOL Linear"])
+                    # self.rows.append(["Done VTOL Linear"])
 
                     # deceleration period, yes we do this first in order to know how long the linear period is
                     timeD = leg["timeDecelerating"]
@@ -173,10 +194,13 @@ class ResultsWriter:
 
                             if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
                                 currAltitude += abs( prevPeriodDistance - periodDistance ) * accelDirection
+                                
 
                     decelDistance = periodDistance
                     currVerticalSpeed = 0 # Correct overshoot based on timeStep chosen
-                else: # We are in Transition or Fixed Wing Acceleration
+                else: # We are in Transition or Fixed Wing Acceleration or Fixed Wing Ascent
+                    
+                    
                     print(getframeinfo(currentframe()).lineno)
                     acceleration = leg["thrust"] / leg["mass"]
 
@@ -259,6 +283,7 @@ class ResultsWriter:
                                 acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
 
                     else:
+                        originalAccel = acceleration
                         while currHorizontalSpeed < leg["targetSpeed"]:
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
@@ -266,10 +291,14 @@ class ResultsWriter:
                             currDistance = totalDistance
                             currHorizontalSpeed += acceleration * self.timeStep
                             totalTime += self.timeStep
+                            currTime += self.timeStep
 
                             if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
                                 acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
                             
+                            print("speed", currHorizontalSpeed)
+                            if currHorizontalSpeed > 1: # because the calcDrag is dumb with small values
+                                acceleration = originalAccel - ( calcDrag(currHorizontalSpeed) / leg["mass"] )
                             # print("HERE!")
                             # print(leg["thrust"] / leg["mass"])
                             # print(acceleration)
@@ -292,8 +321,34 @@ class ResultsWriter:
                         print(currHorizontalSpeed)
 
                         periodDistance = 0
+
+                        # calculate decel distance
+                        decel = 1.8
+                        decelDistance = 0.5 * decel * ( currHorizontalSpeed / decel ) ** 2
+                        # speed = currHorizontalSpeed
+                        # decelDistance = 0
+                        # decelTimeStep = 14.73
+                        # while speed > 0:
+                        #     dragDecel = calcDrag(speed) / leg["mass"]
+                        #     speed -= dragDecel * decelTimeStep
+                        #     decelDistance += speed * decelTimeStep
+
+                        self.cruiseDistance -= decelDistance * numOfCruisePeriods
+                        print("DECEL DISTANCE: ", decelDistance)
                         while periodDistance < self.cruiseDistance / numOfCruisePeriods:
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                            currTime += self.timeStep
+                            currDistance += currHorizontalSpeed * self.timeStep
+                            horizontalDistance += currHorizontalSpeed * self.timeStep
+                            periodDistance += currHorizontalSpeed * self.timeStep
+                            currEnergy -= energyStep
+                            currSOC = currEnergy / self.batteryEnergy * 100
+
+                        while currHorizontalSpeed > 0:
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                            currHorizontalSpeed -= decel * self.timeStep
 
                             currTime += self.timeStep
                             currDistance += currHorizontalSpeed * self.timeStep
@@ -344,7 +399,7 @@ class ResultsWriter:
                     # else:
                     #     pass
             
-            self.rows.append(["Next Period"])
+            # self.rows.append(["Next Period"])
             print("Next Period")
         
         if self.cruiseDistance == None and numOfCruisePeriods != 0:
@@ -356,7 +411,7 @@ class ResultsWriter:
         fileName = "detailedResults.csv"
         self.createRows()
         
-        with open(filePath + fileName, 'w') as csvFile:
+        with open(filePath + fileName, 'w', newline='') as csvFile:
             csvWriter = csv.writer( csvFile )
             csvWriter.writerow( self.headers )
             csvWriter.writerows( self.rows )

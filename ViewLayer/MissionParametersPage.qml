@@ -54,7 +54,7 @@ Item {
         objectName: "missionDistanceInput"
         width: 80
         height: 36
-        text: qsTr("400")
+        text: qsTr("3700")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }
@@ -141,7 +141,7 @@ Item {
         objectName: "cruiseAltitudeInput"
         width: 80
         height: 36
-        text: qsTr("40")
+        text: qsTr("50")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }
@@ -170,7 +170,7 @@ Item {
         objectName: "cruiseSpeedInput"
         width: 80
         height: 36
-        text: qsTr("0")
+        text: qsTr("20")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
     }

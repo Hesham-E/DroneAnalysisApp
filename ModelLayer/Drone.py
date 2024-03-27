@@ -207,8 +207,10 @@ class Drone:
         print("Reference Area ", self.calcReferenceArea())
 
         wettedAndReferenceAreaRatio = self.calcWettedArea() / self.calcReferenceArea()
+        CDMR = 0.021 # 4 becomes N and will change, the D will change, C0.7 will change. All of these will become user inputs later
 
-        print("CD0 ", wettedAndReferenceAreaRatio * skinFrictionCoefficient)
+        print("CD0 ", wettedAndReferenceAreaRatio * skinFrictionCoefficient + CDMR)
+        # return 0.051
         return wettedAndReferenceAreaRatio * skinFrictionCoefficient
 
     def calcLiftInducedDrag(self):
@@ -437,7 +439,11 @@ class Drone:
         for count, leg in enumerate( self.mission.legs ):
             self.resultsWriter.legInfos.append({})
             self.resultsWriter.legInfos[count]["mass"] = self.totalMass
+            self.resultsWriter.legInfos[count]["weight"] = self.totalWeight
+            self.resultsWriter.legInfos[count]["wingArea"] = self.wingArea
             self.resultsWriter.legInfos[count]["legObject"] = leg
+            self.resultsWriter.legInfos[count]["CD0"] = self.calcZeroLiftDragCoefficient()
+            self.resultsWriter.legInfos[count]["dragDueToLiftFactor"] = self.calcDragDueToLiftFactor()
 
             if leg == MissionLeg.CRUISE:
                 cruisePeriods.append( count )
@@ -470,7 +476,7 @@ class Drone:
                 self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
 
                 self.resultsWriter.legInfos[count]["thrust"] = self.vtolMotorTableInterface.getMaxThrust() * 4
-                self.resultsWriter.legInfos[count]["thrustPower"] = self.vtolMotorTableInterface.getMaxPower() * 4
+                self.resultsWriter.legInfos[count]["vtolThrustPower"] = self.vtolMotorTableInterface.getMaxPower() * 4
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.vtolSpeed
 
                 self.resultsWriter.legInfos[count]["baseAltitude"] = self.baseAltitude
@@ -493,6 +499,7 @@ class Drone:
                 self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
 
                 self.resultsWriter.legInfos[count]["thrust"] = self.vtolMotorTableInterface.getMaxThrust() * 4
+                self.resultsWriter.legInfos[count]["vtolThrustPower"] = self.vtolMotorTableInterface.getMaxPower() * 4
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.vtolSpeed
 
                 self.resultsWriter.legInfos[count]["baseAltitude"] = self.baseAltitude
@@ -504,7 +511,8 @@ class Drone:
 
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcStallSpeed()
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
-                self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                self.resultsWriter.legInfos[count]["cruiseThrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                self.resultsWriter.legInfos[count]["vtolThrustPower"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight / 4 ) * 4 # power needed to hover
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
             elif leg == MissionLeg.ACCELERATION:
                 self.resultsWriter.legInfos[count]["timeAccelerating"] = time
@@ -513,17 +521,19 @@ class Drone:
 
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
-                self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                self.resultsWriter.legInfos[count]["cruiseThrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
             elif leg == MissionLeg.ASCENT:
                 self.resultsWriter.legInfos[count]["timeAccelerating"] = time
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
-                self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                self.resultsWriter.legInfos[count]["cruiseThrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
                 self.resultsWriter.legInfos[count]["ROC"], self.resultsWriter.legInfos[count]["compositeROC"] = self.calcRateOfClimb()
-            elif leg == MissionLeg.ASCENT:
+            elif leg == MissionLeg.DESCENT:
                 self.resultsWriter.legInfos[count]["ROD"], self.resultsWriter.legInfos[count]["compositeROD"] = self.calcRateOfDescent()
+                self.resultsWriter.legInfos[count]["cruiseThrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+
             timeInPeriods += time
             distInPeriods += dist
             energyInPeriods += energy
@@ -558,7 +568,7 @@ class Drone:
             return distC + distA
         else:
             return distC
-    
+
     def calcCruiseSpeed(self):
         if self.cruiseSpeed != 0:
             return self.cruiseSpeed
@@ -605,7 +615,7 @@ class Drone:
             airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
             CD0 = self.calcZeroLiftDragCoefficient()
             dragDueToLiftCoefficient = self.calcDragDueToLiftFactor()
-            dynamicThrust = 0.5 * airDensity * ( self.cruiseSpeed ** 2 ) * self.wingArea * dragDueToLiftCoefficient + 2 * dragDueToLiftCoefficient * self.wingArea / ( airDensity * ( self.cruiseSpeed ** 2 ) ) * ( self.weight / self.wingArea ) ** 2
+            dynamicThrust = 0.5 * airDensity * ( self.cruiseSpeed ** 2 ) * self.wingArea * CD0 + 2 * dragDueToLiftCoefficient * self.wingArea / ( airDensity * ( self.cruiseSpeed ** 2 ) ) * ( self.weight / self.wingArea ) ** 2
             return dynamicThrust * self.cruiseSpeed
         elif self.mission.performance == MissionPerformance.PERFORMANCE:
             CD0 = self.calcZeroLiftDragCoefficient()
