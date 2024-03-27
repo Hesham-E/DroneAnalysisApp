@@ -100,7 +100,8 @@ class ResultsWriter:
                             periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
                             currDistance += abs( prevPeriodDistance - periodDistance )
                             
-                            currEnergy -= acceleration * self.timeStep * leg["mass"]
+                            currEnergy -= leg["vtolThrustPowerA"] * self.timeStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
                             currSOC = currEnergy / self.batteryEnergy * 100
 
                             if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
@@ -189,7 +190,8 @@ class ResultsWriter:
                             periodDistance = periodDistance / periodTime * self.timeStep + 0.5 * acceleration * ( periodTime ** 2 )
                             currDistance += abs( prevPeriodDistance - periodDistance )
                             
-                            currEnergy -= acceleration * self.timeStep * leg["mass"]
+                            currEnergy -= leg["vtolThrustPowerD"] * self.timeStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
                             currSOC = currEnergy / self.batteryEnergy * 100
 
                             if "timeDecelerating" in leg.keys(): #VTOL Take Off or Landing since only they have deceleration, therefore, altitude changes too
@@ -293,6 +295,12 @@ class ResultsWriter:
                             totalTime += self.timeStep
                             currTime += self.timeStep
 
+                            if leg["legObject"] == MissionLeg.TRANSITION:
+                                currEnergy -= leg["vtolThrustPower"] * self.timeStep
+                            currEnergy -= leg["cruiseThrustPower"] * self.timeStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
+                            currSOC = currEnergy / self.batteryEnergy * 100
+
                             if leg["thrust"] > leg["propellorPower"] / currHorizontalSpeed: #put this after so that currHorizontalSpeed isn't 0
                                 acceleration = leg["propellorPower"] / currHorizontalSpeed / leg["mass"]
                             
@@ -342,7 +350,8 @@ class ResultsWriter:
                             currDistance += currHorizontalSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             periodDistance += currHorizontalSpeed * self.timeStep
-                            currEnergy -= energyStep
+                            currEnergy -= leg["cruiseThrustPower"] * self.timeStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
                             currSOC = currEnergy / self.batteryEnergy * 100
 
                         while currHorizontalSpeed > 0:
@@ -354,7 +363,7 @@ class ResultsWriter:
                             currDistance += currHorizontalSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             periodDistance += currHorizontalSpeed * self.timeStep
-                            currEnergy -= energyStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
                             currSOC = currEnergy / self.batteryEnergy * 100
 
                         print(horizontalDistance)
@@ -374,7 +383,7 @@ class ResultsWriter:
                         currTime += self.timeStep
                         horizontalDistance += distanceStep
                         currAltitude += altitudeStep
-                        currEnergy -= energyStep
+                        currEnergy -= leg["auxPower"]
                         currSOC = currEnergy / self.batteryEnergy * 100
                 else:
                     pass # is a useless section
