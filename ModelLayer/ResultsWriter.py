@@ -19,6 +19,7 @@ class ResultsWriter:
         self.atmConditions = AtmosphereConditions()
 
         self.cruiseDistance = None
+        self.unpoweredDecel = 1.8
     
     def quadradicCurve(self, x):
         return -2 * x ** 2
@@ -330,9 +331,7 @@ class ResultsWriter:
 
                         periodDistance = 0
 
-                        # calculate decel distance
-                        decel = 1.8
-                        decelDistance = 0.5 * decel * ( currHorizontalSpeed / decel ) ** 2
+
                         # speed = currHorizontalSpeed
                         # decelDistance = 0
                         # decelTimeStep = 14.73
@@ -341,35 +340,68 @@ class ResultsWriter:
                         #     speed -= dragDecel * decelTimeStep
                         #     decelDistance += speed * decelTimeStep
 
-                        self.cruiseDistance -= decelDistance * numOfCruisePeriods
-                        print("DECEL DISTANCE: ", decelDistance)
-                        while periodDistance < self.cruiseDistance / numOfCruisePeriods:
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        if self.legInfos[count+1]["legObject"] == MissionLeg.VTOL_LANDING or \
+                           self.legInfos[count+1]["legObject"] == MissionLeg.VTOL_TAKEOFF:
+                            
+                            # calculate decel distance
+                            decelDistance = 0.5 * self.unpoweredDecel * ( currHorizontalSpeed / self.unpoweredDecel ) ** 2
+                            
+                            self.cruiseDistance -= decelDistance * numOfCruisePeriods
+                            tempCruiseDistance = self.cruiseDistance / numOfCruisePeriods - decelDistance
+                            print("DECEL DISTANCE: ", decelDistance)
+                            while periodDistance < tempCruiseDistance:
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
 
-                            currTime += self.timeStep
-                            currDistance += currHorizontalSpeed * self.timeStep
-                            horizontalDistance += currHorizontalSpeed * self.timeStep
-                            periodDistance += currHorizontalSpeed * self.timeStep
-                            currEnergy -= leg["cruiseThrustPower"] * self.timeStep
-                            currEnergy -= leg["auxPower"] * self.timeStep
-                            currSOC = currEnergy / self.batteryEnergy * 100
+                                currTime += self.timeStep
+                                currDistance += currHorizontalSpeed * self.timeStep
+                                horizontalDistance += currHorizontalSpeed * self.timeStep
+                                periodDistance += currHorizontalSpeed * self.timeStep
+                                currEnergy -= leg["cruiseThrustPower"] * self.timeStep
+                                currEnergy -= leg["auxPower"] * self.timeStep
+                                currSOC = currEnergy / self.batteryEnergy * 100
 
-                        while currHorizontalSpeed > 0:
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            while currHorizontalSpeed > 0:
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
 
-                            currHorizontalSpeed -= decel * self.timeStep
+                                currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
 
-                            currTime += self.timeStep
-                            currDistance += currHorizontalSpeed * self.timeStep
-                            horizontalDistance += currHorizontalSpeed * self.timeStep
-                            periodDistance += currHorizontalSpeed * self.timeStep
-                            currEnergy -= leg["auxPower"] * self.timeStep
-                            currSOC = currEnergy / self.batteryEnergy * 100
+                                currTime += self.timeStep
+                                currDistance += currHorizontalSpeed * self.timeStep
+                                horizontalDistance += currHorizontalSpeed * self.timeStep
+                                periodDistance += currHorizontalSpeed * self.timeStep
+                                currEnergy -= leg["auxPower"] * self.timeStep
+                                currSOC = currEnergy / self.batteryEnergy * 100
+                        else: # true linear cruise period
+                            while periodDistance < self.cruiseDistance / numOfCruisePeriods:
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                                currTime += self.timeStep
+                                currDistance += currHorizontalSpeed * self.timeStep
+                                horizontalDistance += currHorizontalSpeed * self.timeStep
+                                periodDistance += currHorizontalSpeed * self.timeStep
+                                currEnergy -= leg["cruiseThrustPower"] * self.timeStep
+                                currEnergy -= leg["auxPower"] * self.timeStep
+                                currSOC = currEnergy / self.batteryEnergy * 100
 
                         print(horizontalDistance)
                 elif leg["legObject"] == MissionLeg.DESCENT:
+                    # calculate decel distance
+                    decelDistance = 0.5 * self.unpoweredDecel * ( ( currHorizontalSpeed - leg["compositeROD"] ) / self.unpoweredDecel ) ** 2
+                    while currHorizontalSpeed > leg["compositeROD"]:
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+
+                        currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
+
+                        currTime += self.timeStep
+                        currDistance += currHorizontalSpeed * self.timeStep
+                        horizontalDistance += currHorizontalSpeed * self.timeStep
+                        periodDistance += currHorizontalSpeed * self.timeStep
+                        currEnergy -= leg["auxPower"] * self.timeStep
+                        currSOC = currEnergy / self.batteryEnergy * 100
+                    
                     glideAngle = math.asin( leg["ROD"] / leg["compositeROD"] )
                     currHorizontalSpeed = leg["compositeROD"] * math.cos( glideAngle )
+                    currVerticalSpeed = leg["ROD"]
 
                     totalTime = abs( leg["altitudeEnd"] - leg["altitudeStart"] ) / leg["ROD"]
                     steps = totalTime / self.timeStep
@@ -383,7 +415,7 @@ class ResultsWriter:
                         currTime += self.timeStep
                         horizontalDistance += distanceStep
                         currAltitude += altitudeStep
-                        currEnergy -= leg["auxPower"]
+                        currEnergy -= leg["auxPower"] * self.timeStep
                         currSOC = currEnergy / self.batteryEnergy * 100
                 else:
                     pass # is a useless section

@@ -204,7 +204,7 @@ Item {
             objectName: "propellorDiameterInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("0.4572")
+            text: qsTr("0.381")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
         }
