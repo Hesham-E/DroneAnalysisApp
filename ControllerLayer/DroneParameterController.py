@@ -95,7 +95,14 @@ class DroneParameterController:
         self.results["liftInducedDrag"] = self.modelLayer.calcLiftInducedDrag()
         self.results["parasiticDrag"] = self.modelLayer.calcParasiticDrag()
         self.results["totalDrag"] = self.modelLayer.calcDrag()
-        self.results["totalRange"] = self.modelLayer.calcMaxRange()
+
+        try:
+            self.results["totalRange"] = self.modelLayer.calcMaxRange()
+        except Exception as e:
+            errorWindow = self.window.findChild(QObject, "popupPage")
+            errorWindow.findChild(QObject, "popupLabel").setProperty("text", f"{e}")
+            errorWindow.open()
+            print("ERROR HERE!!!")
     
     def getResults(self):
         return self.results

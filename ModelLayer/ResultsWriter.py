@@ -219,25 +219,21 @@ class ResultsWriter:
                         print(currAltitude)
                         print(leg["altitudeEnd"])
                         while compositeSpeed < leg["compositeROC"] and currAltitude < leg["altitudeEnd"]:
-                            print(getframeinfo(currentframe()).lineno)
                             # acceleration phase
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
-                            print(getframeinfo(currentframe()).lineno)
                             totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
-                            print(getframeinfo(currentframe()).lineno)
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
-                            print(getframeinfo(currentframe()).lineno)
                             currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
-                            print(getframeinfo(currentframe()).lineno)
                             currDistance = totalDistance
 
                             
                             currHorizontalSpeed += horizontalAcceleration * self.timeStep
-                            print(getframeinfo(currentframe()).lineno)
                             currVerticalSpeed += verticalAcceleration * self.timeStep
-                            print(getframeinfo(currentframe()).lineno)
                             compositeSpeed = math.sqrt( currHorizontalSpeed ** 2 + currVerticalSpeed ** 2 )
-                            print(getframeinfo(currentframe()).lineno)
+
+                            currEnergy -= leg["thrustPower"] * self.timeStep
+                            currEnergy -= leg["auxPower"] * self.timeStep
+                            currSOC = currEnergy / self.batteryEnergy * 100
 
                             if leg["thrust"] > leg["propellorPower"] / compositeSpeed: #put this after so that compositeSpeed isn't 0
                                 acceleration = leg["propellorPower"] / compositeSpeed / leg["mass"]
@@ -245,7 +241,6 @@ class ResultsWriter:
                                 horizontalAcceleration = acceleration * math.cos( climbAngle )
                                 verticalAcceleration = acceleration * math.sin( climbAngle )
                             
-                            print(getframeinfo(currentframe()).lineno)
                             print(leg["thrust"] / leg["mass"])
                             print(acceleration)
                             print(leg["propellorPower"] / compositeSpeed / leg["mass"])
@@ -255,7 +250,6 @@ class ResultsWriter:
 
                         deceleration = 9.80665 * 0.5 # half of the acceleration needed to hover
                         decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
-
                         while currAltitude < leg["altitudeEnd"] - decelDistance:
                             # do not accelerate but hold speed until target altitude
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )

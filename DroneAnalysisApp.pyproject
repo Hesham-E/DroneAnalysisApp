@@ -17,6 +17,7 @@
         "ViewLayer/MissionParametersPage.qml",
         "ViewLayer/MissionProfilePage.qml",
         "ViewLayer/MissionTypePage.qml",
+        "ViewLayer/PopupPage.qml",
         "ViewLayer/ResultsPage.qml",
         "ViewLayer/images/EpJrE5C6_400x400.png",
         "ViewLayer/images/MissionProfile1.png",

@@ -62,6 +62,12 @@ Window {
         visible: false
     }
 
+    PopupPage {
+        id: popupPage
+        objectName: "popupPage"
+        anchors.centerIn: parent
+    }
+
     ResultsPage {
         id: resultsPage
         objectName: "resultsPage"

@@ -51,6 +51,8 @@ class Drone:
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
         self.mission = mission
+        self.travelledDistance = 0
+        self.expendedEnergy = 0
 
         self.cruiseAltitude = mission.parameters["cruiseAltitude"]
         self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
@@ -542,17 +544,24 @@ class Drone:
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
             elif leg == MissionLeg.ASCENT:
+                # self.resultsWriter.legInfos[count]["timeAccelerating"] = time
+
+                # self.resultsWriter.legInfos[count]["accelThrust"] = self.cruiseMotorTableInterface.getMaxThrust()
+                # self.resultsWriter.legInfos[count]["accelThrustPower"] = self.cruiseMotorTableInterface.getMaxPower()
+                # self.resultsWriter.legInfos[count]["accelPropellorPower"] = self.calcMaxPropellorPower()
+
+                # self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
+                # self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+                # self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
+
+                # self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
+                # self.resultsWriter.legInfos[count]["ROC"], self.resultsWriter.legInfos[count]["compositeROC"] = self.calcRateOfClimb()
+            
                 self.resultsWriter.legInfos[count]["timeAccelerating"] = time
-
-                self.resultsWriter.legInfos[count]["accelThrust"] = self.cruiseMotorTableInterface.getMaxThrust()
-                self.resultsWriter.legInfos[count]["accelThrustPower"] = self.cruiseMotorTableInterface.getMaxPower()
-                self.resultsWriter.legInfos[count]["accelPropellorPower"] = self.calcMaxPropellorPower()
-
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
                 self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
-                self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
-
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
+                self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
                 self.resultsWriter.legInfos[count]["ROC"], self.resultsWriter.legInfos[count]["compositeROC"] = self.calcRateOfClimb()
             elif leg == MissionLeg.DESCENT:
                 self.resultsWriter.legInfos[count]["ROD"], self.resultsWriter.legInfos[count]["compositeROD"] = self.calcRateOfDescent()
@@ -568,6 +577,9 @@ class Drone:
         cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() ) + self.auxPowerCon
         timeC = distC / self.calcCruiseSpeed()
         energyC = cruisePower * timeC
+
+        self.travelledDistance = horizontalDistance
+        self.expendedEnergy = energyInPeriods
 
         print("cruise")
         print(timeC, distC, energyC)
@@ -585,12 +597,33 @@ class Drone:
     def calcMaxRange(self):
         timeC, distC, energyC = self.calcCruisePeriod()
 
-        if MissionLeg.ACCELERATION in self.mission.legs:
-            timeA, distA, energyA = self.calcAccelerationPeriod()
-            distA *= self.mission.legs.count( MissionLeg.ACCELERATION )
-            return distC + distA
-        else:
-            return distC
+        # if MissionLeg.ACCELERATION in self.mission.legs:
+        #     timeA, distA, energyA = self.calcAccelerationPeriod()
+        #     distA *= self.mission.legs.count( MissionLeg.ACCELERATION )
+        #     return distC + distA
+        # else:
+        #     return distC
+
+        # Objective here is to run calculations to see the longest cruise period
+        # the drone can travel given the other parts of the mission.
+        # We also want to run some error checking here.
+        print("travelledDistance: ", self.travelledDistance)
+        print("self.mission.parameters[missionDistance]: ", self.mission.parameters["missionDistance"])
+        print("self.expendedEnergy: ", self.expendedEnergy)
+        print("batteryEnergy: ", self.batteryEnergy)
+        if self.travelledDistance > self.mission.parameters["missionDistance"]:
+            # mission distance is too small given the space needed to manuever
+            raise Exception(f"The selected mission distance is too small (Minimum Needed: {self.travelledDistance} m)")
+        if self.expendedEnergy > self.batteryEnergy:
+            # battery is too small to power this mission
+            raise Exception(f"The battery is too small to fly this mission (Minimum Needed: {self.expendedEnergy / self.batteryVoltage / 3.6 / 0.94} mAh)")
+
+        cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() ) + self.auxPowerCon
+        availableCruiseEnergy = self.batteryEnergy - self.expendedEnergy
+        availableCruiseTime = availableCruiseEnergy / cruisePower
+        availableCruiseDistance = availableCruiseTime * self.calcCruiseSpeed()
+
+        return availableCruiseDistance + self.travelledDistance
 
     def calcCruiseSpeed(self):
         if self.cruiseSpeed != 0: # user set cruise speed
@@ -603,7 +636,7 @@ class Drone:
     def calcCruiseThrust(self):
         if self.cruiseSpeed != 0:
             propellorPower = self.calcPropellorPower()
-            thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter **2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
+            thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter ** 2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
             return thrust
         elif self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.cruiseMotorTableInterface.getMaxThrust()
