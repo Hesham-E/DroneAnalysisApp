@@ -73,17 +73,21 @@ class DroneParameterController:
                     else:
                         raise Exception("Unrecognized QObject used")
                     
-        self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"],
-                                self.params["airFoil"],
-                                self.params["fuselageRadius"], self.params["fuselageLength"],
-                                self.params["propellorDiameter"],
-                                self.params["droneWeight"],
-                                self.params["angleOfAttack"],
-                                self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
-                                self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
-                                self.params["auxPowerCon"],
-                                self.params["vtolSpeed"],
-                                self.getMission())
+        try:
+            self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"],
+                                    self.params["airFoil"],
+                                    self.params["fuselageRadius"], self.params["fuselageLength"],
+                                    self.params["propellorDiameter"],
+                                    self.params["droneWeight"],
+                                    self.params["angleOfAttack"],
+                                    self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
+                                    self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
+                                    self.params["auxPowerCon"],
+                                    self.params["vtolSpeed"],
+                                    self.getMission())
+        except Exception as e:
+            self.popupError("A critical parameter is missing.")
+
 
         print(self.params)
 
@@ -99,10 +103,7 @@ class DroneParameterController:
         try:
             self.results["totalRange"] = self.modelLayer.calcMaxRange()
         except Exception as e:
-            errorWindow = self.window.findChild(QObject, "popupPage")
-            errorWindow.findChild(QObject, "popupLabel").setProperty("text", f"{e}")
-            errorWindow.open()
-            print("ERROR HERE!!!")
+            self.popupError(e)
     
     def getResults(self):
         return self.results
@@ -125,5 +126,10 @@ class DroneParameterController:
 
         profileWindow.setProperty("visible", True)
         self.paramWindow.setProperty("visible", False)
+    
+    def popupError(self, e):
+        errorWindow = self.window.findChild(QObject, "popupPage")
+        errorWindow.findChild(QObject, "popupLabel").setProperty("text", f"{e}")
+        errorWindow.open()
 
         
