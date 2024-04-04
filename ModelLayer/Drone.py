@@ -89,8 +89,13 @@ class Drone:
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath, self.pressure, self.temperature)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath, self.pressure, self.temperature)
         
-        self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy)
+        # self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy)
 
+        self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy,
+                    self.wingSpan, self.wingArea, self.totalMass,
+                    self.batteryCapacity, self.calcMaxSpeed(),
+                    self.calcStallSpeed(), self.calcEfficientSpeed())
+    
         # For future reverse engineering purposes
         if self.pressure == None:
             self.pressure = self.atmConditions.calcPressure(self.cruiseAltitude, self.temperature)
