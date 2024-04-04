@@ -135,7 +135,17 @@ Item {
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
             font.pixelSize: droneParametersPage.bodyFontSize
-            model: ["2408", "23012", "23018"]
+            model: ["2408", "23012", "23018",
+                    "0012", "2414", "2415",
+                    "0006", "0008", "0010",
+                    "0015", "0018", "0021",
+                    "0024", "1408", "1410",
+                    "1412", "2410", "2411",
+                    "2412", "2415", "2418",
+                    "2421", "2424", "4412",
+                    "4415", "4418", "4421",
+                    "4424", "6412", "22112",
+                    "23015", "23021", "23024"]
         }
 
         Text {

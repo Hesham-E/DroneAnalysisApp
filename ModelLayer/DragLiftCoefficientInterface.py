@@ -11,7 +11,6 @@ class DragLiftCoefficientInterface:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)
 
-        df = df.drop(df.columns[0], axis = 1) # first column is just row numbers
         df = df.apply(pd.to_numeric) # convert each entry to numerical values
         df = df.fillna(0)
 
@@ -53,12 +52,12 @@ class DragLiftCoefficientInterface:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)
         
-        df = df.drop(df.columns[0], axis = 1) # first column is just row numbers
         df = df.apply(pd.to_numeric) # convert each entry to numerical values
         df = df.fillna(0)
 
         # we know that the lift slope is linear in the middle
         half = int(len(df) / 2)
+        print(df.iloc[half])
         x1 = df.iloc[half]['Alpha']
         y1 = df.iloc[half]['Cl']
         x2 = df.iloc[half + 1]['Alpha']
@@ -71,7 +70,6 @@ class DragLiftCoefficientInterface:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)
 
-        df = df.drop(df.columns[0], axis = 1) # first column is just row numbers
         df = df.apply(pd.to_numeric) # convert each entry to numerical values
         df = df.fillna(0)
 
@@ -112,7 +110,6 @@ class DragLiftCoefficientInterface:
             reader = csv.DictReader(fp)
             df = pd.DataFrame(data = reader)
 
-        df = df.drop(df.columns[0], axis = 1) # first column is just row numbers
         df = df.apply(pd.to_numeric) # convert each entry to numerical values
         df = df.fillna(0)
     

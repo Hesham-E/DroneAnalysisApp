@@ -1,10 +1,12 @@
+import math
+import fnmatch
+import os
+
 from .AtmosphereConditions import AtmosphereConditions
 from .DragLiftCoefficientInterface import DragLiftCoefficientInterface
 from .MotorTableInterface import MotorTableInterface
 from .Mission import *
 from .ResultsWriter import ResultsWriter
-import math
-
 
 G_ACCEL = 9.80665
 UNDER_HOVER_FORCE = 0.5
@@ -76,7 +78,14 @@ class Drone:
         self.liftDistribution = 0.95
 
         self.atmConditions = AtmosphereConditions()
-        self.dragLiftInterface = DragLiftCoefficientInterface(f"./ModelLayer/data/airfoils/xf-naca{self.airFoil}-il-{self.adjustReynoldsNumberToValue(self.reynoldsNum)}_Subset_1.csv")
+
+        airfoilDir = "./ModelLayer/data/airfoils/"
+        airfoilFile = ""
+        for file in os.listdir(airfoilDir):
+            if fnmatch.fnmatch(file, f"*{self.airFoil}*{self.adjustReynoldsNumberToValue(self.reynoldsNum)}.*"):
+                airfoilFile = file
+        self.dragLiftInterface = DragLiftCoefficientInterface(airfoilDir + airfoilFile)
+        
         self.cruiseMotorTableInterface = MotorTableInterface(cruiseMotorTablePath, self.pressure, self.temperature)
         self.vtolMotorTableInterface = MotorTableInterface(vtolMotorTablePath, self.pressure, self.temperature)
         
