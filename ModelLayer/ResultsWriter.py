@@ -10,7 +10,7 @@ class ResultsWriter:
         self.legInfos = [] # array of dictionaries, in order in mission 
         self.rows = [] # processed data from legInfos to be written
         self.timeStep = 0.1 # seconds
-        self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", "Current Horizontal Speed (m/s)", "Current Vertical Speed (m/s)", "State of Charge (%)"]
+        self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", "Current Horizontal Speed (m/s)", "Current Vertical Speed (m/s)", "State of Charge (%)", "Phase of Flight", "Phase of Flight (Integer)"]
 
         self.mission = mission
         # self.batteryCapactiy = batteryCapacity
@@ -89,7 +89,7 @@ class ResultsWriter:
 
                     originalAccel = acceleration
                     while currVerticalSpeed < leg["targetSpeed"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -143,7 +143,7 @@ class ResultsWriter:
 
                     periodTime = 0
                     while periodTime < timeL:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -179,7 +179,7 @@ class ResultsWriter:
                     periodTime = 0
                     periodDistance = 0
                     while currVerticalSpeed > 0:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -220,7 +220,7 @@ class ResultsWriter:
                         print(leg["altitudeEnd"])
                         while compositeSpeed < leg["compositeROC"] and currAltitude < leg["altitudeEnd"]:
                             # acceleration phase
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
                             totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
                             currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
@@ -252,7 +252,7 @@ class ResultsWriter:
                         decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
                         while currAltitude < leg["altitudeEnd"] - decelDistance:
                             # do not accelerate but hold speed until target altitude
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -260,7 +260,7 @@ class ResultsWriter:
 
                         while currVerticalSpeed > 0:
                             # decelerate
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -269,7 +269,7 @@ class ResultsWriter:
                             currVerticalSpeed -= verticalAcceleration * self.timeStep
                         
                         while currHorizontalSpeed < leg["targetSpeed"]: #accelerate to cruising speed
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             currDistance = totalDistance
@@ -282,7 +282,7 @@ class ResultsWriter:
                     else:
                         originalAccel = acceleration
                         while currHorizontalSpeed < leg["targetSpeed"]:
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             currDistance = totalDistance
@@ -344,7 +344,7 @@ class ResultsWriter:
                             tempCruiseDistance = self.cruiseDistance / numOfCruisePeriods - decelDistance
                             print("DECEL DISTANCE: ", decelDistance)
                             while periodDistance < tempCruiseDistance:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                                 currTime += self.timeStep
                                 currDistance += currHorizontalSpeed * self.timeStep
@@ -355,7 +355,7 @@ class ResultsWriter:
                                 currSOC = currEnergy / self.batteryEnergy * 100
 
                             while currHorizontalSpeed > 0:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                                 currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
 
@@ -367,7 +367,7 @@ class ResultsWriter:
                                 currSOC = currEnergy / self.batteryEnergy * 100
                         else: # true linear cruise period
                             while periodDistance < self.cruiseDistance / numOfCruisePeriods:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                                 currTime += self.timeStep
                                 currDistance += currHorizontalSpeed * self.timeStep
@@ -382,7 +382,7 @@ class ResultsWriter:
                     # calculate decel distance
                     decelDistance = 0.5 * self.unpoweredDecel * ( ( currHorizontalSpeed - leg["compositeROD"] ) / self.unpoweredDecel ) ** 2
                     while currHorizontalSpeed > leg["compositeROD"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
 
@@ -404,7 +404,7 @@ class ResultsWriter:
                     distanceStep = currHorizontalSpeed * self.timeStep
 
                     while currAltitude > leg["altitudeEnd"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currTime += self.timeStep
                         horizontalDistance += distanceStep
@@ -421,7 +421,7 @@ class ResultsWriter:
                     # if altitudeStep == 0: #Ie. not ascent or descent
                     periodTime = 0
                     while periodTime < totalTime:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}"] )
 
                         currTime += self.timeStep
                         currDistance += distanceStep
