@@ -44,5 +44,13 @@ class ResultsController:
         self.resultsWindow.setProperty("visible", False)
 
     def exportAllResults(self):
-        modelLayer = self.getModelLayer()
-        modelLayer.resultsWriter.exportToCSV("./")
+        try:
+            modelLayer = self.getModelLayer()
+            modelLayer.resultsWriter.exportToCSV("./")
+        except:
+            self.popupError("An error occured during simulated flight.")
+
+    def popupError(self, e):
+        errorWindow = self.window.findChild(QObject, "popupPage")
+        errorWindow.findChild(QObject, "popupLabel").setProperty("text", f"{e}")
+        errorWindow.open()

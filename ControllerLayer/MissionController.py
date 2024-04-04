@@ -80,7 +80,7 @@ class MissionController:
         self.selectProfileHelper()
 
     def selectProfileFour(self):
-        self.missionProfile = MissionProfile.SWEEP
+        self.missionProfile = MissionProfile.DOUBLE_CRUISE
 
         self.parameterWindow.findChild(QObject, "vtolDescentLabel").setProperty("visible", True)
         self.parameterWindow.findChild(QObject, "vtolDescentInput").setProperty("visible", True)
