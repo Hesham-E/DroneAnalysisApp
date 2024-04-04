@@ -58,6 +58,7 @@ Item {
         text: qsTr("3700")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -87,6 +88,7 @@ Item {
         text: qsTr("288.15")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
     
     Text {
@@ -116,6 +118,7 @@ Item {
         text: qsTr("101325")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -145,6 +148,7 @@ Item {
         text: qsTr("50")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -174,6 +178,7 @@ Item {
         text: qsTr("20")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -203,6 +208,7 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         objectName: "baseStationAltitudeInput"
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -234,6 +240,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "vtolClimbInput"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -265,6 +272,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "vtolDescentInput"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -296,6 +304,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "cruiseAltitude2Input"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -327,6 +336,7 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Button {

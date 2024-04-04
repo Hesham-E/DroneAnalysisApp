@@ -54,6 +54,7 @@ Item {
             text: qsTr("2.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -80,6 +81,7 @@ Item {
             text: qsTr("6")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -109,6 +111,7 @@ Item {
             text: qsTr("0.53")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -158,6 +161,7 @@ Item {
             text: qsTr("0.1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -183,6 +187,7 @@ Item {
             text: qsTr("1.1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -208,6 +213,7 @@ Item {
             text: qsTr("0.381")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -235,6 +241,7 @@ Item {
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
             visible: false
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
     }
 
@@ -274,6 +281,7 @@ Item {
             text: qsTr("10")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -299,6 +307,7 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -324,6 +333,7 @@ Item {
             text: qsTr("6000")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -349,6 +359,7 @@ Item {
             text: qsTr("22.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -374,6 +385,7 @@ Item {
             text: qsTr("1.5")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -476,6 +488,7 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -501,6 +514,7 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -526,6 +540,7 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
     }

@@ -51,7 +51,7 @@ class Drone:
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
 
         self.mission = mission
-        self.travelledDistance = 0
+        self.minimumDistance = 0
         self.expendedEnergy = 0
 
         self.cruiseAltitude = mission.parameters["cruiseAltitude"]
@@ -578,7 +578,7 @@ class Drone:
         timeC = distC / self.calcCruiseSpeed()
         energyC = cruisePower * timeC
 
-        self.travelledDistance = horizontalDistance
+        self.minimumDistance = horizontalDistance
         self.expendedEnergy = energyInPeriods
 
         print("cruise")
@@ -607,23 +607,28 @@ class Drone:
         # Objective here is to run calculations to see the longest cruise period
         # the drone can travel given the other parts of the mission.
         # We also want to run some error checking here.
-        print("travelledDistance: ", self.travelledDistance)
+        print("minimumDistance: ", self.minimumDistance)
         print("self.mission.parameters[missionDistance]: ", self.mission.parameters["missionDistance"])
         print("self.expendedEnergy: ", self.expendedEnergy)
         print("batteryEnergy: ", self.batteryEnergy)
-        if self.travelledDistance > self.mission.parameters["missionDistance"]:
+        if self.minimumDistance > self.mission.parameters["missionDistance"]:
             # mission distance is too small given the space needed to manuever
-            raise Exception(f"The selected mission distance is too small (Minimum Needed: {self.travelledDistance} m)")
+            raise Exception(f"The selected mission distance is too small (Minimum Needed: {self.minimumDistance:.2f} m)")
         if self.expendedEnergy > self.batteryEnergy:
             # battery is too small to power this mission
-            raise Exception(f"The battery is too small to fly this mission (Minimum Needed: {self.expendedEnergy / self.batteryVoltage / 3.6 / 0.94} mAh)")
+            raise Exception(f"The battery capacity is too small to fly this mission (Minimum Needed: {self.expendedEnergy / self.batteryVoltage / 3.6 / 0.94:.2f} mAh)")
 
         cruisePower = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() ) + self.auxPowerCon
         availableCruiseEnergy = self.batteryEnergy - self.expendedEnergy
         availableCruiseTime = availableCruiseEnergy / cruisePower
         availableCruiseDistance = availableCruiseTime * self.calcCruiseSpeed()
 
-        return availableCruiseDistance + self.travelledDistance
+        print("cruisePower ", cruisePower)
+        print("availableCruiseEnergy ", availableCruiseEnergy)
+        print("availableCruiseTime ", availableCruiseTime)
+        print("availableCruiseDistance ", availableCruiseDistance)
+
+        return availableCruiseDistance + self.minimumDistance
 
     def calcCruiseSpeed(self):
         if self.cruiseSpeed != 0: # user set cruise speed
