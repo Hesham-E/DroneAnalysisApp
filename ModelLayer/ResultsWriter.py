@@ -7,8 +7,9 @@ from inspect import currentframe, getframeinfo
 
 class ResultsWriter:
     def __init__(self, mission, batteryEnergy,
-                 wingSpan, wingArea, totalMass,
-                 batteryCapacity, maxSpeed, stallSpeed,
+                 wingSpan, wingArea, fuselageLength,
+                 totalMass, batteryCapacity, 
+                 maxSpeed, stallSpeed,
                  efficientSpeed):
         self.legInfos = [] # array of dictionaries, in order in mission 
         self.rows = [] # processed data from legInfos to be written
@@ -16,7 +17,7 @@ class ResultsWriter:
         self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", 
                         "Current Horizontal Speed (m/s)", "Current Vertical Speed (m/s)", "State of Charge (%)", 
                         "Phase of Flight", "Phase of Flight (Integer)",
-                        "Wing Span (m)", "Wing Area (m^2)", "Drone Weight (kg)",
+                        "Wing Span (m)", "Wing Area (m^2)", "Fuselage Length (m)", "Drone Weight (kg)",
                         "Battery Capacity (mAh)", "Maximum Speed (m/s)", "Stall Speed (m/s)",
                         "Minimum Cruise Thrust Speed (m/s)"]
 
@@ -31,6 +32,7 @@ class ResultsWriter:
 
         self.wingSpan = wingSpan
         self.wingArea = wingArea
+        self.fuselageLength = fuselageLength
         self.totalMass = totalMass
         self.batteryCapacity = batteryCapacity
         self.maxSpeed = maxSpeed
@@ -109,7 +111,7 @@ class ResultsWriter:
 
                     originalAccel = acceleration
                     while currVerticalSpeed < leg["targetSpeed"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -163,7 +165,7 @@ class ResultsWriter:
 
                     periodTime = 0
                     while periodTime < timeL:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -199,7 +201,7 @@ class ResultsWriter:
                     periodTime = 0
                     periodDistance = 0
                     while currVerticalSpeed > 0:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currTime += self.timeStep
                         periodTime += self.timeStep
@@ -241,7 +243,7 @@ class ResultsWriter:
                         if compositeSpeed < leg["compositeROC"]:
                             while compositeSpeed < leg["compositeROC"] and currAltitude < leg["altitudeEnd"]:
                                 # acceleration phase
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
                                 totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                                 horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
                                 currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
@@ -277,7 +279,7 @@ class ResultsWriter:
                         decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
                         while currAltitude < leg["altitudeEnd"] - decelDistance:
                             # do not accelerate but hold speed until target altitude
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -287,7 +289,7 @@ class ResultsWriter:
 
                         while currVerticalSpeed > 0:
                             # decelerate
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -299,7 +301,7 @@ class ResultsWriter:
                         currVerticalSpeed = 0 # fix overcorrection
                         
                         while currHorizontalSpeed < leg["targetSpeed"]: #accelerate to cruising speed
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             currDistance = totalDistance
@@ -314,7 +316,7 @@ class ResultsWriter:
                     else:
                         originalAccel = acceleration
                         while currHorizontalSpeed < leg["targetSpeed"]:
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             currDistance = totalDistance
@@ -376,7 +378,7 @@ class ResultsWriter:
                             tempCruiseDistance = self.cruiseDistance / numOfCruisePeriods - decelDistance
                             print("DECEL DISTANCE: ", decelDistance)
                             while periodDistance < tempCruiseDistance:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                                 currTime += self.timeStep
                                 currDistance += currHorizontalSpeed * self.timeStep
@@ -387,7 +389,7 @@ class ResultsWriter:
                                 currSOC = currEnergy / self.batteryEnergy * 100
 
                             while currHorizontalSpeed > 0:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                                 currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
 
@@ -399,7 +401,7 @@ class ResultsWriter:
                                 currSOC = currEnergy / self.batteryEnergy * 100
                         else: # true linear cruise period
                             while periodDistance < self.cruiseDistance / numOfCruisePeriods:
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                                 currTime += self.timeStep
                                 currDistance += currHorizontalSpeed * self.timeStep
@@ -414,7 +416,7 @@ class ResultsWriter:
                     # calculate decel distance
                     decelDistance = 0.5 * self.unpoweredDecel * ( ( currHorizontalSpeed - leg["compositeROD"] ) / self.unpoweredDecel ) ** 2
                     while currHorizontalSpeed > leg["compositeROD"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
 
@@ -436,7 +438,7 @@ class ResultsWriter:
                     distanceStep = currHorizontalSpeed * self.timeStep
 
                     while currAltitude > leg["altitudeEnd"]:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currTime += self.timeStep
                         horizontalDistance += distanceStep
@@ -453,7 +455,7 @@ class ResultsWriter:
                     # if altitudeStep == 0: #Ie. not ascent or descent
                     periodTime = 0
                     while periodTime < totalTime:
-                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                        self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
                         currTime += self.timeStep
                         currDistance += distanceStep

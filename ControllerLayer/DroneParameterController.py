@@ -4,6 +4,7 @@ import sys
 import os
 sys.path.append(os.path.abspath('../ModelLayer'))
 from ModelLayer.Drone import Drone
+from ModelLayer.ReverseCalculator import ReverseCalculator
 
 class DroneParameterController:
     def __init__(self, window, resultSignal, getMission):
@@ -16,6 +17,7 @@ class DroneParameterController:
         self.designToggled = False
 
         self.modelLayer = None
+        self.reverseCalculator = ReverseCalculator(getMission())
 
         self.connectButtons()
     
@@ -30,7 +32,26 @@ class DroneParameterController:
 
         predictDesignSwitch = self.paramWindow.findChild(QObject, "predictDesignSwitch")
         predictDesignSwitch.clicked.connect(self.toggleDesign)
+
+        updateButton = self.paramWindow.findChild(QObject, "updateButton")
+        updateButton.clicked.connect(self.predictParamteers)
     
+    def predictParamteers(self):
+        maxSpeed = float( self.paramWindow.findChild(QObject, "maxSpeedInput").property("text") )
+        stallSpeed = float( self.paramWindow.findChild(QObject, "stallSpeedInput").property("text") )
+        aspectRatio = float( self.paramWindow.findChild(QObject, "aspectRatioInput").property("text") )
+        droneMass = float( self.paramWindow.findChild(QObject, "droneWeightInput").property("text") )
+        batteryMass = float( self.paramWindow.findChild(QObject, "batteryWeightInput").property("text") )
+        loadMass = self.getMission().parameters["loadWeight"]
+        mass = droneMass + batteryMass + loadMass
+
+        wingSpan = self.reverseCalculator.calcWingSpan(aspectRatio, stallSpeed, mass)
+        wingArea = self.reverseCalculator.calcWingArea(stallSpeed, mass)
+
+
+        self.paramWindow.findChild(QObject, "wingSpanInput").setProperty("text", round( wingSpan, 2 ) )
+        self.paramWindow.findChild(QObject, "wingAreaInput").setProperty("text", round( wingArea, 2 ) )
+
     def toggleDesign(self):
         self.designToggled = not self.designToggled
         self.paramWindow.findChild(QObject, "rightParameterGrid").setProperty("visible", self.designToggled)
@@ -43,6 +64,7 @@ class DroneParameterController:
 
             # components that we don't want to be green / we want them to be a special color
             self.paramWindow.findChild(QObject, "droneWeightLabel").setProperty("color", "black")
+            self.paramWindow.findChild(QObject, "propellorDiameterLabel").setProperty("color", "black")
             self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#e6bf40")
             self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#e6bf40")
         else:

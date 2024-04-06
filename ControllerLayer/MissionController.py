@@ -20,9 +20,10 @@ class MissionController:
         # Start mission type window configuration
         surveillanceButton = self.typeWindow.findChild(QObject, "surveillanceButton")
         payloadButton = self.typeWindow.findChild(QObject, "payloadDeliveryButton")
-        allButton = self.typeWindow.findChild(QObject, "allButton")
+        typeBackButton = self.typeWindow.findChild(QObject, "returnButton")
         payloadButton.clicked.connect(self.selectPayloadDelivery)
         surveillanceButton.clicked.connect(self.selectSurveillance)
+        typeBackButton.clicked.connect(self.goBackType)
         # End mission type window configuration
 
         # Start mission parameter window configuration
@@ -129,6 +130,12 @@ class MissionController:
         self.parameterWindow.findChild(QObject, "loadWeightLabel").setProperty("visible", False)
         self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("visible", False)
         self.parameterWindow.findChild(QObject, "loadWeightInput").setProperty("text", "0")
+    
+    def goBackType(self):
+        introWindow = self.window.findChild(QObject, "introPage")
+
+        self.typeWindow.setProperty("visible", False)
+        introWindow.setProperty("visible", True)
 
     def confirmParameters(self):
         for child in self.parameterWindow.children():

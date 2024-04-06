@@ -92,7 +92,7 @@ class Drone:
         # self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy)
 
         self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy,
-                    self.wingSpan, self.wingArea, self.totalMass,
+                    self.wingSpan, self.wingArea, self.fuselageLength, self.totalMass,
                     self.batteryCapacity, self.calcMaxSpeed(),
                     self.calcStallSpeed(), self.calcEfficientSpeed())
     
@@ -115,6 +115,8 @@ class Drone:
         print("Air Density: ", airDensity)
         print("CL,MAX ", maxLiftCoefficient)
         print("Wing Loading ", wingloading)
+        print("self.totalWeight ", self.totalWeight)
+        print("self.wingArea ", self.wingArea)
 
         vStallSquared = 2 * wingloading / ( airDensity * maxLiftCoefficient )
         return math.sqrt(vStallSquared)
@@ -207,14 +209,19 @@ class Drone:
         return secA + secB + secC
     
     def calcWettedArea(self):
+        print("Wetted Area: ", self.calcFuselageWettedArea() + self.calcTailWettedArea() + self.wingArea)
+        print("FuseLage Wetteed Area: ", self.calcFuselageWettedArea())
+        print("Tail Wetted Area: ", self.calcTailWettedArea())
         return self.calcFuselageWettedArea() + self.calcTailWettedArea() + self.wingArea
     
     def calcReferenceArea(self):
-        lambdaC = 0.5
-        cR = 2 * self.wingArea / ( ( lambdaC + 1 ) * self.wingSpan )
+        # lambdaC = 0.5
+        # cR = 2 * self.wingArea / ( ( lambdaC + 1 ) * self.wingSpan )
 
-        # should never be negative, abs() just makes it easier to test the code with dummy values
-        return abs( self.wingArea - cR * self.fuselageRadius )
+        # # should never be negative, abs() just makes it easier to test the code with dummy values
+        # print("Reference Area: ", abs( self.wingArea - cR * self.fuselageRadius ))
+        # return abs( self.wingArea - cR * self.fuselageRadius )
+        return self.wingArea
     
     def calcZeroLiftDragCoefficient(self):
         skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
