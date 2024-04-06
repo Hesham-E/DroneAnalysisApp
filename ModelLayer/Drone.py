@@ -20,6 +20,7 @@ class Drone:
                  weight,
                  angleOfAttack,
                  batteryWeight, batteryCapacity, batteryVoltage,
+                 vtolMotorHeight, vtolMotorDiameter, numberOfVTOLProps,
                  cruiseMotorTablePath, vtolMotorTablePath,
                  auxPowerCon,
                  vtolSpeed,
@@ -51,6 +52,10 @@ class Drone:
         self.batteryCapacity = batteryCapacity
         self.batteryVoltage = batteryVoltage
         self.batteryEnergy = batteryVoltage * batteryCapacity * 3.6 * 0.94
+
+        self.vtolMotorHeight = vtolMotorHeight
+        self.vtolMotorDiameter = vtolMotorDiameter
+        self.numberOfVTOLProps = numberOfVTOLProps
 
         self.mission = mission
         self.minimumDistance = 0
@@ -223,6 +228,10 @@ class Drone:
         # return abs( self.wingArea - cR * self.fuselageRadius )
         return self.wingArea
     
+    def calcMotorDragCoefficient(self):
+        refArea = self.calcReferenceArea()
+        C07R = 0.038
+
     def calcZeroLiftDragCoefficient(self):
         skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
         skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane

@@ -16,7 +16,7 @@ class DroneParameterController:
         self.getMission = getMission
         self.designToggled = False
 
-        self.modelLayer = None
+        self.drone = None
         self.reverseCalculator = ReverseCalculator(getMission())
 
         self.connectButtons()
@@ -48,7 +48,6 @@ class DroneParameterController:
         wingSpan = self.reverseCalculator.calcWingSpan(aspectRatio, stallSpeed, mass)
         wingArea = self.reverseCalculator.calcWingArea(stallSpeed, mass)
 
-
         self.paramWindow.findChild(QObject, "wingSpanInput").setProperty("text", round( wingSpan, 2 ) )
         self.paramWindow.findChild(QObject, "wingAreaInput").setProperty("text", round( wingArea, 2 ) )
 
@@ -64,7 +63,8 @@ class DroneParameterController:
 
             # components that we don't want to be green / we want them to be a special color
             self.paramWindow.findChild(QObject, "droneWeightLabel").setProperty("color", "black")
-            self.paramWindow.findChild(QObject, "propellorDiameterLabel").setProperty("color", "black")
+            self.paramWindow.findChild(QObject, "cruisePropellorDiameterLabel").setProperty("color", "black")
+            self.paramWindow.findChild(QObject, "airFoilLabel").setProperty("color", "black")
             self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#e6bf40")
             self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#e6bf40")
         else:
@@ -96,34 +96,35 @@ class DroneParameterController:
                         raise Exception("Unrecognized QObject used")
                     
         try:
-            self.modelLayer = Drone(self.params["wingSpan"], self.params["wingArea"],
+            self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
                                     self.params["airFoil"],
                                     self.params["fuselageRadius"], self.params["fuselageLength"],
                                     self.params["propellorDiameter"],
                                     self.params["droneWeight"],
                                     self.params["angleOfAttack"],
                                     self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
+                                    self.params["vtolMotorHeight"], self.params["vtolMotorDiameter"], self.params["vtolPropellorNumber"],
                                     self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
                                     self.params["auxPowerCon"],
                                     self.params["vtolSpeed"],
                                     self.getMission())
         except Exception as e:
-            self.popupError("A critical parameter is missing.")
+            self.popupError("A critical parameter is missing or incorrect.")
 
 
         print(self.params)
 
     def runSimulations(self):
-        self.results["stallSpeed"] = self.modelLayer.calcStallSpeed()
-        self.results["minimumCruiseThrustSpeed"] = self.modelLayer.calcEfficientSpeed()
-        self.results["maxSpeed"] = self.modelLayer.calcMaxSpeed()
-        self.results["lift"] = self.modelLayer.calcLift()
-        self.results["liftInducedDrag"] = self.modelLayer.calcLiftInducedDrag()
-        self.results["parasiticDrag"] = self.modelLayer.calcParasiticDrag()
-        self.results["totalDrag"] = self.modelLayer.calcDrag()
+        self.results["stallSpeed"] = self.drone.calcStallSpeed()
+        self.results["minimumCruiseThrustSpeed"] = self.drone.calcEfficientSpeed()
+        self.results["maxSpeed"] = self.drone.calcMaxSpeed()
+        self.results["lift"] = self.drone.calcLift()
+        self.results["liftInducedDrag"] = self.drone.calcLiftInducedDrag()
+        self.results["parasiticDrag"] = self.drone.calcParasiticDrag()
+        self.results["totalDrag"] = self.drone.calcDrag()
 
         try:
-            self.results["totalRange"] = self.modelLayer.calcMaxRange()
+            self.results["totalRange"] = self.drone.calcMaxRange()
         except Exception as e:
             self.popupError(e)
     
@@ -138,10 +139,10 @@ class DroneParameterController:
         self.resultSignal.emit()
     
     def getModelLayer(self):
-        # TODO: move "self.modelLayer out of this class and pass a reference originating from ControllerContainer"
+        # TODO: move "self.drone out of this class and pass a reference originating from ControllerContainer"
         # Might not be feasible considering we create the object based on data from this page, though
 
-        return self.modelLayer 
+        return self.drone 
     
     def goBack(self):
         profileWindow = self.window.findChild(QObject, "missionParamtersPage")

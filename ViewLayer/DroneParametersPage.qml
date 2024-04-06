@@ -201,29 +201,81 @@ Item {
         }
 
         Text {
-            id: propellorDiameterLabel
-            objectName: "propellorDiameterLabel"
+            id: cruisePropellorDiameterLabel
+            objectName: "cruisePropellorDiameterLabel"
             text: qsTr("Cruise Propellor Diameter (m)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
             property string tip: "The diameter of the cruise propellor. Used in drag and thrust calculations."
-            ToolTip.visible: tip ? propellorDiameterMA.containsMouse : false
+            ToolTip.visible: tip ? cruisePropellorDiameterMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
-                id: propellorDiameterMA
+                id: cruisePropellorDiameterMA
                 anchors.fill: parent
                 hoverEnabled: true
             }
         }
         TextField {
-            id: propellorDiameterInput
-            objectName: "propellorDiameterInput"
+            id: cruisePropellorDiameterInput
+            objectName: "cruisePropellorDiameterInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
             text: qsTr("0.381")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
             validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolPropellorDiameterLabel
+            objectName: "vtolPropellorDiameterLabel"
+            text: qsTr("VTOL Propellor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the VTOL propellor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolPropellorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolPropellorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolPropellorDiameterInput
+            objectName: "vtolPropellorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.381")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolPropellorNumberLabel
+            objectName: "vtolPropellorNumberLabel"
+            text: qsTr("Number of VTOL Propellors")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The number of VTOL propellors. Used in drag calculations."
+            ToolTip.visible: tip ? propellorNumberMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: propellorNumberMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolPropellorNumberInput
+            objectName: "vtolPropellorNumberInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("4")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]/ }
         }
 
         Text {
@@ -393,6 +445,58 @@ Item {
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
             text: qsTr("1.5")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolMotorHeightLabel
+            objectName: "vtolMotorHeightLabel"
+            text: qsTr("VTOL Motor Height (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The height of the VTOL motor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolMotorHeightMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolMotorHeightMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolMotorHeightInput
+            objectName: "vtolMotorHeightInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.028")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolMotorDiameterLabel
+            objectName: "vtolMotorDiameterLabel"
+            text: qsTr("VTOL Motor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the VTOL motor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolMotorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolMotorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolMotorDiameterInput
+            objectName: "vtolMotorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.042")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
             validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
