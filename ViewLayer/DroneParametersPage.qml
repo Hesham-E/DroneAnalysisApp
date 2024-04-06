@@ -567,7 +567,7 @@ Item {
     Grid {
         id: rightParameterGrid
         objectName: "rightParameterGrid"
-        x: 901
+        x: 857
         y: 319
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
@@ -580,23 +580,23 @@ Item {
 
 
         Text {
-            id: maxSpeedLabel
-            objectName: "maxSpeedLabel"
-            text: qsTr("Desired Max Speed (m/s)")
+            id: minCruiseSpeedLabel
+            objectName: "minCruiseSpeedLabel"
+            text: qsTr("Desired Minimum Cruise Speed (m/s)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The desired max speed of the drone. Will be used to predict drone specification parameters in red."
-            ToolTip.visible: tip ? maxSpeedMA.containsMouse : false
+            property string tip: "The desired max speed of the drone. Will be used to predict drone specification parameters in green."
+            ToolTip.visible: tip ? minCruiseSpeedMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
-                id: maxSpeedMA
+                id: minCruiseSpeedMA
                 anchors.fill: parent
                 hoverEnabled: true
             }
         }
         TextField {
-            id: maxSpeedInput
-            objectName: "maxSpeedInput"
+            id: minCruiseSpeedInput
+            objectName: "minCruiseSpeedInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
             text: qsTr("1")
@@ -611,7 +611,7 @@ Item {
             text: qsTr("Desired Stall Speed (m/s)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The desired stall speed of the drone. Will be used to predict drone specification parameters in red."
+            property string tip: "The desired stall speed of the drone. Will be used to predict drone specification parameters in green."
             ToolTip.visible: tip ? stallSpeedMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -637,7 +637,7 @@ Item {
             text: qsTr("Desired Aspect Ratio")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The desired aspect ratio of the drone. Will be used to predict drone specification parameters in red."
+            property string tip: "The desired aspect ratio of the drone. Will be used to predict drone specification parameters in green."
             ToolTip.visible: tip ? aspectRatioMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -668,7 +668,7 @@ Item {
         text: qsTr("Predict Design")
         font.pixelSize: droneParametersPage.bodyFontSize
 
-        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in red."
+        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in gren."
         ToolTip.visible: tip ? predictDesignMA.containsMouse : false
         ToolTip.text: tip
         MouseArea {
@@ -692,7 +692,7 @@ Item {
         text: qsTr("Predict Performance")
         font.pixelSize: droneParametersPage.bodyFontSize
 
-        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in red."
+        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in green."
         ToolTip.visible: tip ? predictPerformanceMA.containsMouse : false
         ToolTip.text: tip
         MouseArea {

@@ -37,9 +37,14 @@ class DroneParameterController:
         updateButton.clicked.connect(self.predictParamteers)
     
     def predictParamteers(self):
-        maxSpeed = float( self.paramWindow.findChild(QObject, "maxSpeedInput").property("text") )
+        minCruiseSpeed = float( self.paramWindow.findChild(QObject, "minCruiseSpeedInput").property("text") )
         stallSpeed = float( self.paramWindow.findChild(QObject, "stallSpeedInput").property("text") )
         aspectRatio = float( self.paramWindow.findChild(QObject, "aspectRatioInput").property("text") )
+        vtolPropellorDiameter = float( self.paramWindow.findChild(QObject, "vtolPropellorDiameterInput").property("text") )
+        numberOfVTOLPropellors = float( self.paramWindow.findChild(QObject, "vtolPropellorNumberInput").property("text") )
+        vtolMotorHeight = float( self.paramWindow.findChild(QObject, "vtolMotorHeightInput").property("text") )
+        vtolMotorDiameter = float( self.paramWindow.findChild(QObject, "vtolMotorDiameterInput").property("text") )
+
         droneMass = float( self.paramWindow.findChild(QObject, "droneWeightInput").property("text") )
         batteryMass = float( self.paramWindow.findChild(QObject, "batteryWeightInput").property("text") )
         loadMass = self.getMission().parameters["loadWeight"]
@@ -48,8 +53,14 @@ class DroneParameterController:
         wingSpan = self.reverseCalculator.calcWingSpan(aspectRatio, stallSpeed, mass)
         wingArea = self.reverseCalculator.calcWingArea(stallSpeed, mass)
 
+        wingAreaCruise = self.reverseCalculator.calcWingArea(minCruiseSpeed, mass)
+        # fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingAreaCruise, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
+        fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingArea, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
+
         self.paramWindow.findChild(QObject, "wingSpanInput").setProperty("text", round( wingSpan, 2 ) )
         self.paramWindow.findChild(QObject, "wingAreaInput").setProperty("text", round( wingArea, 2 ) )
+        self.paramWindow.findChild(QObject, "fuselageRadiusInput").setProperty("text", round( fuselageRadius, 2 ) )
+        self.paramWindow.findChild(QObject, "fuselageLengthInput").setProperty("text", round( fuselageLength, 2 ) )
 
     def toggleDesign(self):
         self.designToggled = not self.designToggled
@@ -57,19 +68,13 @@ class DroneParameterController:
 
         leftChildren = self.paramWindow.findChild(QObject, "leftParameterGrid").findChildren(QObject)
         if self.designToggled:
-            for child in leftChildren:
-                if "Label" in child.property("objectName"):
-                    child.setProperty("color", "#3f7a23")
 
-            # components that we don't want to be green / we want them to be a special color
-            self.paramWindow.findChild(QObject, "droneWeightLabel").setProperty("color", "black")
-            self.paramWindow.findChild(QObject, "cruisePropellorDiameterLabel").setProperty("color", "black")
-            self.paramWindow.findChild(QObject, "airFoilLabel").setProperty("color", "black")
-            self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#e6bf40")
-            self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#e6bf40")
+            # components to turn green
+            self.paramWindow.findChild(QObject, "wingSpanLabel").setProperty("color", "#3f7a23")
+            self.paramWindow.findChild(QObject, "wingAreaLabel").setProperty("color", "#3f7a23")
+            self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#3f7a23")
+            self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#3f7a23")
         else:
-            self.paramWindow.findChild(QObject, "batteryCapacityLabel").setProperty("color", "black")
-
             for child in leftChildren:
                 if "Label" in child.property("objectName"):
                     child.setProperty("color", "black")
@@ -99,7 +104,7 @@ class DroneParameterController:
             self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
                                     self.params["airFoil"],
                                     self.params["fuselageRadius"], self.params["fuselageLength"],
-                                    self.params["propellorDiameter"],
+                                    self.params["cruisePropellorDiameter"], self.params["vtolPropellorDiameter"],
                                     self.params["droneWeight"],
                                     self.params["angleOfAttack"],
                                     self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],

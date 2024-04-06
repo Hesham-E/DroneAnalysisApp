@@ -16,7 +16,7 @@ class Drone:
                  wingSpan, wingArea,
                  airFoil,
                  fuselageRadius, fuselageLength,
-                 propellorDiameter,
+                 cruisePropellorDiameter, vtolPropellorDiameter,
                  weight,
                  angleOfAttack,
                  batteryWeight, batteryCapacity, batteryVoltage,
@@ -44,7 +44,9 @@ class Drone:
         self.loadWeight = mission.parameters["loadWeight"]
         self.totalMass = weight + batteryWeight + mission.parameters["loadWeight"]
         self.totalWeight = self.totalMass * G_ACCEL # W is used
-        self.propellorDiameter = propellorDiameter
+
+        self.cruisePropellorDiameter = cruisePropellorDiameter
+        self.vtolPropellorDiameter = vtolPropellorDiameter
 
         self.angleOfAttack = angleOfAttack
 
@@ -152,7 +154,7 @@ class Drone:
         coefficientK = self.calcDragDueToLiftFactor()
         maxAltitude = self.cruiseAltitude if self.cruiseAltitude >= self.cruiseAltitude2 else self.cruiseAltitude2
         airDensity = self.atmConditions.calcAirDensityAtAltitude(maxAltitude, self.temperature)
-        powerAvailable = math.sqrt( ( self.cruiseMotorTableInterface.getMaxThrust() ** 3 ) / ( math.pi / 2 * airDensity * ( self.propellorDiameter ** 2 ) ) )
+        powerAvailable = math.sqrt( ( self.cruiseMotorTableInterface.getMaxThrust() ** 3 ) / ( math.pi / 2 * airDensity * ( self.cruisePropellorDiameter ** 2 ) ) )
         
         powerMax = 0
         speeds = []
@@ -232,6 +234,12 @@ class Drone:
         refArea = self.calcReferenceArea()
         C07R = 0.038
 
+        firstTerm = 0.1 * self.numberOfVTOLProps * self.vtolPropellorDiameter * C07R / refArea
+        secondTerm = 1.2 * self.vtolMotorHeight * self.vtolMotorDiameter * self.numberOfVTOLProps / refArea
+
+        print("CDMR ", firstTerm + secondTerm)
+        return firstTerm + secondTerm
+
     def calcZeroLiftDragCoefficient(self):
         skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
         skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
@@ -241,7 +249,7 @@ class Drone:
         print("Reference Area ", self.calcReferenceArea())
 
         wettedAndReferenceAreaRatio = self.calcWettedArea() / self.calcReferenceArea()
-        CDMR = 0.021 # 4 becomes N and will change, the D will change, C0.7 will change. All of these will become user inputs later
+        CDMR = self.calcMotorDragCoefficient()
 
         print("CD0 ", wettedAndReferenceAreaRatio * skinFrictionCoefficient + CDMR)
         # return 0.051
@@ -671,7 +679,7 @@ class Drone:
     def calcCruiseThrust(self):
         if self.cruiseSpeed != 0:
             propellorPower = self.calcPropellorPower()
-            thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter ** 2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
+            thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.cruisePropellorDiameter ** 2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
             return thrust
         elif self.mission.performance == MissionPerformance.PERFORMANCE:
             return self.cruiseMotorTableInterface.getMaxThrust()
@@ -687,7 +695,7 @@ class Drone:
 
     def calcEfficientStaticThrust(self):
         propellorPower = self.calcEfficientSpeed() * self.calcEfficientDynamicThrust()
-        thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.propellorDiameter **2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
+        thrust = ( math.pi / 2 * self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature) * ( self.cruisePropellorDiameter **2 ) * ( propellorPower ** 2 ) ) ** ( 1 / 3 )
         
         if thrust > self.cruiseMotorTableInterface.getMaxThrust():
             pass # throw an error!
@@ -720,7 +728,7 @@ class Drone:
         # return 0.5 * airDensity * ( self.calcMaxSpeed() ** 3 ) * self.wingArea * CD0 + ( 2 * coefficientK * self.wingArea ) / (airDensity * self.calcMaxSpeed()) * ( (self.totalWeight / self.wingArea) ** 2 )
         maxAltitude = self.cruiseAltitude if self.cruiseAltitude >= self.cruiseAltitude2 else self.cruiseAltitude2
         airDensity = self.atmConditions.calcAirDensityAtAltitude(maxAltitude, self.temperature)
-        return math.sqrt( ( self.cruiseMotorTableInterface.getMaxThrust() ** 3 ) / ( math.pi / 2 * airDensity * ( self.propellorDiameter ** 2 ) ) )
+        return math.sqrt( ( self.cruiseMotorTableInterface.getMaxThrust() ** 3 ) / ( math.pi / 2 * airDensity * ( self.cruisePropellorDiameter ** 2 ) ) )
         
     def calcOswaldEfficicency(self):
         aspectRatio = self.calcAspectRatio()

@@ -7,7 +7,8 @@ class ReverseCalculator:
 
     def __init__(self, mission):
         self.atmConditions = AtmosphereConditions()
-        self.mission = mission 
+        self.mission = mission
+        self.reynoldsNum = 100000 # Reynolds number for model aircrafts
     
     def calcWingArea(self, stallSpeed, mass):
         airDensity = self.atmConditions.calcAirDensityAtAltitude(self.mission.parameters["cruiseAltitude"], self.mission.parameters["temperature"])
@@ -27,49 +28,80 @@ class ReverseCalculator:
         print("Wing Span ", math.sqrt( wingArea * aspectRatio ) )
         return math.sqrt( wingArea * aspectRatio )
     
-    def calcOswaldEfficicency(self):
-        aspectRatio = self.calcAspectRatio()
-
+    def calcOswaldEfficicency(self, aspectRatio):
         print("Oswald Efficicency ", 1.78 * (1 - 0.045 * (aspectRatio ** 0.68)) - 0.64)
         return 1.78 * (1 - 0.045 * (aspectRatio ** 0.68)) - 0.64
     
-    # def calcTailWettedArea(self):
-    #     lambdaC = 0.5
-    #     cR = 2 * self.wingArea / ( ( lambdaC + 1 ) * self.wingSpan )
-    #     cBar = 2 / 3 * cR * ( ( 1 + lambdaC + lambdaC ** 2 ) / ( 1 + lambdaC ) )
-
-    #     Lht = self.fuselageLength / 1.511
-    #     Lvt = self.fuselageLength / 1.619
-
-    #     VHT = 0.7
-    #     VVT = 0.04
-
-    #     horizontalWettedArea = cBar * self.wingArea * VHT / Lht
-    #     verticalWettedArea = self.wingSpan * self.wingArea * VVT / Lvt
-
-    #     return horizontalWettedArea + verticalWettedArea
+    def calcDragDueToLiftFactor(self, aspectRatio):
+        print("Drag due to lift factor ", 1 / (math.pi * aspectRatio * self.calcOswaldEfficicency(aspectRatio)))
+        return 1 / (math.pi * aspectRatio * self.calcOswaldEfficicency(aspectRatio))
     
-    # def calcFuselageWettedArea(self):
-    #     # Fuselage is split into three sections according to page 450, figure 8.28 of Anderson book
+    def calcFuselageDimensions(self, mass, wingArea, aspectRatio, speed, numberOfVTOLProps, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter):
+        airDensity = self.atmConditions.calcAirDensityAtAltitude(self.mission.parameters["cruiseAltitude"], self.mission.parameters["temperature"])
+        weight = mass * self.G_ACCEL
+        wingLoading = weight / wingArea
+        dragDueToLiftFactor = self.calcDragDueToLiftFactor(aspectRatio)
+        skinFrictionCoeff = self.calcSkinFrictionCoefficient()
+        CDMR = self.calcMotorDragCoefficient(wingArea, numberOfVTOLProps, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
+        qInf = 0.5 * math.pi * airDensity * ( speed ** 2 ) 
 
-    #     secA1 = 2 * 0.6845 * math.pi * self.fuselageRadius ** 2
-    #     secA2 = 2 * math.pi * math.sqrt( ( self.fuselageRadius ** 2 + ( 2 * self.fuselageRadius * 0.6845 ) ** 2 ) / 2 )
-    #     secA3 = self.fuselageLength * 0.2495
+        print("Wing Loading ", wingLoading)
+        print("Wing Area ", wingArea)
+        print("dragDuetoLiftFactor ", dragDueToLiftFactor)
+        print("wingArea ", wingArea)
+        print("skinFrictionCoeff", skinFrictionCoeff)
+        print("K ", dragDueToLiftFactor)
+        print("mass ", mass)
+        print("airDensity ", airDensity)
+        print("CDMR ", CDMR)
 
-    #     secA = secA1 + secA2 * secA3
+        wettedArea = ( ( wingLoading ** 2 ) * 3 * dragDueToLiftFactor - CDMR ) * wingArea
+        wettedArea = wettedArea / ( skinFrictionCoeff * ( qInf ** 2 ) )
 
-    #     secB1 = ( 2 * self.fuselageRadius ) ** 2 * math.pi / 4
-    #     secB2 = 2 * math.pi * 0.6845 * self.fuselageRadius ** 2
-    #     secB3 = 2 * math.pi * self.fuselageRadius * self.fuselageLength * 0.4177
+        print("wettedArea ", wettedArea)
 
-    #     secB = secB1 - secB2 + secB3
+        fuselageArea =  ( wettedArea - wingArea ) / 1.21
 
-    #     secC = math.pi * self.fuselageRadius ** 3 + self.fuselageLength * 0.33
+        fuselageLength = fuselageArea * 3.43
+        fuselageRadius = fuselageArea * 0.312
 
-    #     return secA + secB + secC
+        return(fuselageLength, fuselageRadius)
     
-    # def calcWettedArea(self):
-    #     print("Wetted Area: ", self.calcFuselageWettedArea() + self.calcTailWettedArea() + self.wingArea)
-    #     print("FuseLage Wetteed Area: ", self.calcFuselageWettedArea())
-    #     print("Tail Wetted Area: ", self.calcTailWettedArea())
-    #     return self.calcFuselageWettedArea() + self.calcTailWettedArea() + self.wingArea
+    def calcSkinFrictionCoefficient(self):
+        skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
+        return skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
+
+    def calcMotorDragCoefficient(self, wingArea, numberOfVTOLProps, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter):
+        C07R = 0.038
+
+        firstTerm = 0.1 * numberOfVTOLProps * vtolPropellorDiameter * C07R / wingArea
+        secondTerm = 1.2 * vtolMotorHeight * vtolMotorDiameter * numberOfVTOLProps / wingArea
+
+        print("CDMR ", firstTerm + secondTerm)
+        return firstTerm + secondTerm
+    
+    def calcZeroLiftDragCoefficient(self, wingArea):
+        skinFrictionCoefficient = 0.42 / ( math.log(0.056 * self.reynoldsNum ) ** 2 )
+        skinFrictionCoefficient = skinFrictionCoefficient * 1.5 # According to Anderson this 1.5 is needed if it is not a flat plane
+
+        print("skinFrictionCoefficient ", skinFrictionCoefficient)
+        print("Wetted Area ", self.calcWettedArea())
+        print("Reference Area ", self.calcReferenceArea())
+
+        wettedAndReferenceAreaRatio = self.calcWettedArea() / wingArea
+        CDMR = self.calcMotorDragCoefficient()
+
+        print("CD0 ", wettedAndReferenceAreaRatio * skinFrictionCoefficient + CDMR)
+        return wettedAndReferenceAreaRatio * skinFrictionCoefficient + CDMR
+    
+    def calcMaxSpeedDrag(self, maxSpeed, stallSpeed, mass, aspectRatio):
+        airDensity = self.atmConditions.calcAirDensityAtAltitude(self.mission.parameters["cruiseAltitude"], self.mission.parameters["temperature"])
+        wingArea = self.calcWingArea(stallSpeed, mass)
+        CD0 = self.calcZeroLiftDragCoefficient(wingArea)
+        K = self.calcDragDueToLiftFactor(aspectRatio)
+        wingLoading = ( mass * self.G_ACCEL ) / wingArea
+
+        firstTerm = 0.5 * airDensity * ( maxSpeed ** 2 ) * wingArea * CD0
+        secondTerm = 2 * K * wingArea / ( airDensity * ( maxSpeed ** 2 ) ) * ( wingLoading ** 2 )
+
+        return firstTerm + secondTerm
