@@ -753,3 +753,6 @@ class Drone:
     
     def calcAspectRatio(self):
         return (self.wingSpan ** 2) / self.wingArea
+    
+    def calcMaxTakeOffWeight(self):
+        return self.vtolMotorTableInterface.getMaxThrust() / (1.5 * G_ACCEL)

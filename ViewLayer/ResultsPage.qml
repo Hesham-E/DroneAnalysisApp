@@ -37,9 +37,9 @@ Item {
 
     Text {
         id: resultsTitle
-        x: 178
+        x: 142
         y: 107
-        text: qsTr("Cruising Performance")
+        text: qsTr("General Performance Summary")
         font.pixelSize: 20
     }
 
@@ -49,7 +49,7 @@ Item {
         x: 44
         y: 150
         width: 494
-        height: 573
+        height: 400
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -131,14 +131,14 @@ Item {
         }
 
         Text {
-            id: maxTakeoffWeightLabel
-            objectName: "maxTakeoffWeightLabel"
-            text: qsTr("Maximum Takeoff Weight (kg)")
+            id: maxTakeOffWeightLabel
+            objectName: "maxTakeOffWeightLabel"
+            text: qsTr("Maximum Take Off Weight (kg)")
             font.pixelSize: resultsPage.labelSize
         }
         Text {
-            id: maxTakeoffWeightOutput
-            objectName: "maxTakeoffWeightOutput"
+            id: maxTakeOffWeightOutput
+            objectName: "maxTakeOffWeightOutput"
             width: resultsPage.outputWidth
             height: resultsPage.outputHeight
             text: qsTr("NA")
@@ -276,7 +276,7 @@ Item {
         id: csvButton
         objectName: "csvButton"
         x: 161
-        y: 513
+        y: 558
         width: 231
         height: 34
         text: qsTr("Export Detailed Results")

@@ -140,6 +140,7 @@ class DroneParameterController:
         self.results["liftInducedDrag"] = self.drone.calcLiftInducedDrag()
         self.results["parasiticDrag"] = self.drone.calcParasiticDrag()
         self.results["totalDrag"] = self.drone.calcDrag()
+        self.results["maxTakeOffWeight"] = self.drone.calcMaxTakeOffWeight()
 
         try:
             self.results["totalRange"] = self.drone.calcMaxRange()
