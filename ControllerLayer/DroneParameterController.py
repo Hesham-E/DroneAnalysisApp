@@ -55,8 +55,6 @@ class DroneParameterController:
         wingSpan = self.reverseCalculator.calcWingSpan(aspectRatio, stallSpeed, mass)
         wingArea = self.reverseCalculator.calcWingArea(stallSpeed, mass)
 
-        wingAreaCruise = self.reverseCalculator.calcWingArea(minCruiseSpeed, mass)
-        # fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingAreaCruise, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
         fuselageLength = float( self.paramWindow.findChild(QObject, "fuselageLengthInput").property("text") )
         fuselageRadius = float( self.paramWindow.findChild(QObject, "fuselageRadiusInput").property("text") )
         maxThrust = self.reverseCalculator.calcMaxStaticThrust(maxSpeed, stallSpeed, mass, aspectRatio, cruisePropellorDiameter, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter, fuselageLength, fuselageRadius)

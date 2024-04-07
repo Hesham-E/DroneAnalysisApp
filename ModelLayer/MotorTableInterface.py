@@ -32,9 +32,10 @@ class MotorTableInterface:
 
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
-        df = df.sort_values(by = ['Thrust (kgf)'])
+        print(df)
+        df = df.sort_values()
         
-        return df['Thrust (kgf)'].values[-1] * 9.81 # kgf * 9.81 = Newtons
+        return df.values[-1] * 9.81 # kgf * 9.81 = Newtons
 
     def getMinThrust(self):
         df = self.table.copy()
@@ -77,7 +78,30 @@ class MotorTableInterface:
             interpolationRatio = (y2 - y1) / (x2 - x1)
             return interpolationRatio * (thrust - x1) + y1
         
-    def getMechanicalPowerAtThrust(self, thrust):
+    # def getMechanicalPowerAtThrust(self, thrust):
+    #     thrust = thrust / 9.81 # Newtons / 9.81 = kgf
+    #     df = self.table.copy()
+        
+    #     df = df.apply(pd.to_numeric)
+    #     df = df.fillna(0)
+    #     df = df.sort_values(by = ['Thrust (kgf)'])
+
+    #     targetRow = df.loc[df['Thrust (kgf)'] == thrust]
+    #     if targetRow.empty is False: # Data exists, no interpolation needed
+    #         return targetRow['Mechanical power (W)'].values[0]
+    #     else: # Interpolate the 'Mechanical power (W)'
+    #         nearestValues = df.iloc[(df['Thrust (kgf)'] - thrust).abs().argsort()[ : 2]]
+    #         nearestValues = nearestValues.sort_values(by = ['Thrust (kgf)'])
+            
+    #         x1 = nearestValues['Thrust (kgf)'].values[0]
+    #         y1 = nearestValues['Mechanical power (W)'].values[0]
+    #         x2 = nearestValues['Thrust (kgf)'].values[1]
+    #         y2 = nearestValues['Mechanical power (W)'].values[1]
+            
+    #         interpolationRatio = (y2 - y1) / (x2 - x1)
+    #         return interpolationRatio * (thrust - x1) + y1
+    
+    def getThrottle(self, thrust):
         thrust = thrust / 9.81 # Newtons / 9.81 = kgf
         df = self.table.copy()
         
@@ -87,15 +111,15 @@ class MotorTableInterface:
 
         targetRow = df.loc[df['Thrust (kgf)'] == thrust]
         if targetRow.empty is False: # Data exists, no interpolation needed
-            return targetRow['Mechanical power (W)'].values[0]
-        else: # Interpolate the 'Mechanical power (W)'
+            return targetRow['Throttle (%)'].values[0]
+        else: # Interpolate the 'Throttle (%)'
             nearestValues = df.iloc[(df['Thrust (kgf)'] - thrust).abs().argsort()[ : 2]]
             nearestValues = nearestValues.sort_values(by = ['Thrust (kgf)'])
             
             x1 = nearestValues['Thrust (kgf)'].values[0]
-            y1 = nearestValues['Mechanical power (W)'].values[0]
+            y1 = nearestValues['Throttle (%)'].values[0]
             x2 = nearestValues['Thrust (kgf)'].values[1]
-            y2 = nearestValues['Mechanical power (W)'].values[1]
+            y2 = nearestValues['Throttle (%)'].values[1]
             
             interpolationRatio = (y2 - y1) / (x2 - x1)
             return interpolationRatio * (thrust - x1) + y1

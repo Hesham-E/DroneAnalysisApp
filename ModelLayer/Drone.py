@@ -101,7 +101,8 @@ class Drone:
         self.resultsWriter = ResultsWriter(self.mission, self.batteryEnergy,
                     self.wingSpan, self.wingArea, self.fuselageLength, self.totalMass,
                     self.batteryCapacity, self.calcMaxSpeed(),
-                    self.calcStallSpeed(), self.calcEfficientSpeed())
+                    self.calcStallSpeed(), self.calcEfficientSpeed(),
+                    cruiseMotorTablePath, vtolMotorTablePath)
     
         # For future reverse engineering purposes
         if self.pressure == None:
@@ -504,6 +505,9 @@ class Drone:
             self.resultsWriter.legInfos[count]["dragDueToLiftFactor"] = self.calcDragDueToLiftFactor()
             self.resultsWriter.legInfos[count]["auxPower"] = self.auxPowerCon
             self.resultsWriter.legInfos[count]["cruiseThrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
+            self.resultsWriter.legInfos[count]["cruiseThrust"] = self.calcCruiseThrust()
+            self.resultsWriter.legInfos[count]["vtolThrust"] = self.totalWeight
+            self.resultsWriter.legInfos[count]["hoverPower"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight )
 
             if leg == MissionLeg.CRUISE:
                 cruisePeriods.append( count )
@@ -536,8 +540,9 @@ class Drone:
                 self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
 
                 self.resultsWriter.legInfos[count]["thrust"] = self.vtolMotorTableInterface.getMaxThrust() * 4
+                self.resultsWriter.legInfos[count]["thrustD"] = self.totalWeight * UNDER_HOVER_FORCE
                 self.resultsWriter.legInfos[count]["vtolThrustPowerA"] = self.vtolMotorTableInterface.getMaxPower() * 4
-                self.resultsWriter.legInfos[count]["vtolThrustPowerD"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight * UNDER_HOVER_FORCE ) * 4
+                self.resultsWriter.legInfos[count]["vtolThrustPowerD"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight * UNDER_HOVER_FORCE / 4 ) * 4
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.vtolSpeed
 
                 self.resultsWriter.legInfos[count]["baseAltitude"] = self.baseAltitude
@@ -560,8 +565,9 @@ class Drone:
                 self.resultsWriter.legInfos[count]["energyDecelerating"] = energyD
 
                 self.resultsWriter.legInfos[count]["thrust"] = self.vtolMotorTableInterface.getMaxThrust() * 4
+                self.resultsWriter.legInfos[count]["thrustD"] = self.totalWeight * UNDER_HOVER_FORCE
                 self.resultsWriter.legInfos[count]["vtolThrustPowerA"] = self.vtolMotorTableInterface.getMaxPower() * 4
-                self.resultsWriter.legInfos[count]["vtolThrustPowerD"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight * UNDER_HOVER_FORCE ) * 4
+                self.resultsWriter.legInfos[count]["vtolThrustPowerD"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight * UNDER_HOVER_FORCE / 4 ) * 4
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.vtolSpeed
 
                 self.resultsWriter.legInfos[count]["baseAltitude"] = self.baseAltitude
@@ -573,6 +579,7 @@ class Drone:
 
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcStallSpeed()
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
+                self.resultsWriter.legInfos[count]["vtolThrust"] = self.totalWeight
                 self.resultsWriter.legInfos[count]["vtolThrustPower"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight / 4 ) * 4 # power needed to hover
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
             elif leg == MissionLeg.ACCELERATION:
@@ -582,6 +589,7 @@ class Drone:
 
                 self.resultsWriter.legInfos[count]["targetSpeed"] = self.calcCruiseSpeed()
                 self.resultsWriter.legInfos[count]["thrust"] = self.calcCruiseThrust()
+                self.resultsWriter.legInfos[count]["thrustPower"] = self.cruiseMotorTableInterface.getPowerAtThrust( self.calcCruiseThrust() )
                 self.resultsWriter.legInfos[count]["propellorPower"] = self.calcPropellorPower()
             elif leg == MissionLeg.ASCENT:
                 # self.resultsWriter.legInfos[count]["timeAccelerating"] = time
@@ -635,7 +643,7 @@ class Drone:
         return timeC, distC, energyC
 
     def calcMaxRange(self):
-        timeC, distC, energyC = self.calcCruisePeriod()
+        timeC, distC, energyC = self.calcCruisePeriod() # needs to be here
 
         # if MissionLeg.ACCELERATION in self.mission.legs:
         #     timeA, distA, energyA = self.calcAccelerationPeriod()
