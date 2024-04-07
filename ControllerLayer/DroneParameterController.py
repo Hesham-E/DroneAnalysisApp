@@ -75,6 +75,7 @@ class DroneParameterController:
     def toggleDesign(self):
         self.designToggled = not self.designToggled
         self.paramWindow.findChild(QObject, "rightParameterGrid").setProperty("visible", self.designToggled)
+        self.paramWindow.findChild(QObject, "legendColumn").setProperty("visible", self.designToggled)
 
         leftChildren = self.paramWindow.findChild(QObject, "leftParameterGrid").findChildren(QObject)
         if self.designToggled:

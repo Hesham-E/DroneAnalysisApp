@@ -568,7 +568,7 @@ Item {
         id: rightParameterGrid
         objectName: "rightParameterGrid"
         x: 857
-        y: 319
+        y: 367
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -722,8 +722,8 @@ Item {
     Switch {
         id: predictDesignSwitch
         objectName: "predictDesignSwitch"
-        x: 1052
-        y: 261
+        x: 1065
+        y: 335
         width: 176
         height: 20
         text: qsTr("Predict Design")
@@ -746,8 +746,8 @@ Item {
     Label {
         id: predictPerformanceLabel
         objectName: "predictPerformanceLabel"
-        x: 893
-        y: 259
+        x: 903
+        y: 331
         width: 110
         height: 24
         text: qsTr("Predict Performance")
@@ -806,5 +806,60 @@ Item {
         y: 8
         text: qsTr("Drone Parameters")
         font.pixelSize: 24
+    }
+
+    Column {
+        id: legendColumn
+        objectName: "legendColumn"
+        x: 857
+        y: 106
+        width: 415
+        height: 218
+        visible: false
+
+        Text {
+            id: reverseInstruction
+            objectName: "reverseInstruction"
+            text: qsTr("How To Use Predict Design")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+
+        Text {
+            id: blackTip
+            objectName: "blackTip"
+            text: qsTr("• Inputs in black are required.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: greenTip
+            objectName: "greenTip"
+            text: qsTr("• Inputs in <font color=\"#3f7a23\">green</font> will be predicted by all other inputs.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: yellowTip
+            objectName: "yellowTip"
+            text: qsTr("• Inputs in <font color=\"#e6bf40\">yellow</font> will be predicted only if set to 0.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: buttonInstruction
+            objectName: "buttonInstruction"
+            text: qsTr("• Press \"Update Parameters\" when you are ready.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap 
+        }
     }
 }

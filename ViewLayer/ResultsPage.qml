@@ -130,6 +130,23 @@ Item {
             verticalAlignment: Text.AlignVCenter
         }
 
+        Text {
+            id: maxTakeoffWeightLabel
+            objectName: "maxTakeoffWeightLabel"
+            text: qsTr("Maximum Takeoff Weight (kg)")
+            font.pixelSize: resultsPage.labelSize
+        }
+        Text {
+            id: maxTakeoffWeightOutput
+            objectName: "maxTakeoffWeightOutput"
+            width: resultsPage.outputWidth
+            height: resultsPage.outputHeight
+            text: qsTr("NA")
+            font.pixelSize: resultsPage.labelSize
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
     }
 
     Button {

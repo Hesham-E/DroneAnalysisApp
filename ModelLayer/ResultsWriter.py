@@ -19,7 +19,7 @@ class ResultsWriter:
         self.headers = ["Time (s)", "Altitude (m)", "Distance Travelled (m)", 
                         "Current Horizontal Speed (m/s)", "Current Vertical Speed (m/s)", "State of Charge (%)", 
                         "Phase of Flight", "Phase of Flight (Integer)",
-                        "Cruise Motor Throttle (%)", "VTOL Motor Throttle (%)",
+                        "VTOL Motor Throttle (%)", "Cruise Motor Throttle (%)",
                         "Wing Span (m)", "Wing Area (m^2)", "Fuselage Length (m)", "Drone Weight (kg)",
                         "Battery Capacity (mAh)", "Maximum Speed (m/s)", "Stall Speed (m/s)",
                         "Minimum Cruise Thrust Speed (m/s)"]
@@ -178,7 +178,7 @@ class ResultsWriter:
                     while periodTime < timeL:
                         self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
                                            f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", 
-                                           f"{self.vtolMotorTableInterface.getThrottle(leg['thrust'] / 4):.2f}", "0.00",
+                                           f"{self.vtolMotorTableInterface.getThrottle(leg['vtolThrust'] / 4):.2f}", "0.00",
                                            f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                            f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                            f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
