@@ -37,9 +37,11 @@ class DroneParameterController:
         updateButton.clicked.connect(self.predictParamteers)
     
     def predictParamteers(self):
+        maxSpeed = float( self.paramWindow.findChild(QObject, "maxSpeedInput").property("text") )
         minCruiseSpeed = float( self.paramWindow.findChild(QObject, "minCruiseSpeedInput").property("text") )
         stallSpeed = float( self.paramWindow.findChild(QObject, "stallSpeedInput").property("text") )
         aspectRatio = float( self.paramWindow.findChild(QObject, "aspectRatioInput").property("text") )
+        cruisePropellorDiameter = float( self.paramWindow.findChild(QObject, "cruisePropellorDiameterInput").property("text") )
         vtolPropellorDiameter = float( self.paramWindow.findChild(QObject, "vtolPropellorDiameterInput").property("text") )
         numberOfVTOLPropellors = float( self.paramWindow.findChild(QObject, "vtolPropellorNumberInput").property("text") )
         vtolMotorHeight = float( self.paramWindow.findChild(QObject, "vtolMotorHeightInput").property("text") )
@@ -55,12 +57,22 @@ class DroneParameterController:
 
         wingAreaCruise = self.reverseCalculator.calcWingArea(minCruiseSpeed, mass)
         # fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingAreaCruise, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
-        fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingArea, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
+        fuselageLength = float( self.paramWindow.findChild(QObject, "fuselageLengthInput").property("text") )
+        fuselageRadius = float( self.paramWindow.findChild(QObject, "fuselageRadiusInput").property("text") )
+        maxThrust = self.reverseCalculator.calcMaxStaticThrust(maxSpeed, stallSpeed, mass, aspectRatio, cruisePropellorDiameter, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter, fuselageLength, fuselageRadius)
+        if fuselageLength == 0 or fuselageRadius == 0:
+            fuselageLength, fuselageRadius = self.reverseCalculator.calcFuselageDimensions(mass, wingArea, aspectRatio, minCruiseSpeed, numberOfVTOLPropellors, vtolPropellorDiameter, vtolMotorHeight, vtolMotorDiameter)
 
         self.paramWindow.findChild(QObject, "wingSpanInput").setProperty("text", round( wingSpan, 2 ) )
         self.paramWindow.findChild(QObject, "wingAreaInput").setProperty("text", round( wingArea, 2 ) )
         self.paramWindow.findChild(QObject, "fuselageRadiusInput").setProperty("text", round( fuselageRadius, 2 ) )
         self.paramWindow.findChild(QObject, "fuselageLengthInput").setProperty("text", round( fuselageLength, 2 ) )
+
+        maxStaticThrustLabel = self.paramWindow.findChild(QObject, "maxStaticThrustLabel")
+        maxStaticThrustOutput = self.paramWindow.findChild(QObject, "maxStaticThrustOutput")
+        maxStaticThrustLabel.setProperty("visible", True)
+        maxStaticThrustOutput.setProperty("visible", True)
+        maxStaticThrustOutput.setProperty("text", round( maxThrust, 2 ) )
 
     def toggleDesign(self):
         self.designToggled = not self.designToggled
@@ -69,11 +81,13 @@ class DroneParameterController:
         leftChildren = self.paramWindow.findChild(QObject, "leftParameterGrid").findChildren(QObject)
         if self.designToggled:
 
-            # components to turn green
+            # components to turn different colors
+            # green for must input/will predict
+            # yellow for optional input, must input both if one is selected though
             self.paramWindow.findChild(QObject, "wingSpanLabel").setProperty("color", "#3f7a23")
             self.paramWindow.findChild(QObject, "wingAreaLabel").setProperty("color", "#3f7a23")
-            self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#3f7a23")
-            self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#3f7a23")
+            self.paramWindow.findChild(QObject, "fuselageRadiusLabel").setProperty("color", "#e6bf40")
+            self.paramWindow.findChild(QObject, "fuselageLengthLabel").setProperty("color", "#e6bf40")
         else:
             for child in leftChildren:
                 if "Label" in child.property("objectName"):
@@ -100,21 +114,21 @@ class DroneParameterController:
                     else:
                         raise Exception("Unrecognized QObject used")
                     
-        try:
-            self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
-                                    self.params["airFoil"],
-                                    self.params["fuselageRadius"], self.params["fuselageLength"],
-                                    self.params["cruisePropellorDiameter"], self.params["vtolPropellorDiameter"],
-                                    self.params["droneWeight"],
-                                    self.params["angleOfAttack"],
-                                    self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
-                                    self.params["vtolMotorHeight"], self.params["vtolMotorDiameter"], self.params["vtolPropellorNumber"],
-                                    self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
-                                    self.params["auxPowerCon"],
-                                    self.params["vtolSpeed"],
-                                    self.getMission())
-        except Exception as e:
-            self.popupError("A critical parameter is missing or incorrect.")
+        # try:
+        self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
+                                self.params["airFoil"],
+                                self.params["fuselageRadius"], self.params["fuselageLength"],
+                                self.params["cruisePropellorDiameter"], self.params["vtolPropellorDiameter"],
+                                self.params["droneWeight"],
+                                self.params["angleOfAttack"],
+                                self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
+                                self.params["vtolMotorHeight"], self.params["vtolMotorDiameter"], self.params["vtolPropellorNumber"],
+                                self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
+                                self.params["auxPowerCon"],
+                                self.params["vtolSpeed"],
+                                self.getMission())
+        # except Exception as e:
+        #     self.popupError("A critical parameter is missing or impossible.")
 
 
         print(self.params)

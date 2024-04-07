@@ -12,12 +12,24 @@ class MotorTableInterface:
             reader = csv.DictReader(fp)
             self.table = pd.DataFrame(data = reader)
         
+        self.temperature = temperature
         airDensity = self.atmCond.calcAirDensity(pressure, temperature)
         self.table["Thrust (kgf)"] = self.table["Thrust (kgf)"].apply( lambda x: ( airDensity / self.atmCond.SEA_AIR_DENSITY ) ** ( 1/3 ) * float(x) )
     
     def getMaxThrust(self):
         df = self.table.copy()
         
+        df = df.apply(pd.to_numeric)
+        df = df.fillna(0)
+        df = df.sort_values(by = ['Thrust (kgf)'])
+        
+        return df['Thrust (kgf)'].values[-1] * 9.81 # kgf * 9.81 = Newtons
+    
+    def getMaxThrustAtAltitude(self, altitude):
+        airDensity = self.atmCond.calcAirDensityAtAltitude(altitude, self.temperature)
+        df = self.table.copy()
+        df = df["Thrust (kgf)"].apply( lambda x: ( airDensity / self.atmCond.SEA_AIR_DENSITY ) ** ( 1/3 ) * float(x) )
+
         df = df.apply(pd.to_numeric)
         df = df.fillna(0)
         df = df.sort_values(by = ['Thrust (kgf)'])

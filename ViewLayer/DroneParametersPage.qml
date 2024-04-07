@@ -578,6 +578,31 @@ Item {
         columnSpacing: 30
         visible: false
 
+        Text {
+            id: maxSpeedLabel
+            objectName: "maxSpeedLabel"
+            text: qsTr("Desired Max Speed (m/s)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired max speed of the drone. Will be used to predict drone specification parameters in red."
+            ToolTip.visible: tip ? maxSpeedMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: maxSpeedMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: maxSpeedInput
+            objectName: "maxSpeedInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
 
         Text {
             id: minCruiseSpeedLabel
@@ -657,6 +682,42 @@ Item {
             validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
+        Text {
+            id: maxStaticThrustLabel
+            objectName: "maxStaticThrustLabel"
+            text: qsTr("Maximum Static Thrust")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The maximum static thrust required given the desired parameters specified."
+            ToolTip.visible: tip ? maxStaticThrustMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: maxStaticThrustMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+
+            visible: false
+        }
+        Text {
+            id: maxStaticThrustOutput
+            objectName: "maxStaticThrustOutput"
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            visible: false
+        }
+
+        Button {
+            id: updateButton
+            objectName: "updateButton"
+            width: 219
+            height: droneParametersPage.inputHeight
+            text: qsTr("Update Parameters")
+            icon.color: "#000000"
+            font.pixelSize: droneParametersPage.bodyFontSize
+        }
+
     }
     Switch {
         id: predictDesignSwitch
@@ -717,23 +778,11 @@ Item {
     Button {
         id: generateResultsButton
         objectName: "generateResultsButton"
-        x: 643
+        x: 533
         y: 896
         width: 214
         height: droneParametersPage.inputHeight
         text: qsTr("Generate Results")
-        icon.color: "#000000"
-        font.pixelSize: droneParametersPage.bodyFontSize
-    }
-
-    Button {
-        id: updateButton
-        objectName: "updateButton"
-        x: 406
-        y: 896
-        width: 219
-        height: droneParametersPage.inputHeight
-        text: qsTr("Update Parameters")
         icon.color: "#000000"
         font.pixelSize: droneParametersPage.bodyFontSize
     }
