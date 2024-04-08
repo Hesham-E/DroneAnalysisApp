@@ -256,8 +256,6 @@ class ResultsWriter:
                         currVerticalSpeed = currHorizontalSpeed * math.tan(climbAngle)
                         currHorizontalSpeed = currHorizontalSpeed * math.cos(climbAngle)
 
-                        deceleration = 9.80665 * 0.5 
-                        decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
                         while currAltitude < leg['altitudeEnd'] - decelDistance:
                             # do not accelerate but hold speed until target altitude
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
@@ -274,27 +272,6 @@ class ResultsWriter:
                             currDistance = totalDistance
                             currEnergy -= leg['maxPower'] * self.timeStep
                             currEnergy -= leg['auxPower'] * self.timeStep
-
-                        decelThrust = (deceleration / math.sin(climbAngle))
-                        while currVerticalSpeed > 0:
-                            # decelerate
-                            self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
-                                                f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", 
-                                                f"{0.00:.2f}", f"{self.cruiseMotorTableInterface.getThrottle(decelThrust):.2f}",
-                                                f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
-                                                f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
-                                                f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
-                            currTime += self.timeStep
-                            periodTime += self.timeStep
-                            totalDistance += compositeSpeed * self.timeStep
-                            horizontalDistance += currHorizontalSpeed * self.timeStep
-                            currAltitude += currVerticalSpeed * self.timeStep
-                            currDistance = totalDistance
-                            currEnergy -= leg['auxPower'] * self.timeStep
-
-                            currVerticalSpeed -= deceleration * self.timeStep
-                        
-                        currVerticalSpeed = 0 # fix overcorrection
                         
                         while currHorizontalSpeed < leg['targetSpeed']: #accelerate to cruising speed
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 

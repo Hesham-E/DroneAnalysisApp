@@ -315,7 +315,7 @@ class Drone:
         airDensity = self.atmConditions.calcAirDensityAtAltitude(self.cruiseAltitude, self.temperature)
 
         ROCMax = velocityROCMax * \
-                 (self.calcCruiseThrust() / self.totalWeight - 0.5 * airDensity * ( velocityROCMax ** 2 ) * ( self.wingArea / self.totalWeight ) * self.calcZeroLiftDragCoefficient() - \
+                 ( ( self.calcMaxPropellorPower() / velocityROCMax ) / self.totalWeight - 0.5 * airDensity * ( velocityROCMax ** 2 ) * ( self.wingArea / self.totalWeight ) * self.calcZeroLiftDragCoefficient() - \
                   self.totalWeight / self.wingArea * ( 2 * self.calcDragDueToLiftFactor() ) / ( airDensity * ( velocityROCMax ** 2 ) ) )
 
         print("ROC ", ROCMax, " | compositeROC ", velocityROCMax, " | propellorPower ", self.calcMaxPropellorPower(), " | L/Dmax ", self.calcMaxLiftDragRatio(), " | airDensity ", airDensity)
