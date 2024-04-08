@@ -495,8 +495,6 @@ class Drone:
 
         cruisePeriods = []
 
-        print("ROBERTO", self.calcMaxPropellorPower())
-
         for count, leg in enumerate( self.mission.legs ):
             self.resultsWriter.legInfos.append({})
             self.resultsWriter.legInfos[count]["mass"] = self.totalMass
