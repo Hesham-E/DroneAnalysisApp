@@ -270,6 +270,8 @@ class ResultsWriter:
                                                 f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                                 f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                                 f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                                currTime += self.timeStep
+                                periodTime += self.timeStep
                                 totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                                 horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
                                 currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
@@ -311,6 +313,8 @@ class ResultsWriter:
                                                 f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                                 f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                                 f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            currTime += self.timeStep
+                            periodTime += self.timeStep
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -327,6 +331,8 @@ class ResultsWriter:
                                                 f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                                 f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                                 f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            currTime += self.timeStep
+                            periodTime += self.timeStep
                             totalDistance += compositeSpeed * self.timeStep
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
@@ -344,6 +350,8 @@ class ResultsWriter:
                                                 f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                                 f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                                 f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
+                            currTime += self.timeStep
+                            periodTime += self.timeStep
                             totalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
                             currDistance = totalDistance
