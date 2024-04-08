@@ -63,8 +63,8 @@ class Drone:
         self.minimumDistance = 0
         self.expendedEnergy = 0
 
-        self.cruiseAltitude = mission.parameters["cruiseAltitude"]
-        self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"]
+        self.cruiseAltitude = mission.parameters["cruiseAltitude"] + mission.parameters["baseStationAltitude"]
+        self.cruiseAltitude2 = mission.parameters["cruiseAltitude2"] + mission.parameters["baseStationAltitude"]
         self.cruiseSpeed = mission.parameters["cruiseSpeed"]
         self.currentAltitude = mission.parameters["baseStationAltitude"]
         self.baseAltitude = mission.parameters["baseStationAltitude"]
@@ -513,7 +513,7 @@ class Drone:
                 cruisePeriods.append( count )
                 continue
             
-            self.resultsWriter.legInfos[count]["altitudeStart"] = self.currentAltitude
+            self.resultsWriter.legInfos[count]["altitudeStart"] = self.currentAltitude - self.baseAltitude
             
             if self.mission.profile == MissionProfile.DOUBLE_CRUISE and leg == MissionLeg.ASCENT:
                 time, dist, energy = eval( "self." + leg.string + f"(targetAltitude={self.cruiseAltitude2})" )
@@ -524,7 +524,7 @@ class Drone:
             self.resultsWriter.legInfos[count]["timeEnd"] = timeInPeriods + time
             self.resultsWriter.legInfos[count]["distanceTravelled"] = dist
             self.resultsWriter.legInfos[count]["energyExpended"] = energy
-            self.resultsWriter.legInfos[count]["altitudeEnd"] = self.currentAltitude
+            self.resultsWriter.legInfos[count]["altitudeEnd"] = self.currentAltitude - self.baseAltitude
             
 
             if leg == MissionLeg.VTOL_TAKEOFF:
@@ -637,8 +637,8 @@ class Drone:
             self.resultsWriter.legInfos[cruisePeriod]["timeEnd"] = self.resultsWriter.legInfos[cruisePeriod - 1]["timeEnd"] + timeC / len( cruisePeriods )
             self.resultsWriter.legInfos[cruisePeriod]["distanceTravelled"] = distC / len( cruisePeriods )
             self.resultsWriter.legInfos[cruisePeriod]["energyExpended"] = energyC / len( cruisePeriods )
-            self.resultsWriter.legInfos[cruisePeriod]["altitudeStart"] = self.cruiseAltitude if count == 0 else self.cruiseAltitude2
-            self.resultsWriter.legInfos[cruisePeriod]["altitudeEnd"] = self.cruiseAltitude if count == 0 else self.cruiseAltitude2
+            self.resultsWriter.legInfos[cruisePeriod]["altitudeStart"] = (self.cruiseAltitude if count == 0 else self.cruiseAltitude2) - self.baseAltitude
+            self.resultsWriter.legInfos[cruisePeriod]["altitudeEnd"] = (self.cruiseAltitude if count == 0 else self.cruiseAltitude2) - self.baseAltitude
 
         return timeC, distC, energyC
 
@@ -755,4 +755,4 @@ class Drone:
         return (self.wingSpan ** 2) / self.wingArea
     
     def calcMaxTakeOffWeight(self):
-        return self.vtolMotorTableInterface.getMaxThrust() / (1.5 * G_ACCEL)
+        return self.vtolMotorTableInterface.getMaxThrust() * 4 / (1.6 * G_ACCEL)

@@ -398,6 +398,7 @@ class ResultsWriter:
                             # print(leg['mass'])
                             # print(leg['thrust'])
                             # print(leg['propellorPower'])
+                        currHorizontalSpeed = leg['targetSpeed']
                             
 
             else: # linear rate of change, ie. no acceleration in this period
@@ -414,7 +415,6 @@ class ResultsWriter:
 
                         periodDistance = 0
 
-
                         # speed = currHorizontalSpeed
                         # decelDistance = 0
                         # decelTimeStep = 14.73
@@ -428,8 +428,6 @@ class ResultsWriter:
                             
                             # calculate decel distance
                             decelDistance = 0.5 * self.unpoweredDecel * ( currHorizontalSpeed / self.unpoweredDecel ) ** 2
-                            
-                            self.cruiseDistance -= decelDistance * numOfCruisePeriods
                             tempCruiseDistance = self.cruiseDistance / numOfCruisePeriods - decelDistance
                             print("DECEL DISTANCE: ", decelDistance)
                             while periodDistance < tempCruiseDistance:
