@@ -113,21 +113,21 @@ class DroneParameterController:
                     else:
                         raise Exception("Unrecognized QObject used")
                     
-        # try:
-        self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
-                                self.params["airFoil"],
-                                self.params["fuselageRadius"], self.params["fuselageLength"],
-                                self.params["cruisePropellorDiameter"], self.params["vtolPropellorDiameter"],
-                                self.params["droneWeight"],
-                                self.params["angleOfAttack"],
-                                self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
-                                self.params["vtolMotorHeight"], self.params["vtolMotorDiameter"], self.params["vtolPropellorNumber"],
-                                self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
-                                self.params["auxPowerCon"],
-                                self.params["vtolSpeed"],
-                                self.getMission())
-        # except Exception as e:
-        #     self.popupError("A critical parameter is missing or impossible.")
+        try:
+            self.drone = Drone(self.params["wingSpan"], self.params["wingArea"],
+                                    self.params["airFoil"],
+                                    self.params["fuselageRadius"], self.params["fuselageLength"],
+                                    self.params["cruisePropellorDiameter"], self.params["vtolPropellorDiameter"],
+                                    self.params["droneWeight"],
+                                    self.params["angleOfAttack"],
+                                    self.params["batteryWeight"], self.params["batteryCapacity"], self.params["batteryVoltage"],
+                                    self.params["vtolMotorHeight"], self.params["vtolMotorDiameter"], self.params["vtolPropellorNumber"],
+                                    self.params["cruiseMotorTablePath"], self.params["vtolMotorTablePath"],
+                                    self.params["auxPowerCon"],
+                                    self.params["vtolSpeed"],
+                                    self.getMission())
+        except Exception as e:
+            self.popupError("A critical parameter is missing or impossible.")
 
 
         print(self.params)
