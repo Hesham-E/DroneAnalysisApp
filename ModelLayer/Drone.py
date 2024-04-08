@@ -495,6 +495,8 @@ class Drone:
 
         cruisePeriods = []
 
+        print("ROBERTO", self.calcMaxPropellorPower())
+
         for count, leg in enumerate( self.mission.legs ):
             self.resultsWriter.legInfos.append({})
             self.resultsWriter.legInfos[count]["mass"] = self.totalMass
@@ -508,6 +510,8 @@ class Drone:
             self.resultsWriter.legInfos[count]["cruiseThrust"] = self.calcCruiseThrust()
             self.resultsWriter.legInfos[count]["vtolThrust"] = self.totalWeight
             self.resultsWriter.legInfos[count]["hoverPower"] = self.vtolMotorTableInterface.getPowerAtThrust( self.totalWeight )
+            self.resultsWriter.legInfos[count]["maxThrust"] = self.cruiseMotorTableInterface.getMaxThrust()
+            self.resultsWriter.legInfos[count]["maxPower"] = self.cruiseMotorTableInterface.getMaxPower()
 
             if leg == MissionLeg.CRUISE:
                 cruisePeriods.append( count )

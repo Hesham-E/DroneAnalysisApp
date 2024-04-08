@@ -129,7 +129,7 @@ Item {
         text: qsTr("Cruise Altitude (m)")
         font.pixelSize: 18
 
-        property string tip: "The cruise altitude of the mission."
+        property string tip: "The cruise altitude of the mission. This is relative to the base station."
         ToolTip.visible: tip ? cruiseAltitudeMA.containsMouse : false
         ToolTip.text: tip
         MouseArea {
@@ -220,7 +220,7 @@ Item {
         objectName: "vtolClimbLabel"
         visible: false
         
-        property string tip: "The altitude to climb to after take off in VTOL mode. The drone will switch to fixed wing ascent after reaching this altitude."
+        property string tip: "The altitude to climb to after take off in VTOL mode. The drone will switch to fixed wing ascent after reaching this altitude. This is relative to the base station."
         ToolTip.visible: tip ? vtolClimbMA.containsMouse && vtolClimbLabel.visible : false
         ToolTip.text: tip
         MouseArea {
@@ -252,7 +252,7 @@ Item {
         objectName: "vtolDescentLabel"
         visible: false
 
-        property string tip: "The altitude to begin VTOL landing from. The drone will have descended to this altitude in fixed wing mode from the cruise altitude."
+        property string tip: "The altitude to begin VTOL landing from. The drone will have descended to this altitude in fixed wing mode from the cruise altitude. This is relative to the base station."
         ToolTip.visible: tip ? vtolDescentMA.containsMouse && vtolDescentLabel.visible : false
         ToolTip.text: tip
         MouseArea {
@@ -284,7 +284,7 @@ Item {
         objectName: "cruiseAltitude2Label"
         visible: false
 
-        property string tip: "The second cruise altitude of the mission."
+        property string tip: "The second cruise altitude of the mission. This is relative to the base station."
         ToolTip.visible: tip ? cruiseAltitude2MA.containsMouse && cruiseAltitude2Label.visible : false
         ToolTip.text: tip
         MouseArea {

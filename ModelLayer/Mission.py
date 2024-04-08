@@ -61,6 +61,7 @@ class Mission:
         elif profile == MissionProfile.BASIC_FIXED_WING:
             self.legs = [MissionLeg.VTOL_TAKEOFF,
                          MissionLeg.TRANSITION,
+                         MissionLeg.ACCELERATION,
                          MissionLeg.ASCENT,
                          MissionLeg.CRUISE,
                          MissionLeg.DESCENT,
@@ -69,6 +70,7 @@ class Mission:
         elif profile == MissionProfile.SWEEP:
             self.legs = [MissionLeg.VTOL_TAKEOFF,
                          MissionLeg.TRANSITION,
+                         MissionLeg.ACCELERATION,
                          MissionLeg.ASCENT,
                          MissionLeg.CRUISE,
                          MissionLeg.DESCENT,

@@ -253,55 +253,8 @@ class ResultsWriter:
                     if leg['legObject'] == MissionLeg.ASCENT:
                         compositeSpeed = math.sqrt( currHorizontalSpeed ** 2 + currVerticalSpeed ** 2 )
                         climbAngle = math.asin( leg['ROC'] / leg['compositeROC'] )
-                        horizontalAcceleration = acceleration * math.cos( climbAngle )
-                        verticalAcceleration = acceleration * math.sin( climbAngle )
-
-                        print(getframeinfo(currentframe()).lineno)
-                        print(compositeSpeed, currHorizontalSpeed, currVerticalSpeed)
-                        print(leg['compositeROC'], leg['ROC'])
-                        print(currAltitude)
-                        print(leg['altitudeEnd'])
-                        if compositeSpeed < leg['compositeROC']:
-                            while compositeSpeed < leg['compositeROC'] and currAltitude < leg['altitudeEnd']:
-                                # acceleration phase
-                                self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
-                                                f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", 
-                                                f"{0.00:.2f}", f"{self.cruiseMotorTableInterface.getThrottle(leg['thrust']):.2f}",
-                                                f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
-                                                f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
-                                                f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
-                                currTime += self.timeStep
-                                periodTime += self.timeStep
-                                totalDistance += compositeSpeed * self.timeStep + 0.5 * acceleration * ( self.timeStep ** 2 )
-                                horizontalDistance += currHorizontalSpeed * self.timeStep + 0.5 * horizontalAcceleration * ( self.timeStep ** 2 )
-                                currAltitude += currVerticalSpeed * self.timeStep + 0.5 * verticalAcceleration * ( self.timeStep ** 2 )
-                                currDistance = totalDistance
-
-                                
-                                currHorizontalSpeed += horizontalAcceleration * self.timeStep
-                                currVerticalSpeed += verticalAcceleration * self.timeStep
-                                compositeSpeed = math.sqrt( currHorizontalSpeed ** 2 + currVerticalSpeed ** 2 )
-
-                                currEnergy -= leg['thrustPower'] * self.timeStep
-                                currEnergy -= leg['auxPower'] * self.timeStep
-                                currSOC = currEnergy / self.batteryEnergy * 100
-
-                                if leg['thrust'] > leg['propellorPower'] / compositeSpeed: #put this after so that compositeSpeed isn't 0
-                                    acceleration = leg['propellorPower'] / compositeSpeed / leg['mass']
-
-                                    horizontalAcceleration = acceleration * math.cos( climbAngle )
-                                    verticalAcceleration = acceleration * math.sin( climbAngle )
-                                
-                                print(leg['thrust'] / leg['mass'])
-                                print(acceleration)
-                                print(leg['propellorPower'] / compositeSpeed / leg['mass'])
-                                print(leg['mass'])
-                                print(leg['thrust'])
-                                print(leg['propellorPower'])
-                        else: #already at speed, just pitch up
-                            currVerticalSpeed = leg['compositeROC'] * math.sin(climbAngle)
-                            currHorizontalSpeed = leg['compositeROC'] * math.cos(climbAngle)
-
+                        currVerticalSpeed = currHorizontalSpeed * math.tan(climbAngle)
+                        currHorizontalSpeed = currHorizontalSpeed * math.cos(climbAngle)
 
                         deceleration = 9.80665 * 0.5 
                         decelDistance = currVerticalSpeed / deceleration # slow down since next leg will be 0 vertical speed
@@ -309,7 +262,7 @@ class ResultsWriter:
                             # do not accelerate but hold speed until target altitude
                             self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
                                                 f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", 
-                                                f"{0.00:.2f}", f"{self.cruiseMotorTableInterface.getThrottle(leg['thrust']):.2f}",
+                                                f"{0.00:.2f}", f"{self.cruiseMotorTableInterface.getThrottle(leg['maxThrust']):.2f}",
                                                 f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
                                                 f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                                 f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
@@ -319,7 +272,7 @@ class ResultsWriter:
                             horizontalDistance += currHorizontalSpeed * self.timeStep
                             currAltitude += currVerticalSpeed * self.timeStep
                             currDistance = totalDistance
-                            currEnergy -= leg['cruiseThrustPower'] * self.timeStep
+                            currEnergy -= leg['maxPower'] * self.timeStep
                             currEnergy -= leg['auxPower'] * self.timeStep
 
                         decelThrust = (deceleration / math.sin(climbAngle))
@@ -399,13 +352,7 @@ class ResultsWriter:
                             print("speed", currHorizontalSpeed)
                             if currHorizontalSpeed > 1: # because the calcDrag is dumb with small values
                                 acceleration = originalAccel - ( calcDrag(currHorizontalSpeed) / leg['mass'] )
-                            # print("HERE!")
-                            # print(leg['thrust'] / leg['mass'])
-                            # print(acceleration)
-                            # print(leg['propellorPower'] / currHorizontalSpeed / leg['mass'])
-                            # print(leg['mass'])
-                            # print(leg['thrust'])
-                            # print(leg['propellorPower'])
+
                         currHorizontalSpeed = leg['targetSpeed']
                             
 
@@ -422,14 +369,6 @@ class ResultsWriter:
                         print(currHorizontalSpeed)
 
                         periodDistance = 0
-
-                        # speed = currHorizontalSpeed
-                        # decelDistance = 0
-                        # decelTimeStep = 14.73
-                        # while speed > 0:
-                        #     dragDecel = calcDrag(speed) / leg['mass']
-                        #     speed -= dragDecel * decelTimeStep
-                        #     decelDistance += speed * decelTimeStep
 
                         if self.legInfos[count+1]["legObject"] == MissionLeg.VTOL_LANDING or \
                            self.legInfos[count+1]["legObject"] == MissionLeg.VTOL_TAKEOFF:
@@ -501,9 +440,8 @@ class ResultsWriter:
                                             f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
                                             f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
 
-                        currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
-
                         currTime += self.timeStep
+                        currHorizontalSpeed -= self.unpoweredDecel * self.timeStep
                         currDistance += currHorizontalSpeed * self.timeStep
                         horizontalDistance += currHorizontalSpeed * self.timeStep
                         periodDistance += currHorizontalSpeed * self.timeStep
@@ -533,29 +471,6 @@ class ResultsWriter:
                         currAltitude += altitudeStep
                         currEnergy -= leg['auxPower'] * self.timeStep
                         currSOC = currEnergy / self.batteryEnergy * 100
-                # else:
-                #     pass # is a useless section
-                #     steps = totalTime / self.timeStep
-                #     distanceStep = totalDistance / steps
-                #     energyStep = totalEnergy / steps
-                #     altitudeStep = ( leg['altitudeEnd'] - leg['altitudeStart'] ) / steps
-
-                #     # if altitudeStep == 0: #Ie. not ascent or descent
-                #     periodTime = 0
-                #     while periodTime < totalTime:
-                #         self.rows.append( [f"{currTime:.2f}", f"{currAltitude:.2f}", f"{horizontalDistance:.2f}", f"{currHorizontalSpeed:.2f}", f"{currVerticalSpeed:.2f}", 
-                #                            f"{currSOC:.2f}", f"{leg['legObject'].realName}", f"{leg['legObject'].value}", f"{self.wingSpan:.2f}", f"{self.wingArea:.2f}", 
-                #                            f"{self.fuselageLength:.2f}", f"{self.totalMass:.2f}", f"{self.batteryCapacity:.2f}", 
-                #                            f"{self.maxSpeed:.2f}", f"{self.stallSpeed:.2f}", f"{self.efficientSpeed:.2f}"] )
-
-                #         currTime += self.timeStep
-                #         currDistance += distanceStep
-                #         horizontalDistance += distanceStep
-                #         currAltitude += altitudeStep
-                #         currEnergy -= energyStep
-                #         currSOC = currEnergy / self.batteryEnergy * 100
-
-                #         periodTime += self.timeStep
             
             # self.rows.append(["Next Period"])
             print("Next Period")
