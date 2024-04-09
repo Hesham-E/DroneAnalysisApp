@@ -134,6 +134,6 @@ Item {
         y: 152
         width: 142
         height: 32
-        model: ["Performance", "Efficicent"]
+        model: ["Performance", "Efficient"]
     }
 }
