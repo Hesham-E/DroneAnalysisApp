@@ -13,7 +13,7 @@ Window {
     objectName: "appWindow"
 
     IntroductionPage {
-        id: introPage 
+        id: introPage
         objectName: "introPage"
         anchors.rightMargin: 0
         anchors.bottomMargin: 0
@@ -53,7 +53,7 @@ Window {
     }
 
     DroneParametersPage {
-        id: droneParametersPage 
+        id: droneParametersPage
         objectName: "droneParametersPage"
         anchors.rightMargin: 0
         anchors.bottomMargin: 0
