@@ -4,6 +4,8 @@ Welcome to our drone analysis app. This was designed by a group of 6 members: Ma
 
 It is built mainly using theory from John D. Anderson's Aircraft Performance and Design textbook. However, we have also used other sources to supplement.
 
+The GitHub can be found here: https://github.com/Hesham-E/DroneAnalysisApp
+
 ## Application
 
 The application itself is built using Python and the QT (PySide6) framework. The software architecture of the application is Model, View, Controller and the specific implementation can be followed through the diagram below.
@@ -55,5 +57,30 @@ The application consists of 5 main screens. These are:
 ![DroneParametersPage](docs/DroneParametersPage.png)
 * The Results Page
   * This page contains a summary of all our results in two distinct sections. The General Performance Summary and the Mission Summary.
-  * Additioanlly, there is an "Export Detailed Results" button which generates a CSV file breaking down the predicted flight every 0.1 seconds.
+  * Additionally, there is an "Export Detailed Results" button which generates a CSV file breaking down the predicted flight every 0.1 seconds. This CSV is saved to the same directory as the main(.py/.exe) 
 ![ResultsPage](docs/ResultsPage.png)
+
+## Power BI Data Visualization Tool
+The design team created a Power BI file to complement the CSV results file as a sample of what visualizing the flight would look like. This can be accessed through the `Flight_Simulations.pbix` file. This file allows a user to quickly break down segements of the data and inspect them through the robust Power BI suite of tools.
+
+### How to Use Power BI
+
+#### First Time Use
+
+* Install Power BI thorugh the Microsoft store
+* Once installed, open the `Flight_Simulations.pbix` file
+
+#### Regular Use
+
+* On the very far right open the data tab and delete the existing model called “detailedResults”
+![Picture1](docs/PowerBI/Picture1.png)
+* Delete this connection by right clicking and pressing "delete from model"
+![Picture2](docs/PowerBI/Picture2.png)
+* From here press get data in the top right and select Excel Workbook
+![Picture3](docs/PowerBI/Picture3.png)
+* When selecting a model from the file path make sure you set to all file types to be able to pull in a csv 
+![Picture4](docs/PowerBI/Picture4.png)
+* Look for the detailed results csv that the program outputs
+![Picture5](docs/PowerBI/Picture5.png)
+* Once you connect to that data model the Power BI will populate.
+* In terms of updating the Power BI in the future all you have to do is press the refresh button, since the model is already connected it is now a very easy process to visualize the simulated flight data.
