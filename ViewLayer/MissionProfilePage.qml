@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+
 import "."
 
 Item {
@@ -22,9 +23,9 @@ Item {
     Image {
         id: imageProfile1
         objectName: "imageProfile1"
-        x: 57
-        y: 322
-        width: 377
+        x: 53
+        y: 337
+        width: 345
         height: 190
         source: "images/MissionProfile1.png"
         fillMode: Image.PreserveAspectFit
@@ -44,9 +45,10 @@ Item {
     Image {
         id: imageProfile2
         objectName: "imageProfile2"
-        x: 440
-        y: 327
-        width: 400
+        x: 474
+        y: 342
+        width: 333
+        height: 180
         source: "images/MissionProfile2.png"
         fillMode: Image.PreserveAspectFit
     }
@@ -66,7 +68,7 @@ Item {
         id: imageProfile3
         objectName: "imageProfile3"
         x: 850
-        y: 343
+        y: 374
         width: 400
         source: "images/MissionProfile3.png"
         fillMode: Image.PreserveAspectFit
@@ -86,9 +88,10 @@ Item {
     Image {
         id: imageProfile4
         objectName: "imageProfile4"
-        x: 440
-        y: 614
-        width: 400
+        x: 459
+        y: 612
+        width: 363
+        height: 185
         source: "images/MissionProfile4.png"
         fillMode: Image.PreserveAspectFit
     }

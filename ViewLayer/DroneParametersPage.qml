@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Universal
 import QtQuick.Dialogs
 import QtCore
+
 import "."
 
 
@@ -36,7 +37,7 @@ Item {
             text: qsTr("Wing Span (m)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The total wing span from tip to tip."
+            property string tip: "The total wing span from tip to tip. Used in drag, lift, and various other calculations."
             ToolTip.visible: tip ? wingSpanMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -50,9 +51,10 @@ Item {
             objectName: "wingSpanInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("2.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -62,7 +64,7 @@ Item {
             textFormat: Text.RichText
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The dry weight of the drone (excluding the battery and payload)."
+            property string tip: "The dry weight of the drone (excluding the battery and payload). Used in thrust and a variety of mechanical calculations."
             ToolTip.visible: tip ? droneWeightMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -76,9 +78,10 @@ Item {
             objectName: "droneWeightInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("3.93")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -91,7 +94,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.RichText
 
-            property string tip: "The surface area of the wings as viewed from above."
+            property string tip: "The surface area of the wings as viewed from above. Used in drag, lift, and various other calculations."
             ToolTip.visible: tip ? wingAreaMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -105,9 +108,10 @@ Item {
             objectName: "wingAreaInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("0.53")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -116,7 +120,7 @@ Item {
             text: qsTr("Airfoil Shape (NACA Shape)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The shape of the airfoil based on the available NACA database shapes."
+            property string tip: "The shape of the airfoil based on the available NACA database shapes. Used in drag, lift, and various other calculations."
             ToolTip.visible: tip ? airFoilMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -131,7 +135,17 @@ Item {
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
             font.pixelSize: droneParametersPage.bodyFontSize
-            model: ["2408", "23012", "23018"]
+            model: ["4421", "23012", "23018",
+                    "0012", "2414", "2415",
+                    "0006", "0008", "0010",
+                    "0015", "0018", "0021",
+                    "0024", "1408", "1410",
+                    "1412", "2410", "2411",
+                    "2412", "2415", "2418",
+                    "2421", "2424", "4412",
+                    "4415", "4418", "2408",
+                    "4424", "6412", "22112",
+                    "23015", "23021", "23024"]
         }
 
         Text {
@@ -140,7 +154,7 @@ Item {
             text: qsTr("Fuselage Radius (m)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The radius of the fuselage at its widest point."
+            property string tip: "The radius of the fuselage at its widest point. Used in drag and various other calculations."
             ToolTip.visible: tip ? fuselageRadiusMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -154,9 +168,10 @@ Item {
             objectName: "fuselageRadiusInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("0.083")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -165,7 +180,7 @@ Item {
             text: qsTr("Fuselage Length (m)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The length of the fuselage from tip to tail."
+            property string tip: "The length of the fuselage from tip to tail. Used in drag and various other calculations."
             ToolTip.visible: tip ? fuselageLengthMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -179,9 +194,88 @@ Item {
             objectName: "fuselageLengthInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("1.15")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: cruisePropellorDiameterLabel
+            objectName: "cruisePropellorDiameterLabel"
+            text: qsTr("Cruise Propellor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the cruise propellor. Used in drag and thrust calculations."
+            ToolTip.visible: tip ? cruisePropellorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: cruisePropellorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: cruisePropellorDiameterInput
+            objectName: "cruisePropellorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.381")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolPropellorDiameterLabel
+            objectName: "vtolPropellorDiameterLabel"
+            text: qsTr("VTOL Propellor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the VTOL propellor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolPropellorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolPropellorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolPropellorDiameterInput
+            objectName: "vtolPropellorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.381")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolPropellorNumberLabel
+            objectName: "vtolPropellorNumberLabel"
+            text: qsTr("Number of VTOL Propellors")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The number of VTOL propellors. Used in drag calculations."
+            ToolTip.visible: tip ? propellorNumberMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: propellorNumberMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolPropellorNumberInput
+            objectName: "vtolPropellorNumberInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("4")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]/ }
         }
 
         Text {
@@ -198,6 +292,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
             }
+            visible: false
         }
         TextField {
             id: angleOfAttackInput
@@ -207,6 +302,8 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            visible: false
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
     }
 
@@ -224,28 +321,12 @@ Item {
         columnSpacing: 30
 
         Text {
-            id: reynoldsNumLabel
-            objectName: "reynoldsNumLabel"
-            text: qsTr("Reynolds Number")
-            font.pixelSize: droneParametersPage.bodyFontSize
-        }
-        TextField {
-            id: reynoldsNumInput
-            objectName: "reynoldsNumInput"
-            width: 100
-            height: droneParametersPage.inputHeight
-            text: qsTr("1")
-            font.pixelSize: droneParametersPage.bodyFontSize
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
             id: auxPowerConLabel
             objectName: "auxPowerConLabel"
             text: qsTr("Auxiliary Power Consumed (W)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The power consumed by peripheral systems (ICs, boards, etc.) that are not the motors."
+            property string tip: "The power consumed by peripheral systems (ICs, boards, etc.) that are not the motors. Used in power calculations."
             ToolTip.visible: tip ? auxPowerConMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -259,9 +340,10 @@ Item {
             objectName: "auxPowerConInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("10")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -270,7 +352,7 @@ Item {
             text: qsTr("Weight of the Battery (kg)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The weight of the battery used to power the drone."
+            property string tip: "The weight of the battery used to power the drone. Used in thrust and a variety of mechanical calculations."
             ToolTip.visible: tip ? batteryWeightMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -284,9 +366,10 @@ Item {
             objectName: "batteryWeightInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("1.81")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -295,7 +378,7 @@ Item {
             text: qsTr("Battery Capacity (mAh)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The capacity of the battery used to power the drone."
+            property string tip: "The capacity of the battery used to power the drone. Used in power and max range calculations."
             ToolTip.visible: tip ? batteryCapacityMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -309,9 +392,10 @@ Item {
             objectName: "batteryCapacityInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("12400")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -320,7 +404,7 @@ Item {
             text: qsTr("Battery Voltage (V)")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The voltage of the battery used to power the drone."
+            property string tip: "The voltage of the battery used to power the drone. Used in power and max range calculations."
             ToolTip.visible: tip ? batteryVoltageMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -334,25 +418,88 @@ Item {
             objectName: "batteryVoltageInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("22.2")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
-            id: ascentDescentSpeedLabel
-            objectName: "ascentDescentSpeedLabel"
-            text: qsTr("Desired Ascent and Descent Speed (m/s)")
+            id: vtolSpeedLabel
+            objectName: "vtolSpeedLabel"
+            text: qsTr("Desired VTOL Speed (m/s)")
             font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired VTOL ascent/descent speed. Used in flight calculations."
+            ToolTip.visible: tip ? vtolSpeedMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolSpeedMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
-            id: ascentDescentSpeedInput
-            objectName: "ascentDescentSpeedInput"
+            id: vtolSpeedInput
+            objectName: "vtolSpeedInput"
             width: droneParametersPage.inputWidth
             height: droneParametersPage.inputHeight
-            text: qsTr("1")
+            text: qsTr("1.5")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolMotorHeightLabel
+            objectName: "vtolMotorHeightLabel"
+            text: qsTr("VTOL Motor Height (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The height of the VTOL motor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolMotorHeightMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolMotorHeightMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolMotorHeightInput
+            objectName: "vtolMotorHeightInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.028")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: vtolMotorDiameterLabel
+            objectName: "vtolMotorDiameterLabel"
+            text: qsTr("VTOL Motor Diameter (m)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The diameter of the VTOL motor. Used in drag calculations."
+            ToolTip.visible: tip ? vtolMotorDiameterMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: vtolMotorDiameterMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: vtolMotorDiameterInput
+            objectName: "vtolMotorDiameterInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("0.042")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
         }
 
         Text {
@@ -361,7 +508,7 @@ Item {
             text: qsTr("File Path to Cruise Motor Table")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used."
+            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used. Used in power and thrust calculations."
             ToolTip.visible: tip ? cruiseMotorTableMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -391,7 +538,7 @@ Item {
             text: qsTr("File Path to VTOL Motor Table")
             font.pixelSize: droneParametersPage.bodyFontSize
 
-            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used."
+            property string tip: "The table containing thrust and power details of the motor / propellor combination to be used. Used in power and thrust calculations."
             ToolTip.visible: tip ? vtolMotorTableMA.containsMouse : false
             ToolTip.text: tip
             MouseArea {
@@ -420,8 +567,8 @@ Item {
     Grid {
         id: rightParameterGrid
         objectName: "rightParameterGrid"
-        x: 879
-        y: 361
+        x: 857
+        y: 367
         verticalItemAlignment: Grid.AlignVCenter
         horizontalItemAlignment: Grid.AlignLeft
         layoutDirection: Qt.LeftToRight
@@ -429,13 +576,22 @@ Item {
         columns: 2
         spacing: 35
         columnSpacing: 30
-
+        visible: false
 
         Text {
             id: maxSpeedLabel
             objectName: "maxSpeedLabel"
-            text: qsTr("(WIP) Desired Max Speed (m/s)")
+            text: qsTr("Desired Max Speed (m/s)")
             font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired max speed of the drone. Will be used to predict drone specification parameters in red."
+            ToolTip.visible: tip ? maxSpeedMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: maxSpeedMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
         TextField {
             id: maxSpeedInput
@@ -445,25 +601,167 @@ Item {
             text: qsTr("1")
             font.pixelSize: droneParametersPage.bodyFontSize
             horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: minCruiseSpeedLabel
+            objectName: "minCruiseSpeedLabel"
+            text: qsTr("Desired Minimum Cruise Speed (m/s)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired max speed of the drone. Will be used to predict drone specification parameters in green."
+            ToolTip.visible: tip ? minCruiseSpeedMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: minCruiseSpeedMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: minCruiseSpeedInput
+            objectName: "minCruiseSpeedInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: stallSpeedLabel
+            objectName: "stallSpeedLabel"
+            text: qsTr("Desired Stall Speed (m/s)")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired stall speed of the drone. Will be used to predict drone specification parameters in green."
+            ToolTip.visible: tip ? stallSpeedMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: stallSpeedMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: stallSpeedInput
+            objectName: "stallSpeedInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: aspectRatioLabel
+            objectName: "aspectRatioLabel"
+            text: qsTr("Desired Aspect Ratio")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The desired aspect ratio of the drone. Will be used to predict drone specification parameters in green."
+            ToolTip.visible: tip ? aspectRatioMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: aspectRatioMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+        }
+        TextField {
+            id: aspectRatioInput
+            objectName: "aspectRatioInput"
+            width: droneParametersPage.inputWidth
+            height: droneParametersPage.inputHeight
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            horizontalAlignment: Text.AlignHCenter
+            validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+        }
+
+        Text {
+            id: maxStaticThrustLabel
+            objectName: "maxStaticThrustLabel"
+            text: qsTr("Maximum Static Thrust")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            property string tip: "The maximum static thrust required given the desired parameters specified."
+            ToolTip.visible: tip ? maxStaticThrustMA.containsMouse : false
+            ToolTip.text: tip
+            MouseArea {
+                id: maxStaticThrustMA
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+
+            visible: false
+        }
+        Text {
+            id: maxStaticThrustOutput
+            objectName: "maxStaticThrustOutput"
+            text: qsTr("1")
+            font.pixelSize: droneParametersPage.bodyFontSize
+
+            visible: false
+        }
+
+        Button {
+            id: updateButton
+            objectName: "updateButton"
+            width: 219
+            height: droneParametersPage.inputHeight
+            text: qsTr("Update Parameters")
+            icon.color: "#000000"
+            font.pixelSize: droneParametersPage.bodyFontSize
         }
 
     }
     Switch {
-        id: switch1
-        x: 1003
-        y: 297
-        text: qsTr("(WIP) Predict Design")
+        id: predictDesignSwitch
+        objectName: "predictDesignSwitch"
+        x: 1065
+        y: 335
+        width: 176
+        height: 20
+        text: qsTr("Predict Design")
         font.pixelSize: droneParametersPage.bodyFontSize
+
+        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in gren."
+        ToolTip.visible: tip ? predictDesignMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: predictDesignMA
+            anchors.fill: parent
+            anchors.rightMargin: -40
+            anchors.bottomMargin: 2
+            anchors.leftMargin: 40
+            anchors.topMargin: -2
+            hoverEnabled: true
+        }
     }
 
     Label {
-        id: label
-        x: 893
-        y: 300
+        id: predictPerformanceLabel
+        objectName: "predictPerformanceLabel"
+        x: 903
+        y: 331
         width: 110
-        height: 31
-        text: qsTr("Predict Speed")
+        height: 24
+        text: qsTr("Predict Performance")
         font.pixelSize: droneParametersPage.bodyFontSize
+
+        property string tip: "Switch used to toggle between using drone parameters to predict performance metrics, or vice versa. When predicting parameters, the applicable ones will be in green."
+        ToolTip.visible: tip ? predictPerformanceMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: predictPerformanceMA
+            anchors.fill: parent
+            anchors.rightMargin: -48
+            hoverEnabled: true
+        }
     }
 
     Image {
@@ -480,23 +778,11 @@ Item {
     Button {
         id: generateResultsButton
         objectName: "generateResultsButton"
-        x: 643
+        x: 533
         y: 896
         width: 214
         height: droneParametersPage.inputHeight
         text: qsTr("Generate Results")
-        icon.color: "#000000"
-        font.pixelSize: droneParametersPage.bodyFontSize
-    }
-
-    Button {
-        id: updateButton
-        objectName: "updateButton"
-        x: 406
-        y: 896
-        width: 219
-        height: droneParametersPage.inputHeight
-        text: qsTr("(WIP) Update Parameters")
         icon.color: "#000000"
         font.pixelSize: droneParametersPage.bodyFontSize
     }
@@ -520,5 +806,60 @@ Item {
         y: 8
         text: qsTr("Drone Parameters")
         font.pixelSize: 24
+    }
+
+    Column {
+        id: legendColumn
+        objectName: "legendColumn"
+        x: 857
+        y: 106
+        width: 415
+        height: 218
+        visible: false
+
+        Text {
+            id: reverseInstruction
+            objectName: "reverseInstruction"
+            text: qsTr("How To Use Predict Design")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+
+        Text {
+            id: blackTip
+            objectName: "blackTip"
+            text: qsTr("• Inputs in black are required.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: greenTip
+            objectName: "greenTip"
+            text: qsTr("• Inputs in <font color=\"#3f7a23\">green</font> will be predicted by all other inputs.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: yellowTip
+            objectName: "yellowTip"
+            text: qsTr("• Inputs in <font color=\"#e6bf40\">yellow</font> will be predicted only if set to 0.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            id: buttonInstruction
+            objectName: "buttonInstruction"
+            text: qsTr("• Press \"Update Parameters\" when you are ready.")
+            font.pixelSize: droneParametersPage.bodyFontSize
+            width: parent.width
+            wrapMode: Text.WordWrap 
+        }
     }
 }

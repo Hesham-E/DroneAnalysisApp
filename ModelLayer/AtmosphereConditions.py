@@ -4,6 +4,7 @@ class AtmosphereConditions:
     # Conditions are assumed to be ideal for now
     SEA_PRESSURE = 101325.0 # Pascals
     SEA_TEMP = 288.15 # Kelvins
+    SEA_AIR_DENSITY = 1.225 # kg/m^3
     LAPSE_RATE = 0.0065 # K/m
     GAS_CONSTANT = 8.3144698 # J/mol-K
     G_ACCEL = 9.80665 # m/s^2
@@ -33,5 +34,9 @@ class AtmosphereConditions:
     
     def calcAirDensity(self, pressure, temperature):
         return pressure * self.AIR_MOLAR_MASS / (self.GAS_CONSTANT * temperature)
+    
+    def calcAirDensityAtAltitude(self, altitude, temperature):
+        pressure = self.calcPressure(altitude, temperature)
+        return self.calcAirDensity(pressure, temperature)
 
         

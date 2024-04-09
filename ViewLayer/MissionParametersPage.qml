@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+
 import "."
 
 Item {
@@ -54,9 +55,10 @@ Item {
         objectName: "missionDistanceInput"
         width: 80
         height: 36
-        text: qsTr("1")
+        text: qsTr("3700")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -86,12 +88,13 @@ Item {
         text: qsTr("288.15")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
     
     Text {
         id: pressureLabel
-        x: 824
-        y: 267
+        x: 826
+        y: 246
         objectName: "pressureLabel"
         text: qsTr("Air Pressure (Pa)")
         font.pixelSize: 18
@@ -108,13 +111,14 @@ Item {
     TextField {
         id: pressureInput
         x: 998
-        y: 261
+        y: 240
         objectName: "pressureInput"
         width: 80
         height: 36
         text: qsTr("101325")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -125,7 +129,7 @@ Item {
         text: qsTr("Cruise Altitude (m)")
         font.pixelSize: 18
 
-        property string tip: "The cruise altitude of the mission."
+        property string tip: "The cruise altitude of the mission. This is relative to the base station."
         ToolTip.visible: tip ? cruiseAltitudeMA.containsMouse : false
         ToolTip.text: tip
         MouseArea {
@@ -141,9 +145,40 @@ Item {
         objectName: "cruiseAltitudeInput"
         width: 80
         height: 36
-        text: qsTr("1")
+        text: qsTr("50")
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
+    }
+
+    Text {
+        id: cruiseSpeedLabel
+        x: 803
+        y: 328
+        objectName: "cruiseSpeedLabel"
+        text: qsTr("Cruise Speed (m/s)")
+        font.pixelSize: 18
+
+        property string tip: "The speed at which to cruise at during the flight. Leave this at zero if you wish the program to calculate it for you."
+        ToolTip.visible: tip ? cruiseSpeedMA.containsMouse : false
+        ToolTip.text: tip
+        MouseArea {
+            id: cruiseSpeedMA
+            anchors.fill: parent
+            hoverEnabled: true
+        }
+    }
+    TextField {
+        id: cruiseSpeedInput
+        x: 998
+        y: 322
+        objectName: "cruiseSpeedInput"
+        width: 80
+        height: 36
+        text: qsTr("20")
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignHCenter
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -173,6 +208,7 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         objectName: "baseStationAltitudeInput"
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -184,7 +220,7 @@ Item {
         objectName: "vtolClimbLabel"
         visible: false
         
-        property string tip: "The altitude to climb to after take off in VTOL mode. The drone will switch to fixed wing ascent after reaching this altitude."
+        property string tip: "The altitude to climb to after take off in VTOL mode. The drone will switch to fixed wing ascent after reaching this altitude. This is relative to the base station."
         ToolTip.visible: tip ? vtolClimbMA.containsMouse && vtolClimbLabel.visible : false
         ToolTip.text: tip
         MouseArea {
@@ -204,6 +240,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "vtolClimbInput"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -215,7 +252,7 @@ Item {
         objectName: "vtolDescentLabel"
         visible: false
 
-        property string tip: "The altitude to begin VTOL landing from. The drone will have descended to this altitude in fixed wing mode from the cruise altitude."
+        property string tip: "The altitude to begin VTOL landing from. The drone will have descended to this altitude in fixed wing mode from the cruise altitude. This is relative to the base station."
         ToolTip.visible: tip ? vtolDescentMA.containsMouse && vtolDescentLabel.visible : false
         ToolTip.text: tip
         MouseArea {
@@ -235,6 +272,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "vtolDescentInput"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -246,7 +284,7 @@ Item {
         objectName: "cruiseAltitude2Label"
         visible: false
 
-        property string tip: "The second cruise altitude of the mission."
+        property string tip: "The second cruise altitude of the mission. This is relative to the base station."
         ToolTip.visible: tip ? cruiseAltitude2MA.containsMouse && cruiseAltitude2Label.visible : false
         ToolTip.text: tip
         MouseArea {
@@ -266,6 +304,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         objectName: "cruiseAltitude2Input"
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Text {
@@ -297,6 +336,7 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         visible: false
+        validator : RegularExpressionValidator { regularExpression : /[0-9]+\.[0-9]+/ }
     }
 
     Button {

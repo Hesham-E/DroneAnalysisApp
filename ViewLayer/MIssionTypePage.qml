@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Universal
+
 import "."
 
 Item {
@@ -55,16 +56,15 @@ Item {
     }
 
     Button {
-        id: allButton
-        objectName: "allButton"
+        id: backButton
+        objectName: "returnButton"
         x: 536
-        y: 562
+        y: 874
         width: 208
-        height: 36
-        text: qsTr("(WIP) All")
+        height: resultsPage.outputHeight
+        text: qsTr("Go Back")
         icon.color: "#000000"
-        font.pixelSize: 18
+        font.pixelSize: resultsPage.labelSize
     }
-
 
 }

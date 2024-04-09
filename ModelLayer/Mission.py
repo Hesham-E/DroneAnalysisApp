@@ -32,15 +32,15 @@ class MissionPerformance(Enum):
         return self.string
 
 class MissionLeg(Enum):
-    _init_ = "value string"
+    _init_ = "value string realName"
 
-    VTOL_TAKEOFF = 1, "calcTakeOff"
-    TRANSITION = 2, "calcAccelerationTransitionPeriod"
-    ACCELERATION = 3, "calcAccelerationPeriod"
-    CRUISE = 4, "calcCruisePeriod"
-    VTOL_LANDING = 5, "calcLanding"
-    ASCENT = 6, "calcFixedWingClimb"
-    DESCENT = 7, "calcFixedWingDescent"
+    VTOL_TAKEOFF = 1, "calcTakeOff", "VTOL Take Off"
+    TRANSITION = 2, "calcAccelerationTransitionPeriod", "Transition"
+    ACCELERATION = 3, "calcAccelerationPeriod", "Fixed-Wing Acceleration"
+    CRUISE = 4, "calcCruisePeriod", "Cruise"
+    VTOL_LANDING = 5, "calcLanding", "VTOL Landing"
+    ASCENT = 6, "calcFixedWingClimb", "Fixed-Wing Climb"
+    DESCENT = 7, "calcFixedWingDescent", "Fixed-Wing Descent"
     
 
 class Mission:
@@ -61,6 +61,7 @@ class Mission:
         elif profile == MissionProfile.BASIC_FIXED_WING:
             self.legs = [MissionLeg.VTOL_TAKEOFF,
                          MissionLeg.TRANSITION,
+                         MissionLeg.ACCELERATION,
                          MissionLeg.ASCENT,
                          MissionLeg.CRUISE,
                          MissionLeg.DESCENT,
@@ -69,6 +70,7 @@ class Mission:
         elif profile == MissionProfile.SWEEP:
             self.legs = [MissionLeg.VTOL_TAKEOFF,
                          MissionLeg.TRANSITION,
+                         MissionLeg.ACCELERATION,
                          MissionLeg.ASCENT,
                          MissionLeg.CRUISE,
                          MissionLeg.DESCENT,

@@ -5,6 +5,7 @@ from .DroneParameterController import DroneParameterController
 from .ResultsController import ResultsController
 from .IntroController import IntroController
 from .MissionController import MissionController
+from .PopupController import PopupController
 
 class ControllerContainer(QObject):
     resultsReady = Signal()
@@ -14,7 +15,8 @@ class ControllerContainer(QObject):
         self.introController = IntroController(window)
         self.missionController = MissionController(window)
         self.droneParameterController = DroneParameterController(window, self.resultsReady, self.missionController.getMission)
-        self.resultsController = ResultsController(window)
+        self.resultsController = ResultsController(window, self.droneParameterController.getModelLayer)
+        self.popupController = PopupController(window)
 
         self.resultsReady.connect(partial(self.resultsController.populateResults, self.droneParameterController.getResults(), self.missionController.getMission))
 
